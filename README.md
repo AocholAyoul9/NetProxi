@@ -1,11 +1,6 @@
-# 🧼 HomeCleaningService – SaaS de gestion de ménage à domicile
+# 🧼 CleanHive – SaaS de gestion de ménage à domicile
 
-![GitHub last commit](https://img.shields.io/github/last-commit/shawilayoul/homeCleaningService)
-![GitHub issues](https://img.shields.io/github/issues/shawilayoul/homeCleaningService)
-![GitHub stars](https://img.shields.io/github/stars/shawilayoul/homeCleaningService?style=social)
-![GitHub license](https://img.shields.io/github/license/shawilayoul/homeCleaningService)
-
-**HomeCleaningService** est une application SaaS full stack basée sur une architecture **microservices**, permettant aux entreprises de ménage de gérer leurs clients, agents, réservations, facturations et opérations quotidiennes.
+**CleanHive** est une application SaaS full stack basée sur une architecture **microservices**, permettant aux entreprises de ménage de gérer leurs clients, agents, réservations, facturations et opérations quotidiennes.
 
 Elle offre une interface web moderne avec une structure modulaire, évolutive et sécurisée.
 
