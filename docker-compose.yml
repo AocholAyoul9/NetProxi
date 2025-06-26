@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: cleaningdb
+      POSTGRES_USER: cleaninguser
+      POSTGRES_PASSWORD: cleaningpass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    container_name: cleaning_backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cleaningdb
+      SPRING_DATASOURCE_USERNAME: cleaninguser
+      SPRING_DATASOURCE_PASSWORD: cleaningpass
+    command: ["java", "-jar", "/app.jar"]
+
+  frontend:
+    build: ./frontend
+    container_name: cleaning_frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
