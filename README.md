@@ -72,18 +72,18 @@ homecleaning/
 - Java 17 / Maven (si build manuel)
 
 ### 🐳 Démarrage
-# Build backend (si non déjà fait)
+### Build backend (si non déjà fait)
 cd services/identity-service
 ./mvnw clean package -DskipTests
 cd ../../
 
-# Lancer tous les services
+### Lancer tous les services
 docker-compose up --build
 
-# Lancement avec Docker
+### Lancement avec Docker
 docker-compose up --build
 
-🔗 Accès aux services
+** 🔗 Accès aux services **
 
 | Service            | URL                                            |
 | ------------------ | ---------------------------------------------- |
@@ -95,23 +95,23 @@ docker-compose up --build
                                 |
 
 🛣️ Roadmap (TODO)
- Intégration Stripe (paiement sécurisé)
+ - Intégration Stripe (paiement sécurisé)
 
- Notifications Email / SMS (Twilio, Mailgun)
+ - Notifications Email / SMS (Twilio, Mailgun)
 
- Chat en temps réel (WebSocket)
+ - Chat en temps réel (WebSocket)
 
- Tableau de bord avancé (stats, revenus, performances)
+ - Tableau de bord avancé (stats, revenus, performances)
 
- Portail entreprise SaaS avec onboarding & souscription
+ - Portail entreprise SaaS avec onboarding & souscription
 
-📄 Licence
+*** 📄 Licence ***
 Ce projet est open-source, proposé à des fins d’apprentissage. N’hésitez pas à l’utiliser ou le modifier selon vos besoins.
 
-👨‍💻 Auteur
+***👨‍💻 Auteur ***
 Shawil Ayoul Mojowok
-📫 www.linkedin.com/in/aochol-ayoul
-🚀 Développeur Full Stack passionné par les architectures SaaS, cloud et microservices.
+- 📫 www.linkedin.com/in/aochol-ayoul
+- 🚀 Développeur Full Stack passionné par les architectures SaaS, cloud et microservices.
 ---
 
 
