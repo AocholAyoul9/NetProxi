@@ -64,7 +64,7 @@ homecleaning/
 ---
 
 ## ⚙️ Lancement rapide avec Docker
-##🔧 Prérequis
+## 🔧 Prérequis
 - Docker
 
 - Docker Compose
@@ -73,17 +73,17 @@ homecleaning/
 
 ### 🐳 Démarrage
 ### Build backend (si non déjà fait)
-cd services/identity-service
-./mvnw clean package -DskipTests
-cd ../../
+- cd services/identity-service
+- ./mvnw clean package -DskipTests
+- cd ../../
 
-### Lancer tous les services
+## Lancer tous les services
 docker-compose up --build
 
-### Lancement avec Docker
+## Lancement avec Docker
 docker-compose up --build
 
-** 🔗 Accès aux services **
+## 🔗 Accès aux services
 
 | Service            | URL                                            |
 | ------------------ | ---------------------------------------------- |
@@ -105,10 +105,10 @@ docker-compose up --build
 
  - Portail entreprise SaaS avec onboarding & souscription
 
-*** 📄 Licence ***
+## 📄 Licence
 Ce projet est open-source, proposé à des fins d’apprentissage. N’hésitez pas à l’utiliser ou le modifier selon vos besoins.
 
-***👨‍💻 Auteur ***
+##👨‍💻 Auteur
 Shawil Ayoul Mojowok
 - 📫 www.linkedin.com/in/aochol-ayoul
 - 🚀 Développeur Full Stack passionné par les architectures SaaS, cloud et microservices.
