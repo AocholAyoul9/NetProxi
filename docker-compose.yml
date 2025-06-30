@@ -1,9 +1,8 @@
-version: '3.8'
-
 services:
+
   db:
     image: postgres:15
-    container_name: postgres_db
+    container_name: cleaninHiv_db
     environment:
       POSTGRES_DB: cleaningdb
       POSTGRES_USER: cleaninguser
@@ -13,18 +12,40 @@ services:
     ports:
       - "5432:5432"
 
-  backend:
-    build: ./backend
-    container_name: cleaning_backend
+  booking-service:
+    build: ./services/booking-service
+    container_name: booking_service
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cleaningdb
       SPRING_DATASOURCE_USERNAME: cleaninguser
       SPRING_DATASOURCE_PASSWORD: cleaningpass
-    command: ["java", "-jar", "/app.jar"]
+      SPRING_PROFILES_ACTIVE: docker
+
+  identity-service:
+    build: ./services/identity-service
+    container_name: identity_service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cleaningdb
+      SPRING_DATASOURCE_USERNAME: cleaninguser
+      SPRING_DATASOURCE_PASSWORD: cleaningpass
+      SPRING_PROFILES_ACTIVE: docker
+
+  gateway:
+    build: ./infrastructure/gateway
+    container_name: gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - booking-service
+      - identity-service
 
   frontend:
     build: ./frontend
@@ -32,7 +53,7 @@ services:
     ports:
       - "4200:80"
     depends_on:
-      - backend
+      - gateway
 
 volumes:
   pgdata:
