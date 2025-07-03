@@ -16,7 +16,7 @@ services:
     build: ./services/booking-service
     container_name: booking_service
     ports:
-      - "8081:8081"
+      - "8081:8080"
     depends_on:
       - db
     environment:

@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public  interface BookingRepository extends  JpaRepository<Booking, Long>{
 
-    List<Booking> findByClient(UUID clientId);
+   List<Booking> findByClientId(UUID clientId);
 
 }
