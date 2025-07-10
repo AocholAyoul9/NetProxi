@@ -1,4 +1,4 @@
-# 🧼 CleanHive – SaaS de gestion de ménage à domicile
+# CleanHive – SaaS de gestion de ménage à domicile
 
 **CleanHive** est une application SaaS full stack basée sur une architecture **microservices**, permettant aux entreprises de ménage de gérer leurs clients, agents, réservations, facturations et opérations quotidiennes.
 
@@ -6,7 +6,7 @@ Elle offre une interface web moderne avec une structure modulaire, évolutive et
 
 ---
 
-## 🚀 Stack technique
+##  Stack technique
 
 - **Frontend** : Angular (TypeScript)
 - **Microservices (Backend)** : Spring Boot (Java)
@@ -19,20 +19,20 @@ Elle offre une interface web moderne avec une structure modulaire, évolutive et
 
 ---
 
-## 🧩 Fonctionnalités principales
+##  Fonctionnalités principales
 
-- 🔐 Authentification avec rôles (Client, Agent, Admin, Entreprise)
-- 📅 Réservation de services à domicile
-- 🧑‍💼 Affectation automatique des agents
-- 🧾 Gestion des utilisateurs, clients et entreprises
-- 📊 Tableau de bord personnalisés
-- 🔔 Notifications par email / SMS (à venir)
-- 💳 Paiements en ligne via Stripe (à venir)
-- 🔄 Architecture scalable multi-entreprises
+-  Authentification avec rôles (Client, Agent, Admin, Entreprise)
+-  Réservation de services à domicile
+-  Affectation automatique des agents
+-  Gestion des utilisateurs, clients et entreprises
+-  Tableau de bord personnalisés
+-  Notifications par email / SMS (à venir)
+-  Paiements en ligne via Stripe (à venir)
+-  Architecture scalable multi-entreprises
 
 ---
 
-## 📁 Structure du projet (microservices)
+## Structure du projet (microservices)
 
 ```text
 homecleaning/
@@ -58,24 +58,21 @@ homecleaning/
 ````
 ---
 
-## ⚙️ Lancement rapide avec Docker
-## 🔧 Prérequis
+##  Lancement rapide avec Docker
+##  Prérequis
 - Docker
 
 - Docker Compose
 
 - Java 17 / Maven (si build manuel)
 
-### 🐳 Démarrage
+###  Démarrage
 ### Build backend (si non déjà fait)
 - cd services/identity-service
 - ./mvnw clean package -DskipTests
 - cd ../../
 
 ## Lancer tous les services
-docker-compose up --build
-
-## Lancement avec Docker
 docker-compose up --build
 
 ## 🔗 Accès aux services
@@ -89,7 +86,7 @@ docker-compose up --build
 | PostgreSQL         | localhost:5432 (user\:password)                |
                                 |
 
-🛣️ Roadmap (TODO)
+## Roadmap (TODO)
  - Intégration Stripe (paiement sécurisé)
 
  - Notifications Email / SMS (Twilio, Mailgun)
@@ -103,10 +100,8 @@ docker-compose up --build
 ## 📄 Licence
 Ce projet est open-source, proposé à des fins d’apprentissage. N’hésitez pas à l’utiliser ou le modifier selon vos besoins.
 
-##👨‍💻 Auteur
-Shawil Ayoul Mojowok
+## Auteur Aochol
 - 📫 www.linkedin.com/in/aochol-ayoul
-- 🚀 Développeur Full Stack passionné par les architectures SaaS, cloud et microservices.
 ---
 
 

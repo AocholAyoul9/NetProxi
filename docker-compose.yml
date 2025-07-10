@@ -10,7 +10,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5434:5432"
+      - "543:5432"
 
   booking-service:
     build: ./services/booking-service
