@@ -37,6 +37,7 @@ services:
       SPRING_DATASOURCE_USERNAME: cleaninguser
       SPRING_DATASOURCE_PASSWORD: cleaningpass
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8082
 
   gateway:
     build: ./infrastructure/gateway
