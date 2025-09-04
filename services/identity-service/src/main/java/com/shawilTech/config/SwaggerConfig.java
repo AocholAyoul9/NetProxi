@@ -1,4 +1,3 @@
-/*
 package com.cleanhive.identity.config;
 
 import io.swagger.v3.oas.models.*;
@@ -28,4 +27,3 @@ public class SwaggerConfig {
                 .build();
     }
 }
-*/
