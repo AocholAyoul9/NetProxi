@@ -2,6 +2,9 @@ package com.shawilTech.identityservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.*;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "companies")
@@ -11,8 +14,8 @@ import lombok.*;
 public class Company {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     private String name;
 
@@ -21,4 +24,19 @@ public class Company {
     private String email;
 
     private String phone;
+
+    private  String registrationNumber;
+
+    @Enumerated(EnumType.STRING)
+    private  SubscriptionPlan subscriptionPlan; // FREE, BASIC, PREMIUM, ENTERPRISE
+
+    private  LocalDateTime subscriptionStartDate;
+    private LocalDateTime getSubscriptionEndDate;
+    private  boolean active = true;
+
+    private  Integer maxEmployees;
+    private  Integer maxActiveBookings;
+
+    @OneToMany(mappedBy = "company")
+    private Set<User> employees;
 }

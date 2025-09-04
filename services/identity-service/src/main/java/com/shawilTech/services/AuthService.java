@@ -1,6 +1,5 @@
 package com.shawilTech.identityservice.service;
 
-
 import com.shawilTech.identityservice.dto.*;
 import com.shawilTech.identityservice.entity.*;
 import com.shawilTech.identityservice.repository.*;
@@ -22,14 +21,15 @@ public  class AuthService{
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtProvider;
 
-    public  AuthResponse register(RegisterRequest request){
+    public AuthResponse register(RegisterRequest request) {
 
-        Role role = roleRepository.findByName("Role_" + request.getRole().toUpperCase())
-                .orElseThrow(()-> new RuntimeException("Role not found"));
+        String roleName = "ROLE_" + request.getRole().toUpperCase();
+
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
 
         Company company = companyRepository.findById(request.getCompanyId())
                 .orElseThrow(() -> new RuntimeException("Company not found"));
-
 
         User user = User.builder()
                 .username(request.getUsername())
@@ -39,13 +39,11 @@ public  class AuthService{
                 .company(company)
                 .build();
 
-
         userRepository.save(user);
 
         String token = jwtProvider.generateToken(user.getUsername());
-        return  new AuthResponse(token, user.getUsername());
+        return new AuthResponse(token, user.getUsername());
     }
-
 
     public  AuthResponse login(LoginRequest request){
 
@@ -57,7 +55,10 @@ public  class AuthService{
         }
 
         String token = jwtProvider.generateToken(user.getUsername());
-        return new AuthResponse(token, user.getUsername());
+
+        AuthResponse response = new AuthResponse(token, user.getUsername());
+        response.setMessage("Login successful!");
+        return response;
 
     }
 }
