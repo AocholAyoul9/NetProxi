@@ -22,10 +22,15 @@ public class Booking {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    private UUID clientId;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
     private UUID agentId;
 
-    private String serviceType;
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    private Service service;
+
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String address;

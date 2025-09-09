@@ -1,10 +1,10 @@
+
 package com.shawilTech.identityservice.repository;
 
-import  com.shawilTech.identityservice.entity.Company;
+import  com.shawilTech.identityservice.entity.Payment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
-
 @Repository
-public interface CompanyRepository extends JpaRepository<Company, UUID> {}
+public interface PaymentRepository extends JpaRepository<Payment, UUID> {}

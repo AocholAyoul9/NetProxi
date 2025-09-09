@@ -3,18 +3,20 @@ package com.shawilTech.identityservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Set;
-import java.time.*;
 import java.util.UUID;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder.Default
+@Builder
 public class User {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID) // ← Change to UUID
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
     @Column(unique = true)
@@ -25,15 +27,18 @@ public class User {
 
     private String password;
 
+    @ToString.Exclude
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 
-    private  boolean active = true;
+    @Builder.Default
+    private boolean active = true;
 }
