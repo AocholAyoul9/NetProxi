@@ -1,5 +1,4 @@
 package com.shawilTech.identityservice.entity;
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +28,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "service_id")
-    private Service service;
+    private ServiceEntity service;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
