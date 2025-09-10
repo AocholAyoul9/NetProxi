@@ -1,3 +1,13 @@
+
+package com.shawilTech.identityservice.entity;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.util.UUID;
+import  java.util.Set;
+
 @Entity
 @Table(name = "clients")
 @Data

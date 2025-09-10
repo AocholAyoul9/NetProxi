@@ -1,3 +1,10 @@
+package com.shawilTech.identityservice.entity;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.*;
+import java.util.UUID;
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "payments")
 @Data

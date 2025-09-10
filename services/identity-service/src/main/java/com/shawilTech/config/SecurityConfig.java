@@ -52,7 +52,11 @@ public class SecurityConfig {
 
                         // Allow authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/bookings/**").permitAll()
+                        // Company registration endpoint
+                        .requestMatchers("/api/companies", "/api/companies/").permitAll()
 
+                        // Allow OPTIONS for CORS preflight
                         // Secure all other endpoints
                         .anyRequest().authenticated()
                 )

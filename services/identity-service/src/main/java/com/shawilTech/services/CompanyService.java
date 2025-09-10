@@ -1,8 +1,7 @@
 package com.shawilTech.identityservice.service;
 
-import com.shawilTech.identityservice.entity.Company;
-import com.shawilTech.identityservice.entity.Subscription;
-import com.shawilTech.identityservice.entity.SubscriptionPlan;
+import com.shawilTech.identityservice.entity.*;
+import com.shawilTech.identityservice.dto.*;
 import com.shawilTech.identityservice.repository.CompanyRepository;
 import com.shawilTech.identityservice.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,19 +14,29 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public  class CompanyService {
+public class CompanyService {
 
     private final CompanyRepository companyRepository;
-    private  final  SubscriptionRepository subscriptionRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
+    /**
+     * Register a new company with FREE plan by default
+     */
     @Transactional
-    public Company registerCompany(Company company){
+    public CompanyResponseDto registerCompany(CompanyRequestDto dto) {
+        // Build company from DTO
+        Company company = Company.builder()
+                .name(dto.getName())
+                .address(dto.getAddress())
+                .email(dto.getEmail())
+                .phone(dto.getPhone())
+                .registrationNumber(dto.getRegistrationNumber())
+                .active(true)
+                .build();
 
-        //save the company first
-        company.setActive(true)
         Company savedCompany = companyRepository.save(company);
 
-        //create default free subscrition
+        // Create default FREE subscription
         Subscription freeSubscription = Subscription.builder()
                 .company(savedCompany)
                 .plan(SubscriptionPlan.FREE)
@@ -39,31 +48,64 @@ public  class CompanyService {
 
         freeSubscription = subscriptionRepository.save(freeSubscription);
 
-        //link active subscription to company
-
+        // Link active subscription to company
         savedCompany.setActiveSubscription(freeSubscription);
-        savedCompany.getSubscriptions.add(freeSubscription);
+        companyRepository.save(savedCompany);
 
-        return companyRepository.save(savedCompany);
+        return CompanyResponseDto.builder()
+                .id(savedCompany.getId())
+                .name(savedCompany.getName())
+                .email(savedCompany.getEmail())
+                .phone(savedCompany.getPhone())
+                .active(savedCompany.isActive())
+                .activePlan(freeSubscription.getPlan())
+                .build();
     }
 
-    // Fetch a company by Id
-
-    public  Company getCompany(UUID companyId){
-        return companyRepository.findById(companyId)
+    /**
+     * Fetch company by ID
+     */
+    public CompanyResponseDto getCompany(UUID companyId) {
+        Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        return CompanyResponseDto.builder()
+                .id(company.getId())
+                .name(company.getName())
+                .email(company.getEmail())
+                .phone(company.getPhone())
+                .active(company.isActive())
+                .activePlan(company.getActiveSubscription() != null
+                        ? company.getActiveSubscription().getPlan()
+                        : null)
+                .build();
     }
 
+    /**
+     * Update company details
+     */
     @Transactional
-    public company updateCompany(UUID companyId, Company updatedCompany){
-        Company company = companyRepository.findById(companyId);
-                          .orElseThrow(() -> new RuntimeException("Company not found"));
+    public CompanyResponseDto updateCompany(UUID companyId, Company updatedCompany) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
         company.setName(updatedCompany.getName());
         company.setAddress(updatedCompany.getAddress());
         company.setEmail(updatedCompany.getEmail());
         company.setPhone(updatedCompany.getPhone());
         company.setRegistrationNumber(updatedCompany.getRegistrationNumber());
 
-        return companyRepository.save(company);
+        Company saved = companyRepository.save(company);
+
+        return CompanyResponseDto.builder()
+                .id(saved.getId())
+                .name(saved.getName())
+                .email(saved.getEmail())
+                .phone(saved.getPhone())
+                .active(saved.isActive())
+                .activePlan(saved.getActiveSubscription() != null
+                        ? saved.getActiveSubscription().getPlan()
+                        : null)
+                .build();
     }
 }
