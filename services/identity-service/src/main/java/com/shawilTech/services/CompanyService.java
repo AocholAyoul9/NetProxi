@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -82,10 +82,29 @@ public class CompanyService {
     }
 
     /**
+     * Fetch all company
+     */
+    public List<CompanyResponseDto> getAllCompanies() {
+        return companyRepository.findAll().stream()
+                .map(company -> CompanyResponseDto.builder()
+                        .id(company.getId())
+                        .name(company.getName())
+                        .email(company.getEmail())
+                        .phone(company.getPhone())
+                        .active(company.isActive())
+                        .activePlan(company.getActiveSubscription() != null
+                                ? company.getActiveSubscription().getPlan()
+                                : null)
+                        .build())
+                .toList();
+    }
+
+
+    /**
      * Update company details
      */
     @Transactional
-    public CompanyResponseDto updateCompany(UUID companyId, Company updatedCompany) {
+    public CompanyResponseDto updateCompany(UUID companyId, CompanyRequestDto updatedCompany) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Company not found"));
 
