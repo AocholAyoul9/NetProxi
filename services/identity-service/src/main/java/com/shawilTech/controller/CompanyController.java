@@ -7,11 +7,15 @@ import com.shawilTech.identityservice.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/companies")
 @RequiredArgsConstructor
+@Tag(name = "Companies", description = "APIs for managing companies")
 public class CompanyController {
 
     private final CompanyService companyService;
@@ -28,11 +32,20 @@ public class CompanyController {
         return companyService.getCompany(companyId);
     }
 
+
+    // get all company
+
+    @Operation(summary = "Get all companies")
+    @GetMapping
+    public List<CompanyResponseDto> getAllCompanies() {
+        return companyService.getAllCompanies();
+    }
+
     // Update company details
     @PutMapping("/{companyId}")
     public CompanyResponseDto updateCompany(
             @PathVariable UUID companyId,
-            @RequestBody Company updatedCompany
+            @RequestBody CompanyRequestDto updatedCompany
     ) {
         return companyService.updateCompany(companyId, updatedCompany);
     }
