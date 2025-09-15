@@ -55,6 +55,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/bookings/**").permitAll()
                         // Company registration endpoint
                         .requestMatchers("/api/companies/**").permitAll()
+                        //allow subscription registation end point
+                        .requestMatchers("/api/subscriptions/**").permitAll()
+
+                        // allow servicies enpoint
+                        .requestMatchers("/api/services/**").permitAll()
                         // Secure all other endpoints
                         .anyRequest().authenticated()
                 )

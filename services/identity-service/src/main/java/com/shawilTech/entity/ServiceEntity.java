@@ -1,8 +1,6 @@
 package com.shawilTech.identityservice.entity;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import java.util.UUID;
 
 @Entity
@@ -10,6 +8,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ServiceEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -18,9 +17,11 @@ public class ServiceEntity{
     private String name;
     private String description;
     private Double basePrice;
-    private int durationInMinutes;
+    private Integer durationInMinutes;
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
     private Company company;
+
+    private  boolean active = true;
 }
