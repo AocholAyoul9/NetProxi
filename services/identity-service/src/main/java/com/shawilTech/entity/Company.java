@@ -5,6 +5,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 
 @Entity
 @Table(name = "companies")
@@ -33,6 +35,7 @@ public class Company {
     private Set<User> employees;
 
     @OneToMany(mappedBy = "company")
+    @JsonManagedReference
     private Set<Subscription> subscriptions; // history of subscriptions
 
     @OneToOne

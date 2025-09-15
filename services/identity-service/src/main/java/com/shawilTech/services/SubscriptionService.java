@@ -58,7 +58,7 @@ public class SubscriptionService {
      * Cancel subscription (end immediately)
      */
     @Transactional
-    public void cancelSubscription(UUID subscriptionId) {
+    public String cancelSubscription(UUID subscriptionId) {
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
                 .orElseThrow(() -> new RuntimeException("Subscription not found"));
 
@@ -69,6 +69,8 @@ public class SubscriptionService {
         Company company = subscription.getCompany();
         company.setActiveSubscription(null);
         companyRepository.save(company);
+
+        return "Subscription has been cancel successfully";
     }
 
     /**
