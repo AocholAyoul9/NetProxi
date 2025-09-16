@@ -2,6 +2,7 @@
 package com.shawilTech.identityservice.entity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
@@ -11,6 +12,7 @@ import  java.util.Set;
 @Entity
 @Table(name = "clients")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client {

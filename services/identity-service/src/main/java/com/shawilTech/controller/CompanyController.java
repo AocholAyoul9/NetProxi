@@ -21,12 +21,14 @@ public class CompanyController {
     private final CompanyService companyService;
 
     //  Register a new company
+    @Operation(summary = "Register a new  company")
     @PostMapping
     public CompanyResponseDto registerCompany(@RequestBody CompanyRequestDto dto) {
         return companyService.registerCompany(dto);
     }
 
     // Get company details by ID
+    @Operation(summary = "Get company by id")
     @GetMapping("/{companyId}")
     public CompanyResponseDto getCompany(@PathVariable UUID companyId) {
         return companyService.getCompany(companyId);
@@ -34,7 +36,6 @@ public class CompanyController {
 
 
     // get all company
-
     @Operation(summary = "Get all companies")
     @GetMapping
     public List<CompanyResponseDto> getAllCompanies() {
@@ -42,6 +43,7 @@ public class CompanyController {
     }
 
     // Update company details
+    @Operation(summary = "update a company")
     @PutMapping("/{companyId}")
     public CompanyResponseDto updateCompany(
             @PathVariable UUID companyId,

@@ -7,7 +7,7 @@ import java.time.*;
 import java.math.BigDecimal;
 
 @Data
-public class BookingRequest {
+public class BookingRequestDto {
     private UUID companyId;
     private UUID clientId;
     private UUID agentId;

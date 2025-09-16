@@ -1,12 +1,14 @@
 package com.shawilTech.identityservice.dto;
 
 import lombok.Data;
+import lombok.Builder;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-public class BookingResponse {
+@Builder
+public class BookingResponseDto {
     private UUID id;
     private UUID clientId;
     private String clientName;

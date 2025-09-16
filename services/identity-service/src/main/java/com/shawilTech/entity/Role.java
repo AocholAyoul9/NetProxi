@@ -13,11 +13,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class Role {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID) // ← Change to UUID
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(unique = true, nullable = false)
-    private String name; // ROLE_ADMIN, ROLE_CLIENT, etc.
+    private String name; // ROLE_ADMIN, ROLE_CLIENT,
 }
