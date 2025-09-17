@@ -13,8 +13,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class Role {
+<<<<<<< HEAD
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+=======
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID) // ← Change to UUID
+>>>>>>> e1569dad99b65bbab55031cbcec49d91d2dcfd09
     private UUID id;
 
     @Column(unique = true, nullable = false)

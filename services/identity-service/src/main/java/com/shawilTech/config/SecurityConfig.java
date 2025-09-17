@@ -49,6 +49,10 @@ public class SecurityConfig {
                                 "/error",
                                 "/actuator/**"
                         ).permitAll()
+<<<<<<< HEAD
+=======
+
+>>>>>>> e1569dad99b65bbab55031cbcec49d91d2dcfd09
                         // Allow authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/bookings/**").permitAll()
@@ -56,10 +60,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/companies/**").permitAll()
                         //allow subscription registation end point
                         .requestMatchers("/api/subscriptions/**").permitAll()
+<<<<<<< HEAD
                         // allow servicies enpoint
                         .requestMatchers("/api/services/**").permitAll()
                         // allow clients enpoint
                         .requestMatchers("/api/clients/**").permitAll()
+=======
+
+                        // allow servicies enpoint
+                        .requestMatchers("/api/services/**").permitAll()
+>>>>>>> e1569dad99b65bbab55031cbcec49d91d2dcfd09
                         // Secure all other endpoints
                         .anyRequest().authenticated()
                 )
