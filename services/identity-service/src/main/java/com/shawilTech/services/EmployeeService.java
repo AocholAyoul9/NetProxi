@@ -1,5 +1,6 @@
 package  com.shawilTech.identityservice.service;
 
+import  com.shawilTech.identityservice.dto.*;
 import  com.shawilTech.identityservice.entity.*;
 import  com.shawilTech.identityservice.repository.*;
 import  lombok.RequiredArgsConstructor;
@@ -11,33 +12,36 @@ import  java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public  class UserService{
+public  class EmployeeService{
 
-    private  final UserRepository userRepository;
+    private  final EmployeeRepository employeeRepository;
     private  final  CompanyRepository companyRepository;
     private  final SubscriptionRepository subscriptionRepository;
 
     @Transactional
-    public  User createEmployee(User user, UUID companyId){
+    public  Employee createEmployee(Employee employee, UUID companyId){
+
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(()->new RuntimeException("Company not found"));
+
         Subscription subscription = subscriptionRepository.findByCompanyAndActiveTrue(company)
                 .orElseThrow(()-> new RuntimeException("No active subscription found"));
-        int currentEmployeess = userRepository.countByCompanyAndActiveTrue(company);
+
+        int currentEmployeess = employeeRepository.countByCompanyAndActiveTrue(company);
        /* if(currentEmployeess >= subscription.getPlan().getMaxEmployee()){
             throw  new RuntimeException("Employee limit reached for your subscription plan .");
         }*/
 
-        user.setCompany(company);
-        user.setActive(true);
+        employee.setCompany(company);
+        employee.setActive(true);
 
-        return userRepository.save(user);
+        return employeeRepository.save(employee);
     }
 
-    public  List<User> getEmployeesByCompany(UUID companyId){
+    public  List<Employee> getEmployeesByCompany(UUID companyId){
         Company  company = companyRepository.findById(companyId)
                 .orElseThrow(()-> new RuntimeException("Company not found"));
 
-        return  userRepository.findByCompany(company);
+        return  employeeRepository.findByCompany(company);
     }
 }

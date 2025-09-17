@@ -1,21 +1,18 @@
-
 package com.shawilTech.identityservice.entity;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
+import lombok.*;
+import java.util.Set;
 import java.util.UUID;
-import  java.util.Set;
+import org.hibernate.annotations.GenericGenerator;
+
 
 @Entity
-@Table(name = "clients")
+@Table(name = "Employees")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Client {
+@Builder
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -25,6 +22,11 @@ public class Client {
     private String phone;
     private String address;
 
-    @OneToMany(mappedBy = "client")
-    private Set<Booking> bookings;
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+    @Builder.Default
+    private boolean active = true;
 }
