@@ -1,13 +1,17 @@
 package com.shawilTech.identityservice.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.Set;
 import java.util.UUID;
+
 import org.hibernate.annotations.GenericGenerator;
 
 
 @Entity
-@Table(name = "Employees")
+@Table(name = "employees", uniqueConstraints = @UniqueConstraint(columnNames = {"company_id", "email"})
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

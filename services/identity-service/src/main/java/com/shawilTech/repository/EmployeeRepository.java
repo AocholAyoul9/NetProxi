@@ -10,7 +10,7 @@ import java.util.*;
 
 @Repository
 public  interface EmployeeRepository  extends  JpaRepository<Employee, UUID>{
-    Optional<Employee> findByName(String name);
+    Optional<Employee> findByIdAndCompany(UUID id, Company company);
     int countByCompanyAndActiveTrue(Company company);
     List<Employee> findByCompany(Company company);
 }

@@ -25,37 +25,39 @@ public class EmployeeController {
 
     @Operation(summary = "Register Employee")
     @PostMapping
-    public  Employee createEmployee(@PathVariable UUID companyId, @RequestBody Employee dto){
+    public  EmployeeResponseDto createEmployee(@PathVariable UUID companyId, @RequestBody EmployeeRequestDto dto){
 
-        Employee employee = Employee.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .phone(dto.getPhone())
-                .address(dto.getAddress())
-                .build();
-        Employee savedEmployee = employeeService.createEmployee(employee, companyId);
-
-        return  Employee.builder()
-                .name(savedEmployee.getName())
-                .email(savedEmployee.getEmail())
-                .phone(savedEmployee.getPhone())
-                .address(savedEmployee.getAddress())
-                .active(savedEmployee.isActive())
-                .build();
+        return  employeeService.createEmployee(dto, companyId);
 
     }
-
     // get all employees
+    @Operation(summary = "get all  Employee from spicific company")
     @GetMapping
-    public List<Employee> getEmployees(@PathVariable UUID companyId){
-        return  employeeService.getEmployeesByCompany(companyId)
-                .stream()
-                .map(user-> Employee.builder()
-                                .name(user.getName())
-                                .email(user.getEmail())
-                                .phone(user.getPhone())
-                                .active(user.isActive())
-                                .build())
-                .collect(Collectors.toList());
+    public List<EmployeeResponseDto> getEmployees(@PathVariable UUID companyId){
+        return  employeeService.getEmployeesByCompany(companyId);
+    }
+
+    //get single employee
+    @Operation(summary = "get   Employee By Id")
+    @GetMapping("/{employeeId}")
+    public EmployeeResponseDto getEmployeesById(@PathVariable UUID companyId, @PathVariable UUID employeeId){
+        return employeeService.getEmployeeById(companyId, employeeId);
+    }
+
+    @PutMapping("/{employeeId}")
+    public EmployeeResponseDto updateEmployee(
+            @PathVariable UUID companyId,
+            @PathVariable UUID employeeId,
+            @RequestBody EmployeeRequestDto dto
+    ){
+        return employeeService.updateEmployee(companyId,employeeId, dto);
+    }
+
+    @DeleteMapping("/{employeeId}")
+    public void  deleteEmployee(
+            @PathVariable UUID companyId,
+            @PathVariable UUID employeeId)
+    {
+        employeeService.deleteEmployee(companyId, employeeId);
     }
 }
