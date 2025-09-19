@@ -8,4 +8,6 @@ public  class CompanyRequestDto {
     private  String email;
     private  String phone;
     private String registrationNumber;
+    private Double latitude;
+    private Double longitude;
 }

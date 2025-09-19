@@ -10,8 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 
 @Entity
-@Table(name = "employees", uniqueConstraints = @UniqueConstraint(columnNames = {"company_id", "email"})
-)
+@Table(name = "employees")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

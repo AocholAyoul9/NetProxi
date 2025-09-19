@@ -19,6 +19,57 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final SubscriptionRepository subscriptionRepository;
      private  final ServiceRepository serviceRepository;
+
+    /**
+     * Find companies near a point (lat, lng) within radius in km
+     */
+
+    public List<CompanyResponseDto> findNearbyCompanies(double lat, double lng, double radiusKm) {
+        List<Company> activeCompanies = companyRepository.findByActiveTrue();
+
+        return activeCompanies.stream()
+                .filter(c -> c.getLatitude() != null && c.getLongitude() != null)
+                .filter(c -> distance(lat, lng, c.getLatitude(), c.getLongitude()) <= radiusKm)
+                .map(c -> CompanyResponseDto.builder()
+                        .id(c.getId())
+                        .name(c.getName())
+                        .address(c.getAddress())
+                        .latitude(c.getLatitude())
+                        .longitude(c.getLongitude())
+                        .build())
+                .toList();
+    }
+
+
+    /**
+     * Haversine formula to compute distance between two lat/lng in KM
+     */
+    private double distance(double lat1, double lon1, double lat2, double lon2) {
+        final int EARTH_RADIUS_KM = 6371;
+
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS_KM * c;
+    }
+
+
+    private CompanyResponseDto mapToDto(Company company) {
+        return CompanyResponseDto.builder()
+                .id(company.getId())
+                .name(company.getName())
+                .address(company.getAddress())
+                .latitude(company.getLatitude())
+                .longitude(company.getLongitude())
+                .active(company.isActive())
+                .build();
+    }
     /**
      * Register a new company with FREE plan by default
      */
@@ -30,6 +81,8 @@ public class CompanyService {
                 .address(dto.getAddress())
                 .email(dto.getEmail())
                 .phone(dto.getPhone())
+                .latitude(dto.getLatitude())
+                .longitude(dto.getLongitude())
                 .registrationNumber(dto.getRegistrationNumber())
                 .active(true)
                 .build();
@@ -59,6 +112,8 @@ public class CompanyService {
                 .phone(savedCompany.getPhone())
                 .active(savedCompany.isActive())
                 .activePlan(freeSubscription.getPlan())
+                .latitude(savedCompany.getLatitude())
+                .longitude(savedCompany.getLongitude())
                 .build();
     }
 

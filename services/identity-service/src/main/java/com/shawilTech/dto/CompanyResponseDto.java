@@ -13,6 +13,9 @@ public class CompanyResponseDto {
     private String name;
     private String email;
     private String phone;
+    private String address;
+    private Double latitude;
+    private Double longitude;
     private boolean active;
     private SubscriptionPlan activePlan;
 }

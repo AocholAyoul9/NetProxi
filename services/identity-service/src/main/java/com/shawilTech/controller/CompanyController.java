@@ -6,7 +6,7 @@ import com.shawilTech.identityservice.entity.Company;
 import com.shawilTech.identityservice.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.ResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -19,6 +19,20 @@ import java.util.*;
 public class CompanyController {
 
     private final CompanyService companyService;
+
+
+    /**
+     * GET /api/companies/nearby?lat=48.85&lng=2.35&radiusKm=5
+     */
+    @GetMapping("/nearby")
+    public ResponseEntity<List<CompanyResponseDto>> getNearbyCompanies(
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam(defaultValue = "5") double radiusKm) {
+
+        List<CompanyResponseDto> companies = companyService.findNearbyCompanies(lat, lng, radiusKm);
+        return ResponseEntity.ok(companies);
+    }
 
     //  Register a new company
     @Operation(summary = "Register a new  company")

@@ -22,4 +22,7 @@ public class BookingResponseDto {
     private String address;
     private BigDecimal price;
     private String status;
+
+    private UUID assignedEmployeeId;
+    private String assignedEmployeeName;
 }

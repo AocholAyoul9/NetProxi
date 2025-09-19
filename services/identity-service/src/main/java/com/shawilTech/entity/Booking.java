@@ -24,7 +24,10 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
-    private UUID agentId;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee assignedEmployee;
 
     @ManyToOne
     @JoinColumn(name = "service_id")

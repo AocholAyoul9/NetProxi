@@ -22,6 +22,7 @@ public class BookingService {
     private final ClientRepository clientRepository;
     private final ServiceRepository serviceRepository;
     private final CompanyRepository companyRepository;
+    private  final EmployeeRepository employeeRepository;
 
     /**
      * Create a new booking for a client
@@ -84,6 +85,28 @@ public class BookingService {
         Booking savedBooking = bookingRepository.save(booking);
 
         return mapToBookingResponseDto(savedBooking);
+    }
+
+
+    @Transactional
+    public BookingResponseDto assignBookingToEmployee(UUID bookingId, UUID employeeId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // Optional: check if employee belongs to same company
+        if (!employee.getCompany().getId().equals(booking.getCompany().getId())) {
+            throw new RuntimeException("Employee does not belong to this company");
+        }
+
+        booking.setAssignedEmployee(employee);
+        booking.setStatus(BookingStatus.CONFIRMED); // mark as assigned / ready
+
+        Booking updatedBooking = bookingRepository.save(booking);
+
+        return mapToBookingResponseDto(updatedBooking);
     }
 
     /**
@@ -178,7 +201,7 @@ public class BookingService {
      * Map Booking entity to BookingResponseDto
      */
     private BookingResponseDto mapToBookingResponseDto(Booking booking) {
-        return BookingResponseDto.builder()
+        BookingResponseDto.BookingResponseDtoBuilder builder = BookingResponseDto.builder()
                 .id(booking.getId())
                 .clientId(booking.getClient().getId())
                 .clientName(booking.getClient().getName())
@@ -190,7 +213,13 @@ public class BookingService {
                 .endTime(booking.getEndTime())
                 .address(booking.getAddress())
                 .price(booking.getPrice())
-                .status(booking.getStatus().name())
-                .build();
+                .status(booking.getStatus().name());
+
+        if (booking.getAssignedEmployee() != null) {
+            builder.assignedEmployeeId(booking.getAssignedEmployee().getId());
+            builder.assignedEmployeeName(booking.getAssignedEmployee().getName());
+        }
+
+        return builder.build();
     }
 }

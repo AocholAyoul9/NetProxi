@@ -31,6 +31,10 @@ public class Company {
     private Integer maxEmployees;
     private Integer maxActiveBookings;
 
+
+    private Double latitude;
+    private Double longitude;
+
     @OneToMany(mappedBy = "company")
     private Set<User> employees;
 
