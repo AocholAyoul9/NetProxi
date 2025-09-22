@@ -1,15 +1,15 @@
 services:
-  db:
-    image: postgres:15
-    container_name: cleaninHiv_db
-    environment:
-      POSTGRES_DB: cleaningdb
-      POSTGRES_USER: cleaninguser
-      POSTGRES_PASSWORD: cleaningpass
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "543:5432"
+  #db:
+   # image: postgres:15
+    #container_name: cleaninHiv_db
+    #environment:
+     # POSTGRES_DB: cleaningdb
+      #POSTGRES_USER: cleaninguser
+      #POSTGRES_PASSWORD: cleaningpass
+    #volumes:
+     # - pgdata:/var/lib/postgresql/data
+    #ports:
+     # - "543:5432"
 
   # booking-service:
   #   build: ./services/booking-service
@@ -24,19 +24,19 @@ services:
   #     SPRING_DATASOURCE_PASSWORD: cleaningpass
   #     SPRING_PROFILES_ACTIVE: docker
 
-  identity-service:
-    build: ./services/identity-service
-    container_name: identity_service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cleaningdb
-      SPRING_DATASOURCE_USERNAME: cleaninguser
-      SPRING_DATASOURCE_PASSWORD: cleaningpass
-      SPRING_PROFILES_ACTIVE: docker
-      SERVER_PORT: 8082
+  #identity-service:
+   # build: ./services/identity-service
+    #container_name: identity_service
+    #ports:
+      #- "8082:8082"
+    #depends_on:
+     # - db
+    #environment:
+     # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cleaningdb
+      #SPRING_DATASOURCE_USERNAME: cleaninguser
+      #SPRING_DATASOURCE_PASSWORD: cleaningpass
+      #SPRING_PROFILES_ACTIVE: docker
+      #SERVER_PORT: 8082
 
   # gateway:
   #   build: ./infrastructure/gateway
@@ -47,13 +47,13 @@ services:
   #     - booking-service
   #     - identity-service
 
-  # frontend:
-  #   build: ./frontend
-  #   container_name: cleaning_frontend
-  #   ports:
-  #     - "4200:80"
+  frontend:
+    build: ./frontend
+    container_name: cleaning_frontend
+    ports:
+      - "4200:80"
   #   depends_on:
   #     - gateway
 
-volumes:
-  pgdata:
+#volumes:
+ # pgdata:
