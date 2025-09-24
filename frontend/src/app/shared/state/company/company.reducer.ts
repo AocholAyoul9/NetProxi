@@ -17,7 +17,7 @@ export const initialState: CompanyState ={
     error: null
 }
 
-export const CompanyReducer = createReducer(
+export const companyReducer = createReducer(
     initialState,
     on(CompanyAction.loadCompany, state =>({...state, loading: true})),
     on(CompanyAction.loadCompanySuccess, (state, {company})=>({...state, currentCompany: company, loading: false})),

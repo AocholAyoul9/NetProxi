@@ -6,9 +6,12 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { CompanyReducer } from './shared/state/company/company.reducer';
+import { companyReducer } from './shared/state/company/company.reducer';
 import { bookingReducer } from './shared/state/booking/booking.reducer';
 import { CompanyEffects } from './shared/state/company/company.effects';
 import { BookingEffects } from './shared/state/booking/booking.effects';
@@ -18,8 +21,11 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
+
+    provideHttpClient(),
+
     provideStore({
-      company: CompanyReducer,
+      company: companyReducer,
       booking: bookingReducer,
     }),
     provideEffects([CompanyEffects, BookingEffects]),

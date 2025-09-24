@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable , inject, PLATFORM_ID} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { User } from '../shared/models/user.model';
+import { isPlatformBrowser } from '@angular/common';
+
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +13,8 @@ export class AuthService {
   private baseUrl = 'http://localhost:8082/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
+
+    private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -49,8 +53,13 @@ export class AuthService {
   }
 
   private getUserFromStorage(): User | null {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    
+
+    if (isPlatformBrowser(this.platformId)) {
+      const userJson = localStorage.getItem('user');
+      return userJson ? JSON.parse(userJson) : null;
+    }
+    return null;
   }
 
   /** Optional: Add auth header for Http requests */
