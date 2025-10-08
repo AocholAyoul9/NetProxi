@@ -15,6 +15,8 @@ import { companyReducer } from './shared/state/company/company.reducer';
 import { bookingReducer } from './shared/state/booking/booking.reducer';
 import { CompanyEffects } from './shared/state/company/company.effects';
 import { BookingEffects } from './shared/state/booking/booking.effects';
+import { authReducer } from './shared/state/auth/auth.reducer';
+import { AuthEffects } from './shared/state/auth/auth.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +29,8 @@ export const appConfig: ApplicationConfig = {
     provideStore({
       company: companyReducer,
       booking: bookingReducer,
+      auth: authReducer
     }),
-    provideEffects([CompanyEffects, BookingEffects]),
+    provideEffects([CompanyEffects, BookingEffects, AuthEffects]),
   ],
 };
