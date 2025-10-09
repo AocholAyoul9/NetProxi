@@ -26,11 +26,11 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(),
 
-    provideStore({
+   /* provideStore({
       company: companyReducer,
       booking: bookingReducer,
       auth: authReducer
     }),
-    provideEffects([CompanyEffects, BookingEffects, AuthEffects]),
+    provideEffects([CompanyEffects, BookingEffects, AuthEffects]),*/
   ],
 };
