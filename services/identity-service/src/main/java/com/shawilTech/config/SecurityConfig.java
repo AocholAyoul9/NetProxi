@@ -54,9 +54,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/bookings/**").permitAll()
                         // Company registration endpoint
-                        .requestMatchers("/api/companies", "/api/companies/").permitAll()
-
-                        // Allow OPTIONS for CORS preflight
+                        .requestMatchers("/api/companies/**").permitAll()
+                        //allow subscription registation end point
+                        .requestMatchers("/api/subscriptions/**").permitAll()
+                        // allow servicies enpoint
+                        .requestMatchers("/api/services/**").permitAll()
+                        // allow clients enpoint
+                        .requestMatchers("/api/clients/**").permitAll()
                         // Secure all other endpoints
                         .anyRequest().authenticated()
                 )
