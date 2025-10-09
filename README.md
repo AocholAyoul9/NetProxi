@@ -1,63 +1,61 @@
-# CleanHive – SaaS de gestion de ménage à domicile
+# CleanHive – Plateforme SaaS de gestion de services de nettoyage
 
-**CleanHive** est une application SaaS full stack basée sur une architecture **microservices**, permettant aux entreprises de ménage de gérer leurs clients, agents, réservations, facturations et opérations quotidiennes.
+**CleanHive** est une application **SaaS full-stack** permettant aux entreprises de nettoyage de gérer leurs **clients**, **employés**, **services**, **réservations** et **abonnements** — tout en offrant aux **clients (particuliers ou entreprises)** une interface simple pour **rechercher et réserver** des services de nettoyage à proximité (domicile, bureaux ou locaux commerciaux).
 
-Elle offre une interface web moderne avec une structure modulaire, évolutive et sécurisée.
+Les clients peuvent simplement **saisir leur adresse** dans la barre de recherche pour découvrir les entreprises de nettoyage proches, consulter les services disponibles (ex. : nettoyage de vitres, tapis, entretien complet), et **réserver directement en ligne**.
 
----
-
-##  Stack technique
-
-- **Frontend** : Angular (TypeScript)
-- **Microservices (Backend)** : Spring Boot (Java)
-- **Base de données** : PostgreSQL
-- **Infrastructure** : Docker & Docker Compose
-- **Communication** : REST, Eureka Discovery, Spring Cloud Gateway
-- **Sécurité** : JWT, Rôles, Intercepteurs
-- **Migration DB** : Flyway
-- **Architecture** : Multi-tenant (entreprises)
+Développée avec **Angular (frontend)** et **Spring Boot (backend)**, CleanHive combine **performance**, **scalabilité** et **simplicité**, tout en supportant un modèle **SaaS multi-entreprises**.
 
 ---
 
-##  Fonctionnalités principales
+## Stack technique
 
--  Authentification avec rôles (Client, Agent, Admin, Entreprise)
--  Réservation de services à domicile
--  Affectation automatique des agents
--  Gestion des utilisateurs, clients et entreprises
--  Tableau de bord personnalisés
--  Notifications par email / SMS (à venir)
--  Paiements en ligne via Stripe (à venir)
--  Architecture scalable multi-entreprises
+| Couche         | Technologie |
+|----------------|--------------|
+| **Frontend**   | Angular (TypeScript) avec Angular Material |
+| **Backend**    | Spring Boot (Java) |
+| **Base de données** | PostgreSQL |
+| **Infrastructure** | Docker & Docker Compose |
+| **Communication** | REST API |
+| **Sécurité** | JWT, rôles, intercepteurs |
+| **Modèle** | Multi-entreprises (SaaS) |
 
 ---
 
-## Structure du projet (microservices)
+## Fonctionnalités principales
+
+- **Authentification avec rôles** (Client, Employé, Entreprise)  
+- **Gestion des entreprises**, employés et services  
+- **Abonnements SaaS** pour les entreprises  
+- **Réservation de services** à domicile ou en entreprise  
+- **Recherche par adresse** pour trouver les entreprises à proximité  
+- **Tableau de bord** pour les entreprises (clients, réservations, statistiques)  
+- **Notifications et paiements** (en cours d’intégration)
+
+---
+
+## Structure du projet
+
+
 
 ```text
-homecleaning/
-├── docker-compose.yml
+cleanhive/
+├── docker-compose.yml         # Compose file for backend + frontend
 │
-├── infrastructure/
-│   ├── config-server/         # Centralisation de configuration (Spring Cloud Config)
-│   ├── discovery-server/      # Service registry (Eureka)
-│   └── gateway/               # API Gateway (Spring Cloud Gateway)
+├── backend/                   # Spring Boot backend
+│   ├── src/main/java/         # Code source Java
+│   ├── src/main/resources/    # Configuration, application.properties
+│   └── pom.xml                # Maven build file
 │
-├── services/
-│   ├── identity-service/      # Authentification + gestion des utilisateurs
-│   ├── booking-service/       # Gestion des réservations et plannings
-│   └── billing-service/       # (à venir) Facturation et paiements
-│
-├── frontend/                  # Application Angular
-│   ├── src/app/
-│   │   ├── core/              # Auth, intercepteurs, services
-│   │   ├── shared/            # Composants réutilisables
-│   │   └── pages/             # Pages (dashboard, login, etc.)
-│   └── environments/
-
+└── frontend/                  # Angular frontend
+    ├── src/app/
+    │   ├── core/             # Auth, API services, interceptors
+    │   ├── features/         # Functional modules (company, booking, client)
+    │   ├── shared/           # Reusable components and models
+    │   └── app.config.ts     # Angular configuration (NgRx, routes, etc.)
+    └── environments/         # Environment variables
 ````
 ---
-
 ##  Lancement rapide avec Docker
 ##  Prérequis
 - Docker
@@ -68,37 +66,35 @@ homecleaning/
 
 ###  Démarrage
 ### Build backend (si non déjà fait)
-- cd services/identity-service
+- cd  backend
 - ./mvnw clean package -DskipTests
 - cd ../../
 
 ## Lancer tous les services
 docker-compose up --build
 
-## 🔗 Accès aux services
+## Accès aux services
 
-| Service            | URL                                            |
-| ------------------ | ---------------------------------------------- |
-| Frontend (Angular) | [http://localhost:4200](http://localhost:4200) |
-| API Gateway        | [http://localhost:8080](http://localhost:8080) |
-| Eureka Discovery   | [http://localhost:8761](http://localhost:8761) |
-| Config Server      | [http://localhost:8888](http://localhost:8888) |
-| PostgreSQL         | localhost:5432 (user\:password)                |
-                                |
+| Service                       | URL                                            |
+| ----------------------------- | ---------------------------------------------- |
+| **Frontend (Angular)**        | [http://localhost:4200](http://localhost:4200) |
+| **Backend API (Spring Boot)** | [http://localhost:8080](http://localhost:8080) |
+| **PostgreSQL**                | `localhost:5432` *(user:password)*             |
 
-## Roadmap (TODO)
- - Intégration Stripe (paiement sécurisé)
 
- - Notifications Email / SMS (Twilio, Mailgun)
+## Roadmap (à venir)
 
- - Chat en temps réel (WebSocket)
+- **Intégration Stripe** pour paiements sécurisés  
+- **Notifications Email / SMS** (Twilio, Mailgun)  
+- **Chat en temps réel** (WebSocket)  
+- **Tableau de bord avancé** (statistiques, revenus, performances)  
+- **Portail SaaS pour entreprises** avec onboarding & gestion des abonnements  
+- **Application mobile (React Native)** pour **clients et agents** afin de réserver, gérer ou accepter des services directement depuis un smartphone  
 
- - Tableau de bord avancé (stats, revenus, performances)
-
- - Portail entreprise SaaS avec onboarding & souscription
 
 ## 📄 Licence
-Ce projet est open-source, proposé à des fins d’apprentissage. N’hésitez pas à l’utiliser ou le modifier selon vos besoins.
+🚫 Ce projet est privé et destiné à un usage commercial.
+Toute utilisation, copie ou redistribution est interdite sans autorisation expresse de l’auteur.
 
 ## Auteur Aochol
 - 📫 www.linkedin.com/in/aochol-ayoul
