@@ -1,5 +1,7 @@
 # CleanHive – Plateforme SaaS de gestion de services de nettoyage
 
+**Objectif :** Aider les entreprises de nettoyage à gagner plus de clients et permettre aux particuliers ou entreprises de trouver facilement des services de nettoyage à proximité.
+
 **CleanHive** est une application **SaaS full-stack** permettant aux entreprises de nettoyage de gérer leurs **clients**, **employés**, **services**, **réservations** et **abonnements** — tout en offrant aux **clients (particuliers ou entreprises)** une interface simple pour **rechercher et réserver** des services de nettoyage à proximité (domicile, bureaux ou locaux commerciaux).
 
 Les clients peuvent simplement **saisir leur adresse** dans la barre de recherche pour découvrir les entreprises de nettoyage proches, consulter les services disponibles (ex. : nettoyage de vitres, tapis, entretien complet), et **réserver directement en ligne**.
