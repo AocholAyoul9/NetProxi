@@ -1,1 +1,27 @@
-<p>header works!</p>
+<header class="header">
+  <div class="container">
+    <!-- Logo -->
+    <div class="logo">
+    <span>CleanHive</span>
+    </div>
+
+    <!-- Hamburger menu for mobile -->
+    <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu">
+      ☰
+    </button>
+
+    <!-- Navigation links -->
+    <nav class="nav" [class.active]="menuOpen()">
+      <a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page">Accueil</a>
+      <a routerLink="/companies" routerLinkActive="active">Entreprises</a>
+      <a routerLink="/about" routerLinkActive="active">À propos</a>
+      <a routerLink="/contact" routerLinkActive="active">Contact</a>
+    </nav>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="login">Connexion</button>
+      <button class="signup">Inscription</button>
+    </div>
+  </div>
+</header>

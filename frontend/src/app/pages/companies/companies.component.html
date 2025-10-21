@@ -1,0 +1,63 @@
+<div class="page-container">
+  <h1>Nos Entreprises</h1>
+  <p>Trouvez les meilleurs services de nettoyage près de chez vous.</p>
+
+  <!-- Search & Filters -->
+  <div class="filters">
+    <input type="text" placeholder="Rechercher une entreprise..." [ngModel]="searchQuery()" />
+    <div class="service-buttons">
+      <button (click)="setServiceFilter('Bureaux')">Bureaux</button>
+      <button (click)="setServiceFilter('Vitres')">Vitres</button>
+      <button (click)="setServiceFilter('Tapis')">Tapis</button>
+      <button (click)="setServiceFilter('Entretien complet')">Entretien complet</button>
+      <button (click)="setServiceFilter('')">Tout</button>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div *ngIf="lat() && lng()" class="map-container">
+    <google-map
+      height="400px"
+      width="100%"
+      [center]="{ lat: lat()!, lng: lng()! }"
+      [zoom]="13">
+      <map-marker [position]="{ lat: lat()!, lng: lng()! }" label="Vous êtes ici"></map-marker>
+      <map-marker *ngFor="let c of filteredCompanies()"
+                  [position]="{ lat: c.latitude ?? 0, lng: c.longitude ?? 0 }"
+                  [title]="c.name"></map-marker>
+    </google-map>
+  </div>
+
+  <!-- Companies Grid -->
+  <div class="company-grid">
+    <div *ngFor="let company of filteredCompanies()" class="company-card">
+      <h3>{{ company.name }}</h3>
+      <p>{{ company.address }}</p>
+      <p>Téléphone: {{ company.phone }}</p>
+      <div class="services">
+        <span *ngFor="let s of company.services">{{ s.name }}</span>
+      </div>
+      <div class="rating">⭐ {{ company.rating ?? 'N/A' }}</div>
+      <button (click)="openBooking(company)">Réserver</button>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div *ngIf="bookingCompany()" class="modal-backdrop">
+  <div class="modal">
+    <h3>Réserver {{ bookingCompany()!.name }}</h3>
+    <p>Sélectionnez le service :</p>
+
+    <select [ngModel]="selectedService()">
+      <option *ngFor="let s of bookingCompany()!.services" [ngValue]="s">{{ s.name }}</option>
+    </select>
+
+    <div class="modal-actions">
+      <button (click)="confirmBooking()" [disabled]="!selectedService()">Confirmer</button>
+      <button (click)="closeBooking()">Annuler</button>
+    </div>
+
+    <div *ngIf="bookingSuccess()">{{ bookingSuccess() }}</div>
+  </div>
+</div>
