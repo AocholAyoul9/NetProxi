@@ -5,7 +5,8 @@
     <h1>Trouvez des services de nettoyage à proximité</h1>
     <p>Entrez votre adresse et découvrez les meilleures entreprises près de chez vous.</p>
     <div class="search-bar">
-      <input type="text" [ngModel]="address()" (ngModelChange)="address.set($event)" placeholder="Entrez votre adresse..." />
+      <input type="text" [ngModel]="address()" (ngModelChange)="address.set($event)"
+        placeholder="Entrez votre adresse..." />
       <button (click)="searchNearby()">Rechercher</button>
     </div>
   </section>
@@ -14,61 +15,61 @@
   <section class="stats-section">
     <div class="stats">
       <div class="stat">
-        <div class="icon">🏢</div>
         <strong>120+</strong>
         <span>Entreprises locales</span>
       </div>
       <div class="stat">
-        <div class="icon">🧹</div>
         <strong>350+</strong>
         <span>Services proposés</span>
       </div>
       <div class="stat">
-        <div class="icon">😊</div>
         <strong>1,200+</strong>
         <span>Clients satisfaits</span>
       </div>
     </div>
   </section>
 
-  <!-- Filters (optional) -->
-<!-- Filters Section -->
-<section class="filters" *ngIf="popularServices.length">
-  <h3 class="filters-title">Filtrer par type de service</h3>
-  <div class="filter-buttons">
-    <button
-      *ngFor="let service of popularServices"
-      (click)="filterByService(service)"
-      [class.active]="activeFilter === service">
-      {{ service }}
-    </button>
-    <button *ngIf="activeFilter" (click)="clearFilter()" class="clear-filter">
-      ✕ Réinitialiser
-    </button>
-  </div>
-</section>
+  <p *ngIf="companies$ | async as companies">
+    Companies length: {{ companies.length }}
+  </p>
+
+  <!-- Filters Section -->
+  <section class="filters" *ngIf="popularServices.length">
+    <h3 class="filters-title">Filtrer par type de service</h3>
+    <div class="filter-buttons">
+      <button *ngFor="let service of popularServices" (click)="filterByService(service)"
+        [class.active]="activeFilter === service">
+        {{ service }}
+      </button>
+      <button *ngIf="activeFilter" (click)="clearFilter()" class="clear-filter">
+        ✕ Réinitialiser
+      </button>
+    </div>
+  </section>
 
   <!-- Status Messages -->
   <section class="status">
-    <div *ngIf="loading()" class="loading">Chargement...</div>
-    <div *ngIf="error()" class="error">{{ error() }}</div>
+    <div *ngIf="loading$ | async" class="loading">Chargement...</div>
+    <div *ngIf="error$ | async as error" class="error">{{ error }}</div>
   </section>
 
-  <!-- Map Section -->
+  <!-- Map Section --
   <section class="map-section" *ngIf="lat() && lng()">
     <google-map height="400px" width="100%" [center]="{ lat: lat()!, lng: lng()! }" [zoom]="13">
       <map-marker [position]="{ lat: lat()!, lng: lng()! }" label="Vous êtes ici"></map-marker>
-      <map-marker *ngFor="let c of companies()" 
-                  [position]="{ lat: c.latitude ?? 0, lng: c.longitude ?? 0 }" 
-                  [title]="c.name">
-      </map-marker>
+
+      <ng-container *ngIf="companies$ | async as companies">
+        <map-marker *ngFor="let c of companies" [position]="{ lat: c.latitude ?? 0, lng: c.longitude ?? 0 }"
+          [title]="c.name">
+        </map-marker>
+      </ng-container>
     </google-map>
-  </section>
+  </section>-->
 
   <!-- Companies Grid -->
-  <section class="companies" *ngIf="companies().length > 0">
-    <div class="company-grid">
-      <div *ngFor="let company of companies()" class="company-card">
+  <section class="companies" *ngIf="companies$ | async as companies">
+    <div *ngIf="companies.length > 0" class="company-grid">
+      <div *ngFor="let company of companies" class="company-card">
         <img *ngIf="company.logoUrl" [src]="company.logoUrl" alt="{{company.name}}" class="company-logo" />
         <div class="company-info">
           <h4>{{ company.name }}</h4>
@@ -87,11 +88,12 @@
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- No companies found -->
-  <section class="no-companies" *ngIf="!loading() && lat() && companies().length === 0">
-    <p>Aucune entreprise trouvée à proximité.</p>
+    <!-- No companies found -->
+    <div *ngIf="(companies$ | async) as companies">
+      <div *ngIf="companies.length === 0" class="no-companies">
+        Aucune entreprise trouvée à proximité.
+      </div>
+    </div>
   </section>
 
 </div>

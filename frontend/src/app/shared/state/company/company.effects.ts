@@ -8,6 +8,7 @@ import * as CompanyActions from './company.actions';
 export class CompanyEffects {
   loadCompany$;
   loadNearbyCompanies$;
+  loadAllCompanies$;
 
   constructor(
     private actions$: Actions,
@@ -44,5 +45,21 @@ export class CompanyEffects {
         )
       )
     );
+
+     this.loadAllCompanies$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CompanyActions.loadAllCompanies),
+      mergeMap(() =>
+        this.api.getCompanyAllCompanies().pipe(
+          map((companies) =>
+            CompanyActions.loadAllCompaniesSuccess({ companies })
+          ),
+          catchError((error) =>
+            of(CompanyActions.loadAllCompaniesFailure({ error: error.message }))
+          )
+        )
+      )
+    )
+  );
   }
 }

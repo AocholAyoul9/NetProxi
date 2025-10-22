@@ -2,22 +2,15 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { Store } from '@ngrx/store';
+import * as CompanyActions from '../../shared/state/company/company.actions';
+import * as CompanySelectors from '../../shared/state/company/company.selectors';
 
-interface ServiceModel {
-  id: string;
-  name: string;
-}
+import { Company } from '../../shared/models/company.model';
+import { ServiceModel } from '../../shared/models/service.model';
+import { Observable } from 'rxjs';
 
-interface Company {
-  id: string;
-  name: string;
-  address: string;
-  phone: string;
-  latitude: number;
-  longitude: number;
-  rating?: number;
-  services?: ServiceModel[];
-}
+
 
 @Component({
   selector: 'app-companies',
@@ -31,68 +24,29 @@ export class CompaniesComponent {
   serviceFilter = signal('');
   lat = signal<number | null>(48.8566);
   lng = signal<number | null>(2.3522);
-  companies = signal<Company[]>([]);
+  allCompanies$: Observable<Company[]>;
+
+  ngOnInit(): void {
+   this.store.dispatch(CompanyActions.loadAllCompanies());
+  }
   
   // Booking modal
   bookingCompany = signal<Company | null>(null);
   selectedService = signal<ServiceModel | null>(null);
   bookingSuccess = signal('');
 
-  constructor() {
-    this.loadFakeCompanies();
+  constructor(private store: Store) {
+
+    this.allCompanies$ = this.store.select(CompanySelectors.selectAllCompanies);
   }
 
-  loadFakeCompanies() {
-    const fakeData: Company[] = [
-      {
-        id: '1',
-        name: 'Nettoyage Pro',
-        address: '12 Rue de Paris, 75001 Paris',
-        phone: '01 23 45 67 89',
-        latitude: 48.8566,
-        longitude: 2.3522,
-        rating: 4.5,
-        services: [
-          { id: 's1', name: 'Bureaux' },
-          { id: 's2', name: 'Vitres' },
-        ],
-      },
-      {
-        id: '2',
-        name: 'Éclat Clean',
-        address: '34 Avenue des Champs, 75008 Paris',
-        phone: '01 98 76 54 32',
-        latitude: 48.8676,
-        longitude: 2.3296,
-        rating: 4.0,
-        services: [
-          { id: 's3', name: 'Tapis' },
-          { id: 's4', name: 'Entretien complet' },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Brillance Nettoyage',
-        address: '56 Boulevard Saint-Germain, 75005 Paris',
-        phone: '01 11 22 33 44',
-        latitude: 48.8527,
-        longitude: 2.3506,
-        rating: 5.0,
-        services: [
-          { id: 's5', name: 'Vitres' },
-          { id: 's6', name: 'Entretien complet' },
-        ],
-      },
-    ];
-
-    this.companies.set(fakeData);
-  }
 
   filteredCompanies() {
-    return this.companies().filter(c =>
+   /* return this.allCompanies$().filter((c: { name: string; services: any[]; }) =>
       (!this.searchQuery() || c.name.toLowerCase().includes(this.searchQuery().toLowerCase())) &&
       (!this.serviceFilter() || c.services?.some(s => s.name === this.serviceFilter()))
-    );
+    );*/
+
   }
 
   setServiceFilter(service: string) {

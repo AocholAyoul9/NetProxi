@@ -1,6 +1,23 @@
 import { createAction, props } from '@ngrx/store';
 import { Company } from '../../models/company.model';
 
+
+
+// 🔹 Load all companies
+export const loadAllCompanies = createAction('[Company] Load All Companies');
+
+export const loadAllCompaniesSuccess = createAction(
+  '[Company] Load All Companies Success',
+  props<{ companies: Company[] }>()
+);
+
+export const loadAllCompaniesFailure = createAction(
+  '[Company] Load All Companies Failure',
+  props<{ error: string }>()
+);
+
+// 🔹 Load single company by ID
+
 export const loadCompany = createAction(
   '[Company] Load Company',
   props<{ id: string }>()
