@@ -27,7 +27,6 @@ export class NearbyCompaniesComponent {
   companies$: Observable<Company[]>;
 
  ngOnInit(): void {
-  // Load all companies when component loads
   this.store.dispatch(CompanyActions.loadAllCompanies());
 }
 
@@ -38,25 +37,6 @@ export class NearbyCompaniesComponent {
     this.companies$ = this.store.select(CompanySelectors.selectNearbyCompanies);
 
   }
-
-
-
- /*ngOnInit(): void {
-  const lat = 48.8566;
-  const lng = 2.3522;
-  const radiusKm = 10;
-
-  this.store.dispatch(
-    CompanyActions.loadNearbyCompanies({ lat, lng, radiusKm })
-  );
-
-  // Debug: subscribe to the store observable
-  this.companies$.subscribe({
-    next: (companies) => console.log('Companies from store:', companies),
-    error: (err) => console.error('Store error:', err),
-  });
-}*/
-
 
 
   // Add properties

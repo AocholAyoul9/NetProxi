@@ -14,19 +14,24 @@
     </div>
   </div>
 
- <!-- Map --
+ <!-- Map -->
   <div *ngIf="lat() && lng()" class="map-container">
     <google-map height="400px" width="100%" [center]="{ lat: lat()!, lng: lng()! }" [zoom]="13">
       <map-marker [position]="{ lat: lat()!, lng: lng()! }" label="Vous êtes ici"></map-marker>
       <map-marker *ngFor="let c of filteredCompanies()" [position]="{ lat: c.latitude , lng: c.longitude }"
         [title]="c.name"></map-marker>
     </google-map>
-  </div> -->
+  </div>
 
   <div class="company-grid">
     <div *ngFor="let company of allCompanies$ | async as companies" class="company-card">
       <h3>{{ company.name }}</h3>
       <p>{{ company.address }}</p>
+      <p>Email: {{ company.email }}</p>
+      <p>Site Web: <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></p>
+      <p>Heures d'ouverture: {{ company.openingHours }}</p>
+      <p>Tarifs: {{ company.pricing }}</p>
+      <p>Commentaires: {{ company.reviews }}</p>
       <p>Téléphone: {{ company.phone }}</p>
       <div class="services">
         <span *ngFor="let s of company.services">{{ s.name }}</span>

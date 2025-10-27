@@ -27,9 +27,9 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    @Bean
+   /* @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
+        http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -39,34 +39,42 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
-                                "/api-docs/**",
-                                "/swagger-config",
-                                "/api-docs/swagger-config",
                                 "/swagger-resources/**",
-                                "/webjars/**",
-                                "/configuration/**",
-                                "/favicon.ico",
-                                "/error",
-                                "/actuator/**"
+                                "/webjars/**"
                         ).permitAll()
 
-                        // Allow authentication endpoints
+                        // Public API endpoints
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/bookings/**").permitAll()
-                        // Company registration endpoint
                         .requestMatchers("/api/companies/**").permitAll()
-                        //allow subscription registation end point
                         .requestMatchers("/api/subscriptions/**").permitAll()
-                        // allow servicies enpoint
                         .requestMatchers("/api/services/**").permitAll()
-                        // allow clients enpoint
                         .requestMatchers("/api/clients/**").permitAll()
-                        // Secure all other endpoints
+
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
+                // Disable default login
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                // Only add JWT filter for non-Swagger endpoints
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+
+        return http.build();
+    }*/
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable);
+        return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

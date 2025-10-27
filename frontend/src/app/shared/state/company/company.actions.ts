@@ -3,7 +3,7 @@ import { Company } from '../../models/company.model';
 
 
 
-// 🔹 Load all companies
+// Load all companies
 export const loadAllCompanies = createAction('[Company] Load All Companies');
 
 export const loadAllCompaniesSuccess = createAction(
@@ -16,7 +16,7 @@ export const loadAllCompaniesFailure = createAction(
   props<{ error: string }>()
 );
 
-// 🔹 Load single company by ID
+// Load single company by ID
 
 export const loadCompany = createAction(
   '[Company] Load Company',
@@ -31,6 +31,7 @@ export const loadCompanyFailure = createAction(
   props<{ error: any }>()
 );
 
+// Load nearby companies based on location
 export const loadNearbyCompanies = createAction(
   '[Company] Load Nearby Companies',
   props<{ lat: number; lng: number; radiusKm: number }>()

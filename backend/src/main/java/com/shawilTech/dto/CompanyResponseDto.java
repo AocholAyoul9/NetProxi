@@ -1,21 +1,41 @@
 package com.shawilTech.identityservice.dto;
-
+import com.shawilTech.identityservice.entity.ServiceEntity;
 import com.shawilTech.identityservice.entity.SubscriptionPlan;
-import lombok.Builder;
-import lombok.Data;
+import com.shawilTech.identityservice.dto.ServiceResponseDto;
 
-import java.util.UUID;
+import lombok.*;
+
+import java.util.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class CompanyResponseDto {
     private UUID id;
     private String name;
-    private String address;
     private String email;
     private String phone;
+    private String address;
+    private boolean active;
+    private String activePlan;
+
+    // Branding
+    private String logoUrl;
+    private String website;
+    private String description;
+
+    // Location
     private Double latitude;
     private Double longitude;
-    private boolean active;
-    private SubscriptionPlan activePlan;
+    private Double distance;
+
+    // Quality indicators
+    private Double rating;
+    private Integer reviewsCount;
+
+    // Services
+    private List<ServiceResponseDto> services;
+    private String pricing;
+    private String openingHours;
 }

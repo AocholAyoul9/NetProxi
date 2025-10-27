@@ -24,14 +24,14 @@ public class CompanyController {
     /**
      * GET /api/companies/nearby?lat=48.85&lng=2.35&radiusKm=5
      */
+
     @GetMapping("/nearby")
-    public ResponseEntity<List<CompanyResponseDto>> getNearbyCompanies(
+    public List<CompanyResponseDto> getNearbyCompanies(
             @RequestParam double lat,
             @RequestParam double lng,
-            @RequestParam(defaultValue = "5") double radiusKm) {
-
-        List<CompanyResponseDto> companies = companyService.findNearbyCompanies(lat, lng, radiusKm);
-        return ResponseEntity.ok(companies);
+            @RequestParam double radiusKm
+    ) {
+        return companyService.findNearbyCompanies(lat, lng, radiusKm);
     }
 
     //  Register a new company

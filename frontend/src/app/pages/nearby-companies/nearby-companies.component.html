@@ -29,9 +29,6 @@
     </div>
   </section>
 
-  <p *ngIf="companies$ | async as companies">
-    Companies length: {{ companies.length }}
-  </p>
 
   <!-- Filters Section -->
   <section class="filters" *ngIf="popularServices.length">
@@ -53,7 +50,7 @@
     <div *ngIf="error$ | async as error" class="error">{{ error }}</div>
   </section>
 
-  <!-- Map Section --
+  <!-- Map Section -->
   <section class="map-section" *ngIf="lat() && lng()">
     <google-map height="400px" width="100%" [center]="{ lat: lat()!, lng: lng()! }" [zoom]="13">
       <map-marker [position]="{ lat: lat()!, lng: lng()! }" label="Vous êtes ici"></map-marker>
@@ -64,7 +61,7 @@
         </map-marker>
       </ng-container>
     </google-map>
-  </section>-->
+  </section>
 
   <!-- Companies Grid -->
   <section class="companies" *ngIf="companies$ | async as companies">

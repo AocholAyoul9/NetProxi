@@ -1,5 +1,5 @@
 # Étape 1 : utiliser une image JDK légère
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine
 
 # Étape 2 : répertoire de travail
 WORKDIR /app
