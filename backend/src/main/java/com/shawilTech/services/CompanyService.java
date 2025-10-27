@@ -36,11 +36,21 @@ public class CompanyService {
                 .map(c -> CompanyResponseDto.builder()
                         .id(c.getId())
                         .name(c.getName())
+                        .email(c.getEmail())
+                        .phone(c.getPhone())
                         .address(c.getAddress())
+                        .active(c.isActive())
+                        .logoUrl(c.getLogoUrl())
+                        .website(c.getWebsite())
+                        .description(c.getDescription())
                         .latitude(c.getLatitude())
                         .longitude(c.getLongitude())
+                        .distance(distance(lat, lng, c.getLatitude(), c.getLongitude()))
+                        .openingHours(c.getOpeningHours())
+
                         .build())
                 .toList();
+
     }
 
     private double distance(double lat1, double lon1, double lat2, double lon2) {
