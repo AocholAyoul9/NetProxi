@@ -1,12 +1,18 @@
 <div class="nearby-companies-page">
-
   <!-- Hero / Search Section -->
   <section class="hero-search">
     <h1>Trouvez des services de nettoyage à proximité</h1>
-    <p>Entrez votre adresse et découvrez les meilleures entreprises près de chez vous.</p>
+    <p>
+      Entrez votre adresse et découvrez les meilleures entreprises près de chez
+      vous.
+    </p>
     <div class="search-bar">
-      <input type="text" [ngModel]="address()" (ngModelChange)="address.set($event)"
-        placeholder="Entrez votre adresse..." />
+      <input
+        type="text"
+        [ngModel]="address()"
+        (ngModelChange)="address.set($event)"
+        placeholder="Entrez votre adresse..."
+      />
       <button (click)="searchNearby()">Rechercher</button>
     </div>
   </section>
@@ -29,13 +35,15 @@
     </div>
   </section>
 
-
   <!-- Filters Section -->
   <section class="filters" *ngIf="popularServices.length">
     <h3 class="filters-title">Filtrer par type de service</h3>
     <div class="filter-buttons">
-      <button *ngFor="let service of popularServices" (click)="filterByService(service)"
-        [class.active]="activeFilter === service">
+      <button
+        *ngFor="let service of popularServices"
+        (click)="filterByService(service)"
+        [class.active]="activeFilter === service"
+      >
         {{ service }}
       </button>
       <button *ngIf="activeFilter" (click)="clearFilter()" class="clear-filter">
@@ -47,50 +55,72 @@
   <!-- Status Messages -->
   <section class="status">
     <div *ngIf="loading$ | async" class="loading">Chargement...</div>
-    <div *ngIf="error$ | async as error" class="error">{{ error }}</div>
+    <!--<div *ngIf="error$ | async as error" class="error">error {{ error }}</div>-->
   </section>
 
   <!-- Map Section -->
   <section class="map-section" *ngIf="lat() && lng()">
-    <google-map height="400px" width="100%" [center]="{ lat: lat()!, lng: lng()! }" [zoom]="13">
-      <map-marker [position]="{ lat: lat()!, lng: lng()! }" label="Vous êtes ici"></map-marker>
+    <google-map
+      height="400px"
+      width="100%"
+      [center]="{ lat: lat()!, lng: lng()! }"
+      [zoom]="13"
+    >
+      <map-marker
+        [position]="{ lat: lat()!, lng: lng()! }"
+        label="Vous êtes ici"
+      ></map-marker>
 
       <ng-container *ngIf="companies$ | async as companies">
-        <map-marker *ngFor="let c of companies" [position]="{ lat: c.latitude ?? 0, lng: c.longitude ?? 0 }"
-          [title]="c.name">
+        <map-marker
+          *ngFor="let c of companies"
+          [position]="{ lat: c.latitude ?? 0, lng: c.longitude ?? 0 }"
+          [title]="c.name"
+        >
         </map-marker>
       </ng-container>
     </google-map>
   </section>
 
-  <!-- Companies Grid -->
   <section class="companies" *ngIf="companies$ | async as companies">
     <div *ngIf="companies.length > 0" class="company-grid">
       <div *ngFor="let company of companies" class="company-card">
-        <img *ngIf="company.logoUrl" [src]="company.logoUrl" alt="{{company.name}}" class="company-logo" />
+        <img
+          *ngIf="company.logoUrl"
+          [src]="company.logoUrl"
+          alt="{{ company.name }}"
+          class="company-logo"
+        />
+
         <div class="company-info">
           <h4>{{ company.name }}</h4>
           <p class="address">{{ company.address }}</p>
           <p class="phone">{{ company.phone }}</p>
+
+          <p *ngIf="company.openingHours">🕒 {{ company.openingHours }}</p>
+
           <div class="rating" *ngIf="company.rating">
             ⭐ {{ company.rating }} ({{ company.reviewsCount || 0 }} avis)
           </div>
-          <div class="services">
-            <span *ngFor="let s of company.services" class="badge">{{ s.name }}</span>
+
+          <div class="services" *ngIf="company.services?.length">
+            <span *ngFor="let s of company.services" class="badge">{{
+              s.name
+            }}</span>
           </div>
         </div>
+
         <div class="company-footer">
-          <span class="distance" *ngIf="company.distance">{{ company.distance | number:'1.1-1' }} km</span>
+          <span class="distance" *ngIf="company.distance">
+            {{ company.distance | number : "1.1-1" }} km
+          </span>
           <button (click)="bookCompany(company)">Réserver</button>
         </div>
       </div>
     </div>
-    <!-- No companies found -->
-    <div *ngIf="(companies$ | async) as companies">
-      <div *ngIf="companies.length === 0" class="no-companies">
-        Aucune entreprise trouvée à proximité.
-      </div>
+
+    <div *ngIf="companies.length === 0" class="no-companies">
+      Aucune entreprise trouvée à proximité.
     </div>
   </section>
-
 </div>

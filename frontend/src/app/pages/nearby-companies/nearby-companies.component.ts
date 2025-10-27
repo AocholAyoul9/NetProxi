@@ -26,9 +26,6 @@ export class NearbyCompaniesComponent {
   error$: Observable<string | null>;
   companies$: Observable<Company[]>;
 
- ngOnInit(): void {
-  this.store.dispatch(CompanyActions.loadAllCompanies());
-}
 
 
   constructor(private store: Store) {
