@@ -35,9 +35,10 @@ export class CompanyEffects {
         ofType(CompanyActions.loadNearbyCompanies),
         mergeMap(({ lat, lng, radiusKm }) =>
           this.api.getNearByCompanies(lat, lng, radiusKm).pipe(
-            map(companies =>
-              CompanyActions.loadNearbyCompaniesSuccess({ companies })
-            ),
+            map(companies => {
+              console.log('Nearby companies from API:', companies);
+              return CompanyActions.loadNearbyCompaniesSuccess({ companies });
+            }),
             catchError(error =>
               of(CompanyActions.loadNearbyCompaniesFailure({ error }))
             )

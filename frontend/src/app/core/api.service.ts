@@ -29,11 +29,20 @@ export class ApiService {
     lng: number,
     radiusKm: number
   ): Observable<Company[]> {
+    console.log('API called with:', { lat, lng, radiusKm });
     return this.http.get<Company[]>(`${this.baseUrl}/companies/nearby`, {
       //headers: this.getHeaders(),
-      params: { lat, lng, radiusKm },
+      //params: { lat, lng, radiusKm },
+      params: { lat: lat.toString(), lng: lng.toString(), radiusKm: radiusKm.toString() }
     });
   }
+
+/*getNearByCompanies(lat: number, lng: number, radiusKm: number) {
+  console.log('API called with:', { lat, lng, radiusKm });
+  return this.http.get<Company[]>(`/api/companies/nearby`, {
+    params: { lat: lat.toString(), lng: lng.toString(), radiusKm: radiusKm.toString() }
+  });
+}*/
 
   getCompanyById(id: string): Observable<Company> {
     return this.http.get<Company>(`${this.baseUrl}/companies/${id}`, {

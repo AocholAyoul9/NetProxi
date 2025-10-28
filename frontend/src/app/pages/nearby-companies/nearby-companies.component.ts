@@ -20,7 +20,7 @@ export class NearbyCompaniesComponent {
   address = signal('');
   lat = signal<number | null>(null);
   lng = signal<number | null>(null);
-  radiusKm = signal(10);
+  radiusKm = signal(2000);
 
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
@@ -36,41 +36,61 @@ export class NearbyCompaniesComponent {
   }
 
 
+
   // Add properties
   popularServices = ['Bureaux', 'Vitres', 'Tapis', 'Entretien complet'];
   activeFilter: string | null = null;
 
-  async searchNearby() {
-    const addr = this.address().trim();
-    if (!addr) return;
 
-    try {
-      // Geocoding via OpenStreetMap
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          addr
-        )}`
-      );
-      const data = await res.json();
-
-      if (!data.length) throw new Error('Adresse non trouvée.');
-
-      const lat = parseFloat(data[0].lat);
-      const lng = parseFloat(data[0].lon);
-      this.lat.set(lat);
-      this.lng.set(lng);
-
-      this.store.dispatch(
-        CompanyActions.loadNearbyCompanies({
-          lat,
-          lng,
-          radiusKm: this.radiusKm(),
-        })
-      );
-    } catch (err: any) {
-      this.error$ = err.message || 'Erreur inattendue.';
-    }
+async searchNearby() {
+  const addr = this.address().trim();
+  if (!addr) {
+    console.warn('Address is empty.');
+    return;
   }
+
+  try {
+    // Fetch geocoding data from Nominatim
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`
+    );
+
+    // Parse JSON response
+    const data = await res.json();
+
+    // Check if Nominatim returned anything
+    if (!data || !data.length) {
+      console.warn('No results from Nominatim for:', addr);
+      //this.error$ = 'Adresse non trouvée.';
+      return;
+    }
+
+    // Take the first (most relevant) result
+    const first = data[0];
+    const lat = parseFloat(first.lat);
+    const lng = parseFloat(first.lon);
+
+    // Optional: log for debugging
+    console.log('Nominatim found:', first.display_name, 'lat:', lat, 'lng:', lng);
+
+    // Set component observables or form values
+    this.lat.set(lat);
+    this.lng.set(lng);
+
+    // Dispatch NgRx action to load nearby companies
+    this.store.dispatch(
+      CompanyActions.loadNearbyCompanies({
+        lat,
+        lng,
+        radiusKm: this.radiusKm(), // make sure radiusKm() returns a number
+      })
+    );
+  } catch (err: any) {
+    console.error('Error searching nearby:', err);
+    this.error$ = err.message || 'Erreur inattendue.';
+  }
+}
+
 
   bookCompany(_t57: Company) {
     throw new Error('Method not implemented.');
