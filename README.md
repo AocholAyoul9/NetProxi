@@ -1,12 +1,12 @@
-# CleanHive – Plateforme SaaS de gestion de services de nettoyage
+# NetProxi – Plateforme SaaS de gestion de services de nettoyage
 
-**Objectif :** Aider les entreprises de nettoyage à gagner plus de clients et permettre aux particuliers ou entreprises de trouver facilement des services de nettoyage à proximité.
+**Objectif :** Aider les entreprises de nettoyage à développer leur clientèle locale et permettre aux particuliers ou entreprises de trouver facilement des services de nettoyage à proximité..
 
-**CleanHive** est une application **SaaS full-stack** permettant aux entreprises de nettoyage de gérer leurs **clients**, **employés**, **services**, **réservations** et **abonnements** — tout en offrant aux **clients (particuliers ou entreprises)** une interface simple pour **rechercher et réserver** des services de nettoyage à proximité (domicile, bureaux ou locaux commerciaux).
+**NetProxi** est une application **SaaS full-stack** permettant aux entreprises de nettoyage de gérer leurs **clients**, **employés**, **services**, **réservations** et **abonnements** — tout en offrant aux **clients (particuliers ou entreprises)** une interface simple pour **rechercher et réserver** des services de nettoyage à proximité (domicile, bureaux ou locaux commerciaux).
 
 Les clients peuvent simplement **saisir leur adresse** dans la barre de recherche pour découvrir les entreprises de nettoyage proches, consulter les services disponibles (ex. : nettoyage de vitres, tapis, entretien complet), et **réserver directement en ligne**.
 
-Développée avec **Angular (frontend)** et **Spring Boot (backend)**, CleanHive combine **performance**, **scalabilité** et **simplicité**, tout en supportant un modèle **SaaS multi-entreprises**.
+Développée avec **Angular (frontend)** et **Spring Boot (backend)**, NetProxi combine **performance**, **scalabilité** et **simplicité**, tout en supportant un modèle **SaaS multi-entreprises**.
 
 ---
 
@@ -107,6 +107,8 @@ Toute utilisation, copie ou redistribution est interdite sans autorisation expre
 
 ## Auteur Aochol
 - 📫 www.linkedin.com/in/aochol-ayoul
+- 🌐 NetProxi : Trouvez votre entreprise de nettoyage en un clic
+-  NetProxi - La solution de proximité pour vos services de nettoyage
 ---
 
 
