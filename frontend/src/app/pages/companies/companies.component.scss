@@ -1,0 +1,630 @@
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin-bottom: 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2563eb;
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 1rem;
+  }
+}
+
+/* Filters Section */
+.filters-section {
+  background: #f9fafb;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+
+  .search-box {
+    position: relative;
+    margin-bottom: 1rem;
+
+    .fa-search {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    .search-input {
+      width: 90%;
+      padding: 0.5rem 0.5rem 0.5rem 2.25rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.4rem;
+      font-size: 0.85rem;
+      outline: none;
+
+      &:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+      }
+    }
+  }
+
+  .filter-options h4 {
+    margin-bottom: 0.75rem;
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .service-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .filter-btn {
+    background: white;
+    border: 1px solid #d1d5db;
+    padding: 0.4rem 0.8rem;
+    border-radius: 1.2rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s;
+
+    i {
+      font-size: 0.75rem;
+    }
+
+    &:hover {
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    &.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+  }
+}
+
+.results-info {
+  margin-bottom: 1.25rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+/* Company Grid */
+.company-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.company-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+}
+
+/* Company Header */
+.company-header {
+  margin-bottom: 1rem;
+}
+
+.company-basic-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.company-avatar {
+  width: 45px;
+  height: 45px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.company-title {
+  flex: 1;
+
+  h3 {
+    margin: 0 0 0.2rem 0;
+    color: #1f2937;
+    font-size: 1.1rem;
+  }
+}
+
+.rating-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: #f59e0b;
+  font-size: 0.85rem;
+
+  .reviews-count {
+    color: #6b7280;
+    font-size: 0.75rem;
+  }
+}
+
+/* Location & Contact */
+.location-info,
+.contact-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.location-item,
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+
+  i {
+    color: #2563eb;
+  }
+}
+
+.distance-badge {
+  background: #f0f8ff;
+  color: #2563eb;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.availability {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.75rem;
+
+  &.available {
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+
+  &:not(.available) {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+}
+
+/* Pricing */
+.pricing-section {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.pricing-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+  color: #374151;
+  font-size: 0.9rem;
+
+  i {
+    color: #2563eb;
+  }
+}
+
+.price-range {
+  color: #1f2937;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.pricing-section small {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+/* Services */
+.services-section {
+  margin-bottom: 0.75rem;
+
+  h4 {
+    margin-bottom: 0.5rem;
+    color: #374151;
+    font-size: 0.85rem;
+  }
+}
+
+.service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.service-tag {
+  background: #f0f8ff;
+  color: #2563eb;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  border: 1px solid #dbeafe;
+}
+
+.no-services {
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* Trust Badges */
+.trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.7rem;
+
+  &.verified {
+    background: #f0f8ff;
+    color: #2563eb;
+  }
+
+  &.experience {
+    background: #fff7ed;
+    color: #ea580c;
+  }
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+
+  button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    border: none;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-primary {
+    background: #2563eb;
+    color: white;
+
+    &:hover {
+      background: #1d4ed8;
+    }
+  }
+
+  .btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+
+    &:hover {
+      background: #e5e7eb;
+    }
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+
+  i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #d1d5db;
+  }
+
+  h3 {
+    margin-bottom: 0.5rem;
+    color: #374151;
+    font-size: 1.25rem;
+  }
+
+  .btn-reset {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+
+    &:hover {
+      background: #1d4ed8;
+    }
+  }
+}
+
+/* Modal Styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0.25rem;
+}
+
+.company-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+
+  .company-avatar-small {
+    width: 35px;
+    height: 35px;
+    background: #2563eb;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+
+  .company-details strong {
+    color: #1f2937;
+    font-size: 1rem;
+  }
+
+  .company-rating {
+    color: #6b7280;
+    font-size: 0.8rem;
+  }
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #374151;
+    font-size: 0.9rem;
+  }
+
+  .service-select {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.4rem;
+    font-size: 0.9rem;
+
+    &:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+  }
+}
+
+.selected-service-info {
+  background: #f0f8ff;
+  padding: 0.75rem;
+  border-radius: 0.4rem;
+  margin-bottom: 1rem;
+  border-left: 3px solid #2563eb;
+
+  .service-summary {
+    color: #1f2937;
+    font-size: 0.9rem;
+
+    .service-price {
+      color: #2563eb;
+      font-weight: 600;
+    }
+  }
+}
+
+.booking-note {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #92400e;
+  padding: 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+
+  button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.8rem;
+    border: none;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .btn-confirm {
+    background: #2563eb;
+    color: white;
+
+    &:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-cancel {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+  }
+}
+
+.booking-success {
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: 0.75rem;
+  border-radius: 0.4rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+
+  .company-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .location-info,
+  .contact-info {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .modal {
+    margin: 1rem;
+    padding: 1.25rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .company-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .empty-state {
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .filters-section {
+    padding: 1rem;
+  }
+
+  .service-buttons {
+    gap: 0.3rem;
+  }
+
+  .filter-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+  }
+
+  .company-card {
+    padding: 1rem;
+  }
+}

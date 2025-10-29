@@ -1,1 +1,46 @@
-<p>header works!</p>
+<header class="header">
+  <div class="container">
+    <!-- Logo -->
+    <div class="logo">
+      <a routerLink="/" class="logo-link">
+        <span class="logo-icon"></span>
+        <span class="logo-text">NetProxi</span>
+      </a>
+    </div>
+
+    <!-- Navigation links -->
+    <nav class="nav" [class.active]="menuOpen()">
+      <a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-link">
+        Accueil
+      </a>
+      <a routerLink="/companies" routerLinkActive="active" class="nav-link">
+        Entreprises
+      </a>
+      <a routerLink="/about" routerLinkActive="active" class="nav-link">
+        À propos
+      </a>
+      <a routerLink="/contact" routerLinkActive="active" class="nav-link">
+        Contact
+      </a>
+    </nav>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn-login" (click)="openLogin()">
+        <i class="fas fa-sign-in-alt"></i>
+        Connexion
+      </button>
+      <button class="btn-signup" (click)="openSignup()">
+        <i class="fas fa-user-plus"></i>
+        Inscription
+      </button>
+    </div>
+
+    <!-- Hamburger menu for mobile -->
+    <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu" [class.active]="menuOpen()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>

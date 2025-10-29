@@ -1,13 +1,25 @@
 package com.shawilTech.identityservice.dto;
-import  lombok.Data;
+import  lombok.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public  class CompanyRequestDto {
     private  String name;
     private  String address;
     private  String email;
     private  String phone;
-    private String registrationNumber;
+
     private Double latitude;
     private Double longitude;
+
+    private String logoUrl;
+    private String website;
+
+    private String description;
+
+
+    private String pricing;
+    private String openingHours;
 }

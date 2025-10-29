@@ -1,0 +1,156 @@
+<div class="page-container">
+  <div class="contact-header">
+    <h1>Contactez-nous</h1>
+    <p class="subtitle">Vous avez une question ou besoin d'aide ? Notre équipe est là pour vous accompagner.</p>
+  </div>
+
+  <div class="contact-layout">
+    <!-- Colonne gauche : Formulaire de contact -->
+    <div class="contact-form-section">
+      <h2>Envoyez-nous un message</h2>
+      <p>Remplissez le formulaire ci-dessous et nous vous répondrons sous 24 heures.</p>
+      
+      <form class="contact-form">
+          <div class="form-group">
+            <label for="name">Nom complet *</label>
+            <input type="text" id="name" placeholder="Votre nom" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Adresse email *</label>
+            <input type="email" id="email" placeholder="Votre email" required />
+          </div>
+
+        <div class="form-group">
+          <label for="company">Entreprise (optionnel)</label>
+          <input type="text" id="company" placeholder="Nom de votre entreprise" />
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Sujet *</label>
+          <select id="subject" required>
+            <option value="">Sélectionnez un sujet</option>
+            <option value="support">Support technique</option>
+            <option value="partnership">Partenariat</option>
+            <option value="billing">Facturation</option>
+            <option value="feature">Suggestion de fonctionnalité</option>
+            <option value="complaint">Réclamation</option>
+            <option value="other">Autre</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message *</label>
+          <textarea id="message" placeholder="Décrivez votre demande en détail..." rows="6" required></textarea>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="newsletter" />
+          <label for="newsletter">Recevoir les actualités et offres spéciales de NetProxi</label>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-paper-plane"></i>
+          Envoyer le message
+        </button>
+      </form>
+    </div>
+
+    <!-- Colonne droite : Informations de contact -->
+    <div class="contact-info-section">
+      <div class="info-card">
+        <h3>Informations de contact</h3>
+        
+        <div class="contact-method">
+          <div class="icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="details">
+            <h4>Adresse</h4>
+            <p>12 Rue de Paris<br>75001 Paris, France</p>
+          </div>
+        </div>
+
+        <div class="contact-method">
+          <div class="icon">
+            <i class="fas fa-phone"></i>
+          </div>
+          <div class="details">
+            <h4>Téléphone</h4>
+            <p>+33 1 23 45 67 89</p>
+            <small>Lun-Ven: 9h-18h</small>
+          </div>
+        </div>
+
+        <div class="contact-method">
+          <div class="icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="details">
+            <h4>Email</h4>
+            <p>contact&#64;NetProxi.com</p>
+            <small>Réponse sous 24h</small>
+          </div>
+        </div>
+
+        <div class="contact-method">
+          <div class="icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <div class="details">
+            <h4>Support technique</h4>
+            <p>support&#64;NetProxi.com</p>
+            <small>Assistance prioritaire</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Liens rapides FAQ -->
+      <div class="faq-section">
+        <h4>Questions fréquentes</h4>
+        <div class="faq-links">
+          <a href="/faq#inscription">Comment créer un compte entreprise ?</a>
+          <a href="/faq#paiement">Modes de paiement acceptés</a>
+          <a href="/faq#annulation">Politique d'annulation</a>
+          <a href="/faq#securite">Sécurité des données</a>
+        </div>
+      </div>
+
+      <!-- Réseaux sociaux -->
+      <div class="social-section">
+        <h4>Suivez-nous</h4>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-instagram"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section carte -->
+  <div class="map-section">
+    <h3>Nous trouver</h3>
+    <div class="map-placeholder">
+      <div class="map-frame">
+        <!-- Intégration Google Maps ou similaire ici -->
+        <div class="map-content">
+          <i class="fas fa-map-marker-alt"></i>
+          <p>12 Rue de Paris, 75001 Paris</p>
+          <button class="view-map-btn">
+            <i class="fas fa-map"></i>
+            Voir sur Google Maps
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

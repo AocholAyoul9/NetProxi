@@ -6,6 +6,7 @@ import com.shawilTech.identityservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.shawilTech.identityservice.service.GeocodingService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,7 +19,9 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final SubscriptionRepository subscriptionRepository;
-     private  final ServiceRepository serviceRepository;
+    private  final ServiceRepository serviceRepository;
+    private final GeocodingService geocodingService; // <-- Add this
+
 
     /**
      * Find companies near a point (lat, lng) within radius in km
@@ -33,17 +36,23 @@ public class CompanyService {
                 .map(c -> CompanyResponseDto.builder()
                         .id(c.getId())
                         .name(c.getName())
+                        .email(c.getEmail())
+                        .phone(c.getPhone())
                         .address(c.getAddress())
+                        .active(c.isActive())
+                        .logoUrl(c.getLogoUrl())
+                        .website(c.getWebsite())
+                        .description(c.getDescription())
                         .latitude(c.getLatitude())
                         .longitude(c.getLongitude())
+                        .distance(distance(lat, lng, c.getLatitude(), c.getLongitude()))
+                        .openingHours(c.getOpeningHours())
+
                         .build())
                 .toList();
+
     }
 
-
-    /**
-     * Haversine formula to compute distance between two lat/lng in KM
-     */
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         final int EARTH_RADIUS_KM = 6371;
 
@@ -58,6 +67,7 @@ public class CompanyService {
 
         return EARTH_RADIUS_KM * c;
     }
+
 
 
     private CompanyResponseDto mapToDto(Company company) {
@@ -83,7 +93,11 @@ public class CompanyService {
                 .phone(dto.getPhone())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
-                .registrationNumber(dto.getRegistrationNumber())
+                .logoUrl(dto.getLogoUrl())
+                .website(dto.getWebsite())
+                .description(dto.getDescription())
+                .pricing(dto.getPricing())
+                .openingHours(dto.getOpeningHours())
                 .active(true)
                 .build();
 
@@ -108,12 +122,17 @@ public class CompanyService {
         return CompanyResponseDto.builder()
                 .id(savedCompany.getId())
                 .name(savedCompany.getName())
+                .address(savedCompany.getAddress())
                 .email(savedCompany.getEmail())
                 .phone(savedCompany.getPhone())
                 .active(savedCompany.isActive())
-                .activePlan(freeSubscription.getPlan())
+                .activePlan(freeSubscription.getPlan() != null ? freeSubscription.getPlan().name() : null)
                 .latitude(savedCompany.getLatitude())
                 .longitude(savedCompany.getLongitude())
+                .logoUrl(savedCompany.getLogoUrl())
+                .website(savedCompany.getWebsite())
+                .description(savedCompany.getDescription())
+                .pricing(savedCompany.getPricing())
                 .build();
     }
 
@@ -127,11 +146,15 @@ public class CompanyService {
         return CompanyResponseDto.builder()
                 .id(company.getId())
                 .name(company.getName())
+                .address(company.getAddress())
                 .email(company.getEmail())
                 .phone(company.getPhone())
+                .logoUrl(company.getLogoUrl())
+                .website(company.getWebsite())
+                .description(company.getDescription())
                 .active(company.isActive())
                 .activePlan(company.getActiveSubscription() != null
-                        ? company.getActiveSubscription().getPlan()
+                        ? company.getActiveSubscription().getPlan().name()
                         : null)
                 .build();
     }
@@ -144,11 +167,16 @@ public class CompanyService {
                 .map(company -> CompanyResponseDto.builder()
                         .id(company.getId())
                         .name(company.getName())
+                        .address(company.getAddress())
                         .email(company.getEmail())
                         .phone(company.getPhone())
+                        .logoUrl(company.getLogoUrl())
+                        .website(company.getWebsite())
+                        .description(company.getDescription())
+                        .pricing(company.getPricing())
                         .active(company.isActive())
                         .activePlan(company.getActiveSubscription() != null
-                                ? company.getActiveSubscription().getPlan()
+                                ? company.getActiveSubscription().getPlan().name()
                                 : null)
                         .build())
                 .toList();
@@ -167,18 +195,18 @@ public class CompanyService {
         company.setAddress(updatedCompany.getAddress());
         company.setEmail(updatedCompany.getEmail());
         company.setPhone(updatedCompany.getPhone());
-        company.setRegistrationNumber(updatedCompany.getRegistrationNumber());
 
         Company saved = companyRepository.save(company);
 
         return CompanyResponseDto.builder()
                 .id(saved.getId())
                 .name(saved.getName())
+                .address(saved.getAddress())
                 .email(saved.getEmail())
                 .phone(saved.getPhone())
                 .active(saved.isActive())
                 .activePlan(saved.getActiveSubscription() != null
-                        ? saved.getActiveSubscription().getPlan()
+                        ? saved.getActiveSubscription().getPlan().name()
                         : null)
                 .build();
     }

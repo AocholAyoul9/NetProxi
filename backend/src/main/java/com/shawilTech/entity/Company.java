@@ -21,10 +21,11 @@ public class Company {
     private UUID id;
 
     private String name;
+
+    @Column(name = "address")
     private String address;
     private String email;
     private String phone;
-    private String registrationNumber;
 
     private boolean active = true;
 
@@ -34,6 +35,17 @@ public class Company {
 
     private Double latitude;
     private Double longitude;
+
+
+    private String logoUrl;
+    private String website;
+
+    @Column(length = 2000)
+    private String description;
+
+
+    private String pricing;
+    private String openingHours;
 
     @OneToMany(mappedBy = "company")
     private Set<User> employees;
