@@ -24,7 +24,7 @@ export class AboutComponent {
   }
 
   animateCounters() {
-    const duration = 2000; // animation duration in ms
+    const duration = 2000;
     const interval = 30; // interval in ms
     const steps = duration / interval;
 

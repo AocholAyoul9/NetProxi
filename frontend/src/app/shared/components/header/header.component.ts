@@ -9,10 +9,13 @@ import { RouterModule } from '@angular/router';
 })
 export class HeaderComponent {
 
-    menuOpen = signal(false);
+  menuOpen = signal(false);
 
   toggleMenu() {
     this.menuOpen.set(!this.menuOpen());
   }
+
+  openLogin(){}
+  openSignup(){}
 
 }

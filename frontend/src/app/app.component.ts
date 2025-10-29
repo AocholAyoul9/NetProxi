@@ -10,5 +10,5 @@ import { HeaderComponent } from "./shared/components/header/header.component";
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'PropreConnect';
+  title = 'NetProxi';
 }
