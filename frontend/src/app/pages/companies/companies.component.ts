@@ -169,9 +169,7 @@ export class CompaniesComponent implements OnInit {
   /**
    * Handles service selection in modal
    */
-  onServiceSelect(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const serviceName = select.value;
+  onServiceSelect(serviceName: string): void {
     
     if (!serviceName) {
       this.selectedService.set(null);
