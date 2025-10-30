@@ -19,7 +19,7 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private  final ServiceRepository serviceRepository;
+    private final ServiceRepository serviceRepository;
     private final GeocodingService geocodingService; // <-- Add this
 
 
@@ -47,7 +47,16 @@ public class CompanyService {
                         .longitude(c.getLongitude())
                         .distance(distance(lat, lng, c.getLatitude(), c.getLongitude()))
                         .openingHours(c.getOpeningHours())
-
+                        .services(c.getServices() != null
+                                ? c.getServices().stream()
+                                .map(s -> ServiceResponseDto.builder()
+                                        .id(s.getId())
+                                        .name(s.getName())
+                                        .description(s.getDescription())
+                                        .basePrice(s.getBasePrice())
+                                        .build())
+                                .toList()
+                                : Collections.emptyList())
                         .build())
                 .toList();
 
@@ -69,7 +78,6 @@ public class CompanyService {
     }
 
 
-
     private CompanyResponseDto mapToDto(Company company) {
         return CompanyResponseDto.builder()
                 .id(company.getId())
@@ -80,6 +88,7 @@ public class CompanyService {
                 .active(company.isActive())
                 .build();
     }
+
     /**
      * Register a new company with FREE plan by default
      */
@@ -178,6 +187,16 @@ public class CompanyService {
                         .activePlan(company.getActiveSubscription() != null
                                 ? company.getActiveSubscription().getPlan().name()
                                 : null)
+                        .services(company.getServices() != null
+                                ? company.getServices().stream()
+                                .map(s -> ServiceResponseDto.builder()
+                                        .id(s.getId())
+                                        .name(s.getName())
+                                        .description(s.getDescription())
+                                        .basePrice(s.getBasePrice())
+                                        .build())
+                                .toList()
+                                : Collections.emptyList())
                         .build())
                 .toList();
     }

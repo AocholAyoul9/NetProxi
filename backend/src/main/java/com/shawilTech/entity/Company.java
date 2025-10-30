@@ -3,9 +3,9 @@ package com.shawilTech.identityservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.shawilTech.identityservice.entity.ServiceEntity;
 
 
 @Entity
@@ -46,6 +46,9 @@ public class Company {
 
     private String pricing;
     private String openingHours;
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    private List<ServiceEntity> services;
 
     @OneToMany(mappedBy = "company")
     private Set<User> employees;
