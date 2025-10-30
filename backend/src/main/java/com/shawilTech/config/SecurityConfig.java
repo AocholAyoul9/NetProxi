@@ -40,8 +40,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/webjars/**"
-                        ).permitAll()
+                                "/webjars/**")
+                        .permitAll()
 
                         // Public API endpoints
                         .requestMatchers("/api/auth/**").permitAll()
@@ -52,8 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/clients/**").permitAll()
 
                         // Everything else requires authentication
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 // Disable default login
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -63,18 +62,18 @@ public class SecurityConfig {
         return http.build(); // only build here once
     }
 
-
-
-   /* @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable);
-        return http.build();
-    }*/
-
+    /*
+     * @Bean
+     * public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
+     * Exception {
+     * http
+     * .csrf(AbstractHttpConfigurer::disable)
+     * .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+     * .httpBasic(AbstractHttpConfigurer::disable)
+     * .formLogin(AbstractHttpConfigurer::disable);
+     * return http.build();
+     * }
+     */
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

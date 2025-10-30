@@ -203,85 +203,82 @@
       </div>
     </div>
   </section>
+<div *ngIf="bookingCompany()" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Réserver {{ bookingCompany()!.name }}</h3>
+      <button class="modal-close" (click)="closeBooking()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
 
-  <div *ngIf="bookingCompany()" class="modal-backdrop">
-    <div class="modal">
-      <div class="modal-header">
-        <h3>Réserver {{ bookingCompany()!.name }}</h3>
-        <button class="modal-close" (click)="closeBooking()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div class="modal-content">
-        <div class="company-info">
-          <div class="company-avatar-small">
-            {{ bookingCompany()!.name || "N" }}
-          </div>
-          <div class="company-details">
-            <strong>{{ bookingCompany()!.name }}</strong>
-            <div class="company-rating">
-              ⭐ {{ bookingCompany()!.rating || "4.5" }} ({{
-                bookingCompany()!.reviewsCount || 10
-              }}
-              avis)
-            </div>
-          </div>
+    <div class="modal-content">
+      <div class="company-info">
+        <div class="company-avatar-small">
+          {{ bookingCompany()!.name?.charAt(0) || 'N' }}
         </div>
-
-        <div class="form-group">
-          <label for="service-select">Sélectionnez le service :</label>
-          <select
-            id="service-select"
-            [ngModel]="selectedService()?.name"
-            (ngModelChange)="onServiceSelect($event)"
-            class="service-select"
-          >
-            <option value="">Choisissez un service</option>
-            <option
-              *ngFor="let s of bookingCompany()!.services"
-              [ngValue]="s.name"
-            >
-              {{ s.name }} - {{ s.basePrice || "Prix sur demande" }} €
-            </option>
-          </select>
-        </div>
-
-        <div class="selected-service-info" *ngIf="selectedService()">
-          <div class="service-summary">
-            <strong>Service sélectionné :</strong> {{ selectedService()!.name }}
-            <span *ngIf="selectedService()!.basePrice" class="service-price">
-              - {{ selectedService()!.basePrice }} €
-            </span>
+        <div class="company-details">
+          <strong>{{ bookingCompany()!.name }}</strong>
+          <div class="company-rating">
+            ⭐ {{ bookingCompany()!.rating || "4.5" }} 
+            ({{ bookingCompany()!.reviewsCount || 10 }} avis)
           </div>
-        </div>
-
-        <div class="booking-note">
-          <i class="fas fa-info-circle"></i>
-          Vous recevrez un email de confirmation avec les détails de votre
-          réservation.
         </div>
       </div>
 
-      <div class="modal-actions">
-        <button
-          class="btn-confirm"
-          (click)="confirmBooking()"
-          [disabled]="!selectedService()"
+      <div class="form-group">
+        <label for="service-select">Sélectionnez le service :</label>
+        <select
+          id="service-select"
+          [ngModel]="selectedService()?.name"
+          (ngModelChange)="onServiceSelect($event)"
+          class="service-select"
         >
-          <i class="fas fa-check"></i>
-          Confirmer la réservation
-        </button>
-        <button class="btn-cancel" (click)="closeBooking()">
-          <i class="fas fa-times"></i>
-          Annuler
-        </button>
+          <option value="">Choisissez un service</option>
+          <option
+            *ngFor="let s of bookingCompany()!.services"
+            [ngValue]="s.name"
+          >
+            {{ s.name }} - {{ s.basePrice || "Prix sur demande" }} €
+          </option>
+        </select>
       </div>
 
-      <div *ngIf="bookingSuccess()" class="booking-success">
-        <i class="fas fa-check-circle"></i>
-        {{ bookingSuccess() }}
+      <div class="selected-service-info" *ngIf="selectedService()">
+        <div class="service-summary">
+          <strong>Service sélectionné :</strong> 
+          {{ selectedService()!.name }}
+          <span *ngIf="selectedService()!.basePrice" class="service-price">
+            - {{ selectedService()!.basePrice }} €
+          </span>
+        </div>
+      </div>
+
+      <div class="booking-note">
+        <i class="fas fa-info-circle"></i>
+        Vous recevrez un email de confirmation avec les détails de votre réservation.
       </div>
     </div>
+
+    <div class="modal-actions">
+      <button
+        class="btn-confirm"
+        (click)="confirmBooking()"
+        [disabled]="!selectedService()"
+      >
+        <i class="fas fa-check"></i>
+        Confirmer la réservation
+      </button>
+      <button class="btn-cancel" (click)="closeBooking()">
+        <i class="fas fa-times"></i>
+        Annuler
+      </button>
+    </div>
+
+    <div *ngIf="bookingSuccess()" class="booking-success">
+      <i class="fas fa-check-circle"></i>
+      {{ bookingSuccess() }}
+    </div>
   </div>
+</div>
 </div>

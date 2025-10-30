@@ -20,13 +20,12 @@ import {
   styleUrls: ['./nearby-companies.component.scss'],
 })
 export class NearbyCompaniesComponent implements OnInit {
-  // Search signals
+  
   address = signal('');
   lat = signal<number | null>(null);
   lng = signal<number | null>(null);
-  radiusKm = signal(10); // Reduced radius for better UX
+  radiusKm = signal(10); 
 
-  // State observables
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
   companies$: Observable<Company[]>;
@@ -47,13 +46,13 @@ export class NearbyCompaniesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Try to get user's current location on component initialization
     this.getCurrentLocation();
   }
 
   /**
    * Gets user's current location using browser geolocation API
    */
+
   private getCurrentLocation(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -155,7 +154,6 @@ export class NearbyCompaniesComponent implements OnInit {
         })
       );
 
-      // Clear any active filters when performing new search
       this.clearFilter();
     } catch (err: any) {
       console.error('Error searching nearby:', err);
