@@ -1,0 +1,94 @@
+<!-- super-admin-dashboard.component.html -->
+<div class="super-admin-dashboard">
+  <div class="admin-header">
+    <h1>Tableau de Bord Administrateur</h1>
+    <p>Gestion de la plateforme SaaS</p>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="admin-stats" *ngIf="stats$ | async as stats">
+    <div class="stat-card">
+      <i class="fas fa-building"></i>
+      <div>
+        <h3>{{ stats.totalCompanies }}</h3>
+        <p>Entreprises</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-user-check"></i>
+      <div>
+        <h3>{{ stats.activeCompanies }}</h3>
+        <p>Entreprises Actives</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-money-bill-wave"></i>
+      <div>
+        <h3>{{ stats.totalRevenue }}€</h3>
+        <p>Revenu Mensuel</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <i class="fas fa-calendar-alt"></i>
+      <div>
+        <h3>{{ stats.totalBookings }}</h3>
+        <p>Réservations</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Companies Management -->
+  <div class="companies-section">
+    <h2>Gestion des Entreprises</h2>
+    
+    <div class="companies-table">
+      <div class="table-header">
+        <div>Entreprise</div>
+        <div>Plan</div>
+        <div>Services</div>
+        <div>Employés</div>
+        <div>Statut</div>
+        <div>Actions</div>
+      </div>
+      
+      <div *ngFor="let company of companies$ | async" class="table-row">
+        <div class="company-cell">
+          <div class="company-avatar">
+            <img *ngIf="company.logoUrl" [src]="company.logoUrl" [alt]="company.name">
+            <div *ngIf="!company.logoUrl" class="avatar-placeholder">
+              {{ company.name.charAt(0) }}
+            </div>
+          </div>
+          <div class="company-info">
+            <strong>{{ company.name }}</strong>
+            <span>{{ company.email }}</span>
+          </div>
+        </div>
+        
+        <div>
+          <span class="plan-badge" [class]="company.activePlan?.toLowerCase()">
+            {{ company.activePlan }}
+          </span>
+        </div>
+        
+        <div class="service-count">{{ company.services?.length || 0 }}</div>
+        <div class="employee-count">-</div>
+        
+        <div>
+          <label class="toggle-switch" [class.active]="company.active">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="actions">
+          <button class="btn-view">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button class="btn-edit">
+            <i class="fas fa-edit"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

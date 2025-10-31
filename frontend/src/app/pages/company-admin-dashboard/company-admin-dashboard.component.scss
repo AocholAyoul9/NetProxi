@@ -1,0 +1,243 @@
+// company-admin-dashboard.component.scss
+.company-admin-dashboard {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.dashboard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .company-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    .company-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      overflow: hidden;
+      
+      img, .avatar-placeholder {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .avatar-placeholder {
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+    }
+    
+    .plan-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      
+      &.premium { background: #fbbf24; color: #92400e; }
+      &.basic { background: #60a5fa; color: #1e40af; }
+      &.free { background: #9ca3af; color: #374151; }
+    }
+  }
+}
+
+.dashboard-tabs {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  gap: 0;
+  
+  button {
+    padding: 1rem 2rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #f8fafc;
+      color: #3b82f6;
+    }
+    
+    &.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+      background: #f0f9ff;
+    }
+  }
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    
+    &.services { background: #dbeafe; color: #1e40af; }
+    &.bookings { background: #f0fdf4; color: #166534; }
+    &.employees { background: #fef3c7; color: #92400e; }
+    &.revenue { background: #fce7f3; color: #be185d; }
+  }
+  
+  .stat-info h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #1f2937;
+  }
+}
+
+.services-grid, .employees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.service-card, .employee-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.service-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  
+  .price-tag {
+    background: #059669;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-weight: 600;
+  }
+}
+
+.bookings-table {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  .table-header, .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 0.5fr 0.8fr 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    align-items: center;
+  }
+  
+  .table-header {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .table-row {
+    border-bottom: 1px solid #f3f4f6;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  
+  &.pending { background: #fef3c7; color: #92400e; }
+  &.confirmed { background: #dbeafe; color: #1e40af; }
+  &.completed { background: #f0fdf4; color: #166534; }
+  &.cancelled { background: #fef2f2; color: #dc2626; }
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  &:hover {
+    background: #2563eb;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .dashboard-tabs {
+    overflow-x: auto;
+    
+    button {
+      padding: 1rem;
+      white-space: nowrap;
+    }
+  }
+  
+  .bookings-table {
+    .table-header, .table-row {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

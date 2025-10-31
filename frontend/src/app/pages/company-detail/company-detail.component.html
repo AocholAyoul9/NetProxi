@@ -1,0 +1,265 @@
+<!-- company-detail.component.html -->
+<div class="company-details-container">
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Chargement des détails...</p>
+  </div>
+
+  <!-- Company Details -->
+  <ng-container *ngIf="(company$ | async) as company">
+    <!-- Header Section -->
+    <div class="company-header">
+      <div class="header-content">
+        <div class="company-main-info">
+          <div class="company-avatar-large">
+            <img 
+              *ngIf="company.logoUrl; else textAvatar" 
+              [src]="company.logoUrl" 
+              [alt]="company.name"
+              class="company-logo"
+            >
+            <ng-template #textAvatar>
+              <div class="avatar-placeholder">
+                {{ getInitials(company.name) }}
+              </div>
+            </ng-template>
+          </div>
+          
+          <div class="company-title-section">
+            <div class="title-row">
+              <h1 class="company-name">{{ company.name }}</h1>
+              <div class="verification-badge" *ngIf="company.isVerified">
+                <i class="fas fa-check-circle"></i>
+                <span>Entreprise vérifiée</span>
+              </div>
+            </div>
+            
+            <div class="rating-section">
+              <div class="stars">
+                <i *ngFor="let star of [1,2,3,4,5]" 
+                   class="fas fa-star" 
+                   [class.filled]="star <= (company.rating || 0)"></i>
+              </div>
+              <span class="rating-text">
+                {{ company.rating || '4.5' }} ({{ company.reviewsCount || 10 }} avis)
+              </span>
+            </div>
+
+            <div class="company-meta">
+              <div class="meta-item" *ngIf="company.yearsExperience">
+                <i class="fas fa-briefcase"></i>
+                <span>{{ company.yearsExperience }} ans d'expérience</span>
+              </div>
+              <div class="meta-item" *ngIf="company.employeeCount">
+                <i class="fas fa-users"></i>
+                <span>{{ company.employeeCount }} employés</span>
+              </div>
+              <div class="meta-item" *ngIf="company.distance">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ company.distance }} km</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="header-actions">
+          <button class="btn-primary" (click)="goToBooking()">
+            <i class="fas fa-calendar-check"></i>
+            Réserver
+          </button>
+          <button class="btn-secondary">
+            <i class="fas fa-share"></i>
+            Partager
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="company-content">
+      <!-- Left Column -->
+      <div class="content-main">
+        <!-- Description -->
+        <section class="content-section" *ngIf="company.description">
+          <h2>Description</h2>
+          <p class="company-description">{{ company.description }}</p>
+        </section>
+
+        <!-- Services -->
+        <section class="content-section">
+          <div class="section-header">
+            <h2>Services proposés</h2>
+            <span class="services-count">{{ company.services?.length || 0 }} services</span>
+          </div>
+          
+          <div class="services-grid">
+            <div *ngFor="let service of company.services" class="service-card">
+              <div class="service-header">
+                <h3 class="service-name">{{ service.name }}</h3>
+                <span *ngIf="service.isPopular" class="popular-badge">
+                  <i class="fas fa-fire"></i> Populaire
+                </span>
+              </div>
+              
+              <p *ngIf="service.description" class="service-description">
+                {{ service.description }}
+              </p>
+              
+              <div class="service-footer">
+                <span class="service-price" *ngIf="service.basePrice; else priceOnRequest">
+                  {{ service.basePrice }} €
+                </span>
+                <ng-template #priceOnRequest>
+                  <span class="price-on-request">Prix sur demande</span>
+                </ng-template>
+                
+                <button class="btn-service" (click)="selectService(service)">
+                  Choisir
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Portfolio --
+        <section class="content-section" *ngIf="company.portfolioImages && company.portfolioImages.length > 0">
+          <h2>Réalisations</h2>
+          <div class="portfolio-grid">
+            <div *ngFor="let image of company.portfolioImages" class="portfolio-item">
+              <img [src]="image" alt="Réalisation" class="portfolio-image">
+            </div>
+          </div>
+        </section>-->
+      </div>
+
+      <!-- Right Column - Sidebar -->
+      <div class="content-sidebar">
+        <!-- Contact Info -->
+        <section class="sidebar-section contact-info">
+          <h3>Informations de contact</h3>
+          <div class="contact-item" *ngIf="company.phone">
+            <i class="fas fa-phone"></i>
+            <div>
+              <div class="contact-label">Téléphone</div>
+              <div class="contact-value">{{ formatPhoneNumber(company.phone) }}</div>
+            </div>
+          </div>
+          
+          <div class="contact-item" *ngIf="company.email">
+            <i class="fas fa-envelope"></i>
+            <div>
+              <div class="contact-label">Email</div>
+              <div class="contact-value">{{ company.email }}</div>
+            </div>
+          </div>
+          
+          <div class="contact-item" *ngIf="company.website">
+            <i class="fas fa-globe"></i>
+            <div>
+              <div class="contact-label">Site web</div>
+              <div class="contact-value">
+                <a [href]="company.website" target="_blank">{{ company.website }}</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="contact-item" *ngIf="company.address">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <div class="contact-label">Adresse</div>
+              <div class="contact-value">{{ company.address }}</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Company Details -->
+        <section class="sidebar-section company-specs">
+          <h3>Détails de l'entreprise</h3>
+          
+         <!----<div class="spec-item" *ngIf="company.foundedYear">
+            <span class="spec-label">Année de création</span>
+            <span class="spec-value">{{ company.foundedYear }}</span>
+          </div>-->
+          
+          <div class="spec-item" *ngIf="company.responseTime">
+            <span class="spec-label">Temps de réponse</span>
+            <span class="spec-value">{{ getResponseTime(company.responseTime) }}</span>
+          </div>
+          
+          <div class="spec-item" *ngIf="company.insuranceVerified">
+            <span class="spec-label">Assurance</span>
+            <span class="spec-value verified">Vérifiée</span>
+          </div>
+          
+          <div class="spec-item" *ngIf="company.minimumPrice">
+            <span class="spec-label">Prix minimum</span>
+            <span class="spec-value">{{ company.minimumPrice }} €</span>
+          </div>
+
+          <div class="spec-item" *ngIf="company.pricingRange">
+            <span class="spec-label">Fourchette de prix</span>
+            <span class="spec-value">{{ getPriceRange(company) }}</span>
+          </div>
+        </section>
+
+        <!-- Specialties -->
+        <section class="sidebar-section" *ngIf="company.specialties && company.specialties.length > 0">
+          <h3>Spécialités</h3>
+          <div class="tags-container">
+            <span *ngFor="let specialty of company.specialties" class="tag">
+              {{ specialty }}
+            </span>
+          </div>
+        </section>
+
+        <!-- Languages -->
+        <section class="sidebar-section" *ngIf="company.languages && company.languages.length > 0">
+          <h3>Langues parlées</h3>
+          <div class="tags-container">
+            <span *ngFor="let language of company.languages" class="tag language-tag">
+              {{ language }}
+            </span>
+          </div>
+        </section>
+
+        <!-- Opening Hours -->
+        <section class="sidebar-section" *ngIf="company.openingHours">
+          <h3>Horaires d'ouverture</h3>
+          <div class="opening-hours">
+            {{ company.openingHours }}
+          </div>
+        </section>
+
+        <!-- Service Areas 
+        <section class="sidebar-section" *ngIf="company.serviceAreas && company.serviceAreas.length > 0">
+          <h3>Zones desservies</h3>
+          <div class="tags-container">
+            <span *ngFor="let area of company.serviceAreas" class="tag area-tag">
+              {{ area }}
+            </span>
+          </div>
+        </section>-->
+
+        <!-- Availability Status -->
+        <section class="sidebar-section">
+          <h3>Disponibilité</h3>
+          <div class="availability-status" [class.available]="company.isAvailableNow">
+            <i class="fas" [class.fa-check-circle]="company.isAvailableNow" 
+               [class.fa-clock]="!company.isAvailableNow"></i>
+            <span>{{ company.isAvailableNow ? 'Disponible maintenant' : 'Vérifier la disponibilité' }}</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Error State -->
+  <div *ngIf="(error$ | async) && !(loading$ | async)" class="error-container">
+    <i class="fas fa-exclamation-triangle"></i>
+    <h3>Impossible de charger les détails</h3>
+    <p>{{ error$ | async }}</p>
+    <button class="btn-primary" (click)="retry()">Réessayer</button>
+  </div>
+</div>

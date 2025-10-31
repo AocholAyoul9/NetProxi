@@ -4,4 +4,5 @@ export interface User {
     address: string;
     email: string;
     phone: string;
+    active: boolean;
 }

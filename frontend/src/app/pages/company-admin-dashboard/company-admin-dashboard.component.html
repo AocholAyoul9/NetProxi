@@ -1,0 +1,242 @@
+<!-- company-admin-dashboard.component.html -->
+<div class="company-admin-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Tableau de Bord Entreprise</h1>
+      <div class="company-info" *ngIf="company$ | async as company">
+        <div class="company-avatar">
+          <img *ngIf="company.logoUrl" [src]="company.logoUrl" [alt]="company.name">
+          <div *ngIf="!company.logoUrl" class="avatar-placeholder">
+            {{ company.name.charAt(0) }}
+          </div>
+        </div>
+        <div class="company-details">
+          <h2>{{ company.name }}</h2>
+          <p class="plan-badge" [class]="company.activePlan?.toLowerCase()">
+            {{ company.activePlan }} Plan
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <nav class="dashboard-tabs">
+    <button 
+      [class.active]="activeTab === 'overview'" 
+      (click)="setActiveTab('overview')">
+      <i class="fas fa-chart-pie"></i>
+      Vue d'ensemble
+    </button>
+    <button 
+      [class.active]="activeTab === 'services'" 
+      (click)="setActiveTab('services')">
+      <i class="fas fa-concierge-bell"></i>
+      Services
+    </button>
+    <button 
+      [class.active]="activeTab === 'bookings'" 
+      (click)="setActiveTab('bookings')">
+      <i class="fas fa-calendar-check"></i>
+      Réservations
+    </button>
+    <button 
+      [class.active]="activeTab === 'employees'" 
+      (click)="setActiveTab('employees')">
+      <i class="fas fa-users"></i>
+      Employés
+    </button>
+  </nav>
+
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="!(loading$ | async)">
+    
+    <!-- Overview Tab -->
+    <div *ngIf="activeTab === 'overview'" class="tab-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon services">
+            <i class="fas fa-concierge-bell"></i>
+          </div>
+          <div class="stat-info">
+            <h3>{{ (services$ | async)?.length || 0 }}</h3>
+            <p>Services Actifs</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon bookings">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="stat-info">
+            <h3>{{ (bookings$ | async)?.length || 0 }}</h3>
+            <p>Réservations Total</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon employees">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-info">
+            <h3>{{ (employees$ | async)?.length || 0 }}</h3>
+            <p>Employés</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon revenue">
+            <i class="fas fa-euro-sign"></i>
+          </div>
+          <div class="stat-info">
+           <!----<h3>{{ getTotalRevenue(bookings$ | async) }}€</h3>-->
+            <p>Revenu Total</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Bookings --
+      <div class="recent-section">
+        <h3>Réservations Récentes</h3>
+        <div class="bookings-list">
+          <div *ngFor="let booking of (bookings$ | async)?.slice(0, 5)" 
+               class="booking-item" [class]="booking.status.toLowerCase()">
+            <div class="booking-info">
+              <strong>{{ booking.serviceName }}</strong>
+              <span>{{ booking.startTime | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <div class="booking-status">
+              <span class="status-badge" [class]="booking.status.toLowerCase()">
+                {{ booking.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>-->
+    </div>
+
+    <!-- Services Tab -->
+    <div *ngIf="activeTab === 'services'" class="tab-content">
+      <div class="section-header">
+        <h2>Gestion des Services</h2>
+        <button class="btn-primary" (click)="openServiceModal()">
+          <i class="fas fa-plus"></i>
+          Nouveau Service
+        </button>
+      </div>
+      
+      <div class="services-grid">
+        <div *ngFor="let service of services$ | async" class="service-card">
+          <div class="service-header">
+            <h3>{{ service.name }}</h3>
+           <!----<span class="price-tag">{{ service.basePrice }}€</span>-->
+          </div>
+          <p class="service-description">{{ service.description }}</p>
+          <div class="service-actions">
+            <button class="btn-edit">
+              <i class="fas fa-edit"></i>
+              Modifier
+            </button>
+            <button class="btn-delete">
+              <i class="fas fa-trash"></i>
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bookings Tab --
+    <div *ngIf="activeTab === 'bookings'" class="tab-content">
+      <div class="section-header">
+        <h2>Gestion des Réservations</h2>
+      </div>
+      
+      <div class="bookings-table">
+        <div class="table-header">
+          <div>Client</div>
+          <div>Service</div>
+          <div>Date</div>
+          <div>Prix</div>
+          <div>Statut</div>
+          <div>Employé</div>
+          <div>Actions</div>
+        </div>
+        
+        <div *ngFor="let booking of bookings$ | async" class="table-row">
+          <div>{{ booking.clientName }}</div>
+          <div>{{ booking.serviceName }}</div>
+          <div>{{ booking.startTime | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div>{{ booking.price }}€</div>
+          <div>
+            <span class="status-badge" [class]="booking.status.toLowerCase()">
+              {{ booking.status }}
+            </span>
+          </div>
+          <div>
+            <select *ngIf="booking.status === 'PENDING'" 
+                    (change)="assignEmployeeToBooking(booking.id, $event.target.value)">
+              <option value="">Assigner un employé</option>
+              <option *ngFor="let employee of employees$ | async" 
+                      [value]="employee.id">
+                {{ employee.name }}
+              </option>
+            </select>
+            <span *ngIf="booking.assignedEmployeeName">{{ booking.assignedEmployeeName }}</span>
+          </div>
+          <div class="actions">
+            <button *ngIf="booking.status === 'PENDING'" 
+                    class="btn-confirm"
+                    (click)="updateBookingStatus(booking.id, 'CONFIRMED')">
+              Confirmer
+            </button>
+            <button *ngIf="booking.status === 'CONFIRMED'" 
+                    class="btn-complete"
+                    (click)="updateBookingStatus(booking.id, 'COMPLETED')">
+              Terminer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>-->
+
+    <!-- Employees Tab -->
+    <div *ngIf="activeTab === 'employees'" class="tab-content">
+      <div class="section-header">
+        <h2>Gestion des Employés</h2>
+        <button class="btn-primary" (click)="openEmployeeModal()">
+          <i class="fas fa-user-plus"></i>
+          Nouvel Employé
+        </button>
+      </div>
+      
+      <div class="employees-grid">
+        <div *ngFor="let employee of employees$ | async" class="employee-card">
+          <div class="employee-avatar">
+            {{ employee.name.charAt(0) }}
+          </div>
+          <div class="employee-info">
+            <h3>{{ employee.name }}</h3>
+            <p>{{ employee.email }}</p>
+            <p>{{ employee.phone }}</p>
+          </div>
+          <div class="employee-actions">
+            <button class="btn-edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

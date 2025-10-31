@@ -11,11 +11,12 @@ import {
   Company,
   ServiceResponseDto as ServiceModel,
 } from '../../shared/models/company.model';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-nearby-companies',
   standalone: true,
-  imports: [CommonModule, FormsModule, GoogleMapsModule],
+  imports: [CommonModule, FormsModule, GoogleMapsModule, RouterLink],
   templateUrl: './nearby-companies.component.html',
   styleUrls: ['./nearby-companies.component.scss'],
 })
@@ -189,6 +190,19 @@ export class NearbyCompaniesComponent implements OnInit {
       );
   }
 
+  
+   // Get initials for avatar placeholder
+  getInitials(companyName: string): string {
+    if (!companyName) return 'N';
+    
+    return companyName
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
   /**
    * Clears active filter and resets to all companies
    */
@@ -217,14 +231,6 @@ export class NearbyCompaniesComponent implements OnInit {
     this.bookingSuccess.set('');
   }
 
-  /**
-   * Views company details (placeholder for navigation)
-   */
-  viewDetails(company: Company): void {
-    console.log('View details for company:', company);
-    // Implement navigation to company details page
-    // Example: this.router.navigate(['/company', company.id]);
-  }
 
   /**
    * Handles service selection in booking modal
