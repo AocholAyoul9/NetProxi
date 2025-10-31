@@ -32,59 +32,59 @@
   </section>
 
   <!-- Quick Stats -->
- <section class="stats-section">
-  <div class="stats-container">
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-icon">
-         <!--- <i class="fas fa-store"></i>-->
+  <section class="stats-section">
+    <div class="stats-container">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-icon">
+            <!--- <i class="fas fa-store"></i>-->
+          </div>
+          <strong>120+</strong>
+          <span>Entreprises locales</span>
         </div>
-        <strong>120+</strong>
-        <span>Entreprises locales</span>
-      </div>
-      <div class="stat">
-        <div class="stat-icon">
-          <!--<i class="fas fa-concierge-bell"></i>-->
+        <div class="stat">
+          <div class="stat-icon">
+            <!--<i class="fas fa-concierge-bell"></i>-->
+          </div>
+          <strong>350+</strong>
+          <span>Services proposés</span>
         </div>
-        <strong>350+</strong>
-        <span>Services proposés</span>
-      </div>
-      <div class="stat">
-        <div class="stat-icon">
-          <!--<i class="fas fa-smile"></i>-->
+        <div class="stat">
+          <div class="stat-icon">
+            <!--<i class="fas fa-smile"></i>-->
+          </div>
+          <strong>1,200+</strong>
+          <span>Clients satisfaits</span>
         </div>
-        <strong>1,200+</strong>
-        <span>Clients satisfaits</span>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- Filters Section -->
-<section class="filters-section" *ngIf="popularServices.length">
-  <div class="filters-container">
-    <h3 class="filters-title">Filtrer par type de service</h3>
-    <div class="filter-buttons">
-      <button
-        *ngFor="let service of popularServices"
-        (click)="filterByService(service)"
-        [class.active]="activeFilter === service"
-        class="filter-btn"
-      >
-        <i class="fas {{ getServiceIcon(service) }}"></i>
-        {{ service }}
-      </button>
-      <button
-        *ngIf="activeFilter"
-        (click)="clearFilter()"
-        class="clear-filter"
-      >
-        <i class="fas fa-times"></i>
-        Réinitialiser
-      </button>
+  <section class="filters-section" *ngIf="popularServices.length">
+    <div class="filters-container">
+      <h3 class="filters-title">Filtrer par type de service</h3>
+      <div class="filter-buttons">
+        <button
+          *ngFor="let service of popularServices"
+          (click)="filterByService(service)"
+          [class.active]="activeFilter === service"
+          class="filter-btn"
+        >
+          <i class="fas {{ getServiceIcon(service) }}"></i>
+          {{ service }}
+        </button>
+        <button
+          *ngIf="activeFilter"
+          (click)="clearFilter()"
+          class="clear-filter"
+        >
+          <i class="fas fa-times"></i>
+          Réinitialiser
+        </button>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- Status Messages -->
   <section class="status-section">
@@ -182,7 +182,7 @@
             <i class="fas fa-calendar-check"></i>
             Réserver
           </button>
-          <button class="btn-secondary" (click)="viewDetails(company)">
+          <button class="btn-secondary" [routerLink]="['/company', company.id]">
             <i class="fas fa-info-circle"></i>
             Détails
           </button>
@@ -203,82 +203,85 @@
       </div>
     </div>
   </section>
-<div *ngIf="bookingCompany()" class="modal-backdrop">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Réserver {{ bookingCompany()!.name }}</h3>
-      <button class="modal-close" (click)="closeBooking()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
+  <div *ngIf="bookingCompany()" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Réserver {{ bookingCompany()!.name }}</h3>
+        <button class="modal-close" (click)="closeBooking()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
 
-    <div class="modal-content">
-      <div class="company-info">
-        <div class="company-avatar-small">
-          {{ bookingCompany()!.name?.charAt(0) || 'N' }}
-        </div>
-        <div class="company-details">
-          <strong>{{ bookingCompany()!.name }}</strong>
-          <div class="company-rating">
-            ⭐ {{ bookingCompany()!.rating || "4.5" }} 
-            ({{ bookingCompany()!.reviewsCount || 10 }} avis)
+      <div class="modal-content">
+        <div class="company-info">
+          <div class="company-avatar-small">
+            {{ getInitials(bookingCompany()!.name) }}
+          </div>
+          <div class="company-details">
+            <strong>{{ bookingCompany()!.name }}</strong>
+            <div class="company-rating">
+              ⭐ {{ bookingCompany()!.rating || "4.5" }} ({{
+                bookingCompany()!.reviewsCount || 10
+              }}
+              avis)
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="service-select">Sélectionnez le service :</label>
-        <select
-          id="service-select"
-          [ngModel]="selectedService()?.name"
-          (ngModelChange)="onServiceSelect($event)"
-          class="service-select"
-        >
-          <option value="">Choisissez un service</option>
-          <option
-            *ngFor="let s of bookingCompany()!.services"
-            [ngValue]="s.name"
+        <div class="form-group">
+          <label for="service-select">Sélectionnez le service :</label>
+          <select
+            id="service-select"
+            [ngModel]="selectedService()?.name"
+            (ngModelChange)="onServiceSelect($event)"
+            class="service-select"
           >
-            {{ s.name }} - {{ s.basePrice || "Prix sur demande" }} €
-          </option>
-        </select>
-      </div>
+            <option value="">Choisissez un service</option>
+            <option
+              *ngFor="let s of bookingCompany()!.services"
+              [ngValue]="s.name"
+            >
+              {{ s.name }} - {{ s.basePrice || "Prix sur demande" }} €
+            </option>
+          </select>
+        </div>
 
-      <div class="selected-service-info" *ngIf="selectedService()">
-        <div class="service-summary">
-          <strong>Service sélectionné :</strong> 
-          {{ selectedService()!.name }}
-          <span *ngIf="selectedService()!.basePrice" class="service-price">
-            - {{ selectedService()!.basePrice }} €
-          </span>
+        <div class="selected-service-info" *ngIf="selectedService()">
+          <div class="service-summary">
+            <strong>Service sélectionné :</strong>
+            {{ selectedService()!.name }}
+            <span *ngIf="selectedService()!.basePrice" class="service-price">
+              - {{ selectedService()!.basePrice }} €
+            </span>
+          </div>
+        </div>
+
+        <div class="booking-note">
+          <i class="fas fa-info-circle"></i>
+          Vous recevrez un email de confirmation avec les détails de votre
+          réservation.
         </div>
       </div>
 
-      <div class="booking-note">
-        <i class="fas fa-info-circle"></i>
-        Vous recevrez un email de confirmation avec les détails de votre réservation.
+      <div class="modal-actions">
+        <button
+          class="btn-confirm"
+          (click)="confirmBooking()"
+          [disabled]="!selectedService()"
+        >
+          <i class="fas fa-check"></i>
+          Confirmer la réservation
+        </button>
+        <button class="btn-cancel" (click)="closeBooking()">
+          <i class="fas fa-times"></i>
+          Annuler
+        </button>
+      </div>
+
+      <div *ngIf="bookingSuccess()" class="booking-success">
+        <i class="fas fa-check-circle"></i>
+        {{ bookingSuccess() }}
       </div>
     </div>
-
-    <div class="modal-actions">
-      <button
-        class="btn-confirm"
-        (click)="confirmBooking()"
-        [disabled]="!selectedService()"
-      >
-        <i class="fas fa-check"></i>
-        Confirmer la réservation
-      </button>
-      <button class="btn-cancel" (click)="closeBooking()">
-        <i class="fas fa-times"></i>
-        Annuler
-      </button>
-    </div>
-
-    <div *ngIf="bookingSuccess()" class="booking-success">
-      <i class="fas fa-check-circle"></i>
-      {{ bookingSuccess() }}
-    </div>
   </div>
-</div>
 </div>

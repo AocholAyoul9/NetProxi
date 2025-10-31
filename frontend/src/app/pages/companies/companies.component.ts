@@ -12,12 +12,13 @@ import {
   ServiceResponseDto as ServiceModel,
   getPriceRange,
 } from '../../shared/models/company.model';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-companies',
   standalone: true,
-  imports: [CommonModule, FormsModule, GoogleMapsModule],
+  imports: [CommonModule, FormsModule, GoogleMapsModule, RouterLink],
   templateUrl: './companies.component.html',
   styleUrls: ['./companies.component.scss'],
 })
@@ -110,6 +111,18 @@ export class CompaniesComponent implements OnInit {
     this.searchQuery.set(input.value);
   }
 
+   // Get initials for avatar placeholder
+  getInitials(companyName: string): string {
+    if (!companyName) return 'N';
+    
+    return companyName
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
   /**
    * Opens booking modal for a company
    */
@@ -119,14 +132,6 @@ export class CompaniesComponent implements OnInit {
     this.bookingSuccess.set('');
   }
 
-  /**
-   * Navigates to company details page
-   */
-  viewDetails(company: Company) {
-    // You can implement navigation to company details page here
-    console.log('View details for company:', company);
-    // Example: this.router.navigate(['/company', company.id]);
-  }
 
   /**
    * Confirms booking

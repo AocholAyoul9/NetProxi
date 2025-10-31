@@ -165,6 +165,16 @@ public class CompanyService {
                 .activePlan(company.getActiveSubscription() != null
                         ? company.getActiveSubscription().getPlan().name()
                         : null)
+                .services(company.getServices() != null
+                        ? company.getServices().stream()
+                        .map(s -> ServiceResponseDto.builder()
+                                .id(s.getId())
+                                .name(s.getName())
+                                .description(s.getDescription())
+                                .basePrice(s.getBasePrice())
+                                .build())
+                        .toList()
+                        : Collections.emptyList())
                 .build();
     }
 

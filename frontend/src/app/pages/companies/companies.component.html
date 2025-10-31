@@ -4,80 +4,90 @@
     <p>Trouvez les meilleurs services de nettoyage près de chez vous.</p>
   </div>
 
-<div class="filters-section">
-  <div class="search-box">
-    <i class="fas fa-search"></i>
-    <input
-      type="text"
-      placeholder="Rechercher une entreprise..."
-      [value]="searchQuery()"
-      (input)="onSearchQueryChange($event)"
-      class="search-input"
-    />
-  </div>
-  
-  <div class="filter-options">
-    <h4>Filtrer par service :</h4>
-    <div class="service-buttons">
-      <button 
-        class="filter-btn" 
-        [class.active]="activeServiceFilter() === 'Bureaux'"
-        (click)="setServiceFilter('Bureaux')">
-        <i class="fas fa-building"></i>
-        Bureaux
-      </button>
-      <button 
-        class="filter-btn" 
-        [class.active]="activeServiceFilter() === 'Vitres'"
-        (click)="setServiceFilter('Vitres')">
-        <i class="fas fa-window-restore"></i>
-        Vitres
-      </button>
-      <button 
-        class="filter-btn" 
-        [class.active]="activeServiceFilter() === 'Tapis'"
-        (click)="setServiceFilter('Tapis')">
-        <i class="fas fa-rug"></i>
-        Tapis
-      </button>
-      <button 
-        class="filter-btn" 
-        [class.active]="activeServiceFilter() === 'Entretien complet'"
-        (click)="setServiceFilter('Entretien complet')">
-        <i class="fas fa-home"></i>
-        Entretien complet
-      </button>
-      <button 
-        class="filter-btn" 
-        [class.active]="activeServiceFilter() === ''"
-        (click)="setServiceFilter('')">
-        <i class="fas fa-broom"></i>
-        Tout
-      </button>
+  <div class="filters-section">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        placeholder="Rechercher une entreprise..."
+        [value]="searchQuery()"
+        (input)="onSearchQueryChange($event)"
+        class="search-input"
+      />
+    </div>
+
+    <div class="filter-options">
+      <h4>Filtrer par service :</h4>
+      <div class="service-buttons">
+        <button
+          class="filter-btn"
+          [class.active]="activeServiceFilter() === 'Bureaux'"
+          (click)="setServiceFilter('Bureaux')"
+        >
+          <i class="fas fa-building"></i>
+          Bureaux
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="activeServiceFilter() === 'Vitres'"
+          (click)="setServiceFilter('Vitres')"
+        >
+          <i class="fas fa-window-restore"></i>
+          Vitres
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="activeServiceFilter() === 'Tapis'"
+          (click)="setServiceFilter('Tapis')"
+        >
+          <i class="fas fa-rug"></i>
+          Tapis
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="activeServiceFilter() === 'Entretien complet'"
+          (click)="setServiceFilter('Entretien complet')"
+        >
+          <i class="fas fa-home"></i>
+          Entretien complet
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="activeServiceFilter() === ''"
+          (click)="setServiceFilter('')"
+        >
+          <i class="fas fa-broom"></i>
+          Tout
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
   <!-- Results Info -->
-  <div class="results-info" *ngIf="(filteredCompanies$ | async) as companies">
+  <div class="results-info" *ngIf="filteredCompanies$ | async as companies">
     <p>{{ getCompaniesCount(companies) }} entreprise(s) trouvée(s)</p>
   </div>
 
   <!-- Company Cards Grid -->
   <div class="company-grid">
-    <div *ngFor="let company of filteredCompanies$ | async" class="company-card-wrapper">
+    <div
+      *ngFor="let company of filteredCompanies$ | async"
+      class="company-card-wrapper"
+    >
       <div class="company-card">
         <!-- Company Header with Logo -->
         <div class="company-header">
           <div class="company-basic-info">
             <div class="company-avatar">
-              {{ company.name?.charAt(0) || 'N' }}
+              {{ getInitials(company.name) }}
             </div>
             <div class="company-title">
               <h3>{{ company.name }}</h3>
               <div class="rating-badge">
-                ⭐ {{ company.rating || "4.5" }} 
-                <span class="reviews-count">({{ company.reviewsCount || 10 }} avis)</span>
+                ⭐ {{ company.rating || "4.5" }}
+                <span class="reviews-count"
+                  >({{ company.reviewsCount || 10 }} avis)</span
+                >
               </div>
             </div>
           </div>
@@ -87,7 +97,9 @@
         <div class="location-info">
           <div class="location-item">
             <i class="fas fa-map-marker-alt"></i>
-            <span class="address">{{ company.address || 'Adresse non disponible' }}</span>
+            <span class="address">{{
+              company.address || "Adresse non disponible"
+            }}</span>
           </div>
           <!--<div class="distance-badge" *ngIf="company.distance !== undefined">
             📍 À {{ formatDistance(company.distance) }}
@@ -101,11 +113,18 @@
         <div class="contact-info">
           <div class="contact-item">
             <i class="fas fa-phone"></i>
-            <span>{{ company.phone || 'Non renseigné' }}</span>
+            <span>{{ company.phone || "Non renseigné" }}</span>
           </div>
-          <div class="availability" [class.available]="isCompanyAvailable(company)">
+          <div
+            class="availability"
+            [class.available]="isCompanyAvailable(company)"
+          >
             <i class="fas fa-circle"></i>
-            {{ isCompanyAvailable(company) ? 'Disponible maintenant' : 'Indisponible' }}
+            {{
+              isCompanyAvailable(company)
+                ? "Disponible maintenant"
+                : "Indisponible"
+            }}
           </div>
         </div>
 
@@ -118,7 +137,9 @@
           <div class="price-range">
             {{ getPriceDisplay(company) }}
           </div>
-          <small *ngIf="company.minimumPrice">Minimum : {{ company.minimumPrice }} €</small>
+          <small *ngIf="company.minimumPrice"
+            >Minimum : {{ company.minimumPrice }} €</small
+          >
         </div>
 
         <!-- Services & Specialties -->
@@ -128,7 +149,8 @@
             <span
               *ngFor="let service of company.services || []"
               class="service-tag"
-              [class.popular]="service.isPopular">
+              [class.popular]="service.isPopular"
+            >
               {{ service.name || "Service" }}
             </span>
             <span *ngIf="!company.services?.length" class="no-services">
@@ -159,7 +181,7 @@
             <i class="fas fa-calendar-check"></i>
             Réserver maintenant
           </button>
-          <button class="btn-secondary" (click)="viewDetails(company)">
+          <button class="btn-secondary" [routerLink]="['/company', company.id]">
             <i class="fas fa-info-circle"></i>
             Voir les détails
           </button>
@@ -189,30 +211,37 @@
         <i class="fas fa-times"></i>
       </button>
     </div>
-    
+
     <div class="modal-content">
       <div class="company-info">
         <div class="company-avatar-small">
-          {{ bookingCompany()!.name?.charAt(0) || 'N' }}
+          {{ getInitials(bookingCompany()!.name) }}
         </div>
         <div class="company-details">
           <strong>{{ bookingCompany()!.name }}</strong>
           <div class="company-rating">
-            ⭐ {{ bookingCompany()!.rating || "4.5" }} ({{ bookingCompany()!.reviewsCount || 10 }} avis)
+            ⭐ {{ bookingCompany()!.rating || "4.5" }} ({{
+              bookingCompany()!.reviewsCount || 10
+            }}
+            avis)
           </div>
         </div>
       </div>
 
       <div class="form-group">
         <label for="service-select">Sélectionnez le service :</label>
-        <select 
-          id="service-select" 
-          [ngModel]="selectedService()?.name" 
+        <select
+          id="service-select"
+          [ngModel]="selectedService()?.name"
           (ngModelChange)="onServiceSelect($event)"
-          class="service-select">
+          class="service-select"
+        >
           <option value="">Choisissez un service</option>
-          <option *ngFor="let s of bookingCompany()!.services" [ngValue]="s.name">
-            {{ s.name }} - {{ s.basePrice || 'Prix sur demande' }} €
+          <option
+            *ngFor="let s of bookingCompany()!.services"
+            [ngValue]="s.name"
+          >
+            {{ s.name }} - {{ s.basePrice || "Prix sur demande" }} €
           </option>
         </select>
       </div>
@@ -231,12 +260,17 @@
 
       <div class="booking-note">
         <i class="fas fa-info-circle"></i>
-        Vous recevrez un email de confirmation avec les détails de votre réservation.
+        Vous recevrez un email de confirmation avec les détails de votre
+        réservation.
       </div>
     </div>
 
     <div class="modal-actions">
-      <button class="btn-confirm" (click)="confirmBooking()" [disabled]="!selectedService()">
+      <button
+        class="btn-confirm"
+        (click)="confirmBooking()"
+        [disabled]="!selectedService()"
+      >
         <i class="fas fa-check"></i>
         Confirmer la réservation
       </button>

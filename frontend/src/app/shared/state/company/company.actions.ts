@@ -17,7 +17,6 @@ export const loadAllCompaniesFailure = createAction(
 );
 
 // Load single company by ID
-
 export const loadCompany = createAction(
   '[Company] Load Company',
   props<{ id: string }>()
