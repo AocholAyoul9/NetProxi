@@ -1,20 +1,54 @@
 // super-admin-dashboard.component.scss
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
+// Variables
+$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$secondary-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+$text-dark: #1f2937;
+$text-muted: #6b7280;
+$white: #fff;
+$shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+$border-radius: 1rem;
+$transition: all 0.3s ease;
+
+// Mixins
+@mixin card-base {
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  border: 1px solid rgba($white, 0.2);
+}
+
+@mixin gradient-text {
+  background: linear-gradient(135deg, $text-dark, #374151);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Base Styles
 .super-admin-dashboard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
+// Header
 .admin-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  @include card-base;
+  background: $primary-gradient;
+  color: $white;
   padding: 2.5rem;
-  border-radius: 1.5rem;
   margin-bottom: 2.5rem;
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
   position: relative;
   overflow: hidden;
   
@@ -25,30 +59,30 @@
     right: -50%;
     width: 100%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background: radial-gradient(circle, rgba($white, 0.1) 1px, transparent 1px);
     background-size: 20px 20px;
     opacity: 0.3;
   }
   
-  h1 {
-    margin: 0 0 0.75rem 0;
-    color: white;
-    font-size: 2.5rem;
-    font-weight: 700;
+  h1, p {
     position: relative;
     z-index: 2;
+    margin: 0;
+  }
+  
+  h1 {
+    margin-bottom: 0.75rem;
+    font-size: 2.5rem;
+    font-weight: 700;
   }
   
   p {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba($white, 0.9);
     font-size: 1.25rem;
-    font-weight: 400;
-    position: relative;
-    z-index: 2;
   }
 }
 
+// Stats Grid
 .admin-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -57,15 +91,12 @@
 }
 
 .stat-card {
-  background: white;
+  @include card-base;
   padding: 2rem;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: $transition;
   position: relative;
   overflow: hidden;
   
@@ -76,45 +107,40 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: $primary-gradient;
   }
   
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: $shadow-lg;
+    
+    i {
+      transform: scale(1.1);
+    }
   }
   
   i {
+    @include flex-center;
     width: 80px;
     height: 80px;
     border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 2rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
+    background: $primary-gradient;
+    color: $white;
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s ease;
-  }
-  
-  &:hover i {
-    transform: scale(1.1);
+    transition: $transition;
   }
   
   h3 {
     font-size: 2.5rem;
     font-weight: 800;
     margin: 0 0 0.5rem 0;
-    color: #1f2937;
-    background: linear-gradient(135deg, #1f2937, #374151);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    @include gradient-text;
   }
   
   p {
     margin: 0;
-    color: #6b7280;
+    color: $text-muted;
     font-size: 1rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -122,16 +148,14 @@
   }
 }
 
+// Companies Section
 .companies-section {
-  background: white;
+  @include card-base;
   padding: 2.5rem;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
   
   h2 {
     margin: 0 0 2rem 0;
-    color: #1f2937;
+    color: $text-dark;
     font-size: 1.75rem;
     font-weight: 700;
     display: flex;
@@ -142,26 +166,31 @@
       content: '';
       width: 4px;
       height: 24px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: $primary-gradient;
       border-radius: 2px;
     }
   }
 }
 
+// Table Styles
 .companies-table {
   background: #f8fafc;
-  border-radius: 1rem;
+  border-radius: $border-radius;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: $shadow-sm;
   
-  .table-header {
+  .table-header,
+  .table-row {
     display: grid;
     grid-template-columns: 2fr 1fr 0.8fr 0.8fr 0.8fr 1fr;
     gap: 1.5rem;
     padding: 1.5rem 2rem;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+  }
+  
+  .table-header {
+    background: $primary-gradient;
+    color: $white;
     font-weight: 600;
     font-size: 0.9rem;
     text-transform: uppercase;
@@ -169,14 +198,9 @@
   }
   
   .table-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 0.8fr 0.8fr 0.8fr 1fr;
-    gap: 1.5rem;
-    padding: 1.5rem 2rem;
-    align-items: center;
-    background: white;
+    background: $white;
     border-bottom: 1px solid #f1f5f9;
-    transition: all 0.2s ease;
+    transition: $transition;
     
     &:last-child {
       border-bottom: none;
@@ -189,6 +213,7 @@
   }
 }
 
+// Company Cell
 .company-cell {
   display: flex;
   align-items: center;
@@ -199,7 +224,7 @@
     height: 50px;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: $shadow-sm;
     flex-shrink: 0;
     
     img {
@@ -209,36 +234,33 @@
     }
     
     .avatar-placeholder {
+      @include flex-center;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: $primary-gradient;
+      color: $white;
       font-weight: 700;
       font-size: 1.2rem;
     }
   }
   
   .company-info {
-    display: flex;
-    flex-direction: column;
-    
     strong {
-      color: #1f2937;
+      color: $text-dark;
       font-weight: 600;
       font-size: 1rem;
       margin-bottom: 0.25rem;
+      display: block;
     }
     
     span {
-      color: #6b7280;
+      color: $text-muted;
       font-size: 0.875rem;
     }
   }
 }
 
+// Toggle Switch
 .toggle-switch {
   position: relative;
   display: inline-block;
@@ -253,7 +275,7 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-    transition: all 0.3s ease;
+    transition: $transition;
     border-radius: 30px;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
     
@@ -264,8 +286,8 @@
       width: 22px;
       left: 4px;
       bottom: 4px;
-      background: white;
-      transition: all 0.3s ease;
+      background: $white;
+      transition: $transition;
       border-radius: 50%;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
@@ -275,7 +297,6 @@
     background: linear-gradient(135deg, #d1d5db, #9ca3af);
   }
   
-  // Active state (when checkbox would be checked)
   &.active .slider {
     background: linear-gradient(135deg, #10b981, #059669);
     
@@ -285,24 +306,23 @@
   }
 }
 
+// Actions
 .actions {
   display: flex;
   gap: 0.75rem;
   
   button {
+    @include flex-center;
     padding: 0.75rem;
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: $transition;
+    box-shadow: $shadow-sm;
     
     &.btn-view {
       background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      color: white;
+      color: $white;
       
       &:hover {
         background: linear-gradient(135deg, #1d4ed8, #1e40af);
@@ -313,7 +333,7 @@
     
     &.btn-edit {
       background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
+      color: $white;
       
       &:hover {
         background: linear-gradient(135deg, #d97706, #b45309);
@@ -328,19 +348,22 @@
   }
 }
 
-// Plan badges for the plan column
-.plan-badge {
+// Badges & Counts
+.plan-badge, .service-count, .employee-count {
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   font-size: 0.8rem;
   font-weight: 600;
+  text-align: center;
+}
+
+.plan-badge {
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  text-align: center;
   
   &.free {
     background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-    color: #6b7280;
+    color: $text-muted;
   }
   
   &.basic {
@@ -354,24 +377,19 @@
   }
 }
 
-// Service and employee count styling
 .service-count, .employee-count {
-  font-weight: 600;
-  color: #1f2937;
+  color: $text-dark;
   background: #f8fafc;
-  padding: 0.5rem 1rem;
-  border-radius: 1rem;
-  text-align: center;
   border: 1px solid #e5e7eb;
 }
 
-// Responsive design
+// Responsive
 @media (max-width: 1200px) {
   .companies-table {
     .table-header, .table-row {
       grid-template-columns: 2fr 1fr 0.8fr 0.8fr 1fr;
       
-      div:nth-child(4) { // Hide employee count on smaller screens
+      div:nth-child(4) {
         display: none;
       }
     }
@@ -387,13 +405,8 @@
     padding: 2rem 1.5rem;
     text-align: center;
     
-    h1 {
-      font-size: 2rem;
-    }
-    
-    p {
-      font-size: 1.125rem;
-    }
+    h1 { font-size: 2rem; }
+    p { font-size: 1.125rem; }
   }
   
   .admin-stats {
@@ -410,17 +423,13 @@
       font-size: 1.5rem;
     }
     
-    h3 {
-      font-size: 2rem;
-    }
+    h3 { font-size: 2rem; }
   }
   
   .companies-section {
     padding: 1.5rem;
     
-    h2 {
-      font-size: 1.5rem;
-    }
+    h2 { font-size: 1.5rem; }
   }
   
   .companies-table {
@@ -437,7 +446,7 @@
         &::before {
           content: attr(data-label);
           font-weight: 600;
-          color: #6b7280;
+          color: $text-muted;
           text-transform: uppercase;
           font-size: 0.8rem;
           letter-spacing: 0.5px;
@@ -459,7 +468,7 @@
   }
 }
 
-// Animation for loading states
+// Animations
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -473,26 +482,4 @@
 
 .stat-card, .companies-section {
   animation: fadeIn 0.6s ease-out;
-}
-
-// Custom scrollbar for table
-.companies-table {
-  &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 3px;
-  }
-  
-  &::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
-  }
 }
