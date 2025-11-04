@@ -9,11 +9,68 @@ export class CompanyEffects {
   loadCompany$;
   loadNearbyCompanies$;
   loadAllCompanies$;
+  loadCompanyServices$;
+  loadCompanyBookings$;
+  loadCompanyEmployees$;
 
   constructor(
     private actions$: Actions,
     private api: ApiService
   ) {
+
+
+    this.loadCompanyEmployees$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(CompanyActions.loadCompanyEmployees),
+        mergeMap(({ companyId }) =>
+          this.api.getCompanyEmployees(companyId).pipe(
+            map(employees =>
+              CompanyActions.loadCompanyEmployeesSuccess({ employees })
+            ),
+            catchError(error =>
+              of(CompanyActions.loadCompanyEmployeesFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+   
+    this.loadCompanyBookings$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(CompanyActions.loadCompanyBookings),
+        mergeMap(({ companyId }) =>
+          this.api.getCompanyBookings(companyId).pipe(
+            map(bookings =>
+              CompanyActions.loadCompanyBookingsSuccess({ bookings })
+            ),
+            catchError(error =>
+              of(CompanyActions.loadCompanyBookingsFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+    this.loadCompanyServices$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(CompanyActions.loadCompanyServices),
+        mergeMap(({ companyId }) =>
+          this.api.getCompanyService(companyId).pipe(
+            map(services =>
+              CompanyActions.loadCompanyServicesSuccess({ services })
+            ),
+            catchError(error =>
+              of(CompanyActions.loadCompanyServicesFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+    
+
+
+
+
+
     this.loadCompany$ = createEffect(() =>
       this.actions$.pipe(
         ofType(CompanyActions.loadCompany),

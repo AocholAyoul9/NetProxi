@@ -70,12 +70,15 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { Company } from '../../shared/models/company.model';
+import * as CompanySelectors from '../../shared/state/company/company.selectors';
+import * as CompanyActions from '../../shared/state/company/company.actions';
 
 
 import { User as EmployeeResponseDto } from '../../shared/models/user.model';
 import { Booking as BookingResponseDto } from '../../shared/models/booking.model';
 
 import { ServiceModel as ServiceResponseDto } from '../../shared/models/service.model';
+import { Store } from '@ngrx/store';
 @Component({
   selector: 'app-company-admin-dashboard',
   standalone: true,
@@ -92,13 +95,13 @@ export class CompanyAdminDashboardComponent implements OnInit {
 
   activeTab: 'overview' | 'services' | 'bookings' | 'employees' = 'overview';
 
-  constructor() {
-    // Mock data to avoid errors
-    this.company$ = of(this.createMockCompany());
-    this.services$ = of(this.createMockServices());
-    this.bookings$ = of(this.createMockBookings());
-    this.employees$ = of(this.createMockEmployees());
-    this.loading$ = of(false);
+  constructor(private store: Store) {
+
+    this.company$ = this.store.select(CompanySelectors.selectCurrentCompany);
+    this.services$ =  this.store.select(CompanySelectors.selectCompanyServices);
+    this.bookings$ = this.store.select(CompanySelectors.selectCompanyBookings);
+    this.employees$ = this.store.select(CompanySelectors.selectCompanyEmployees);
+    this.loading$ = this.store.select(CompanySelectors.selectCompanyLoading);
   }
 
   ngOnInit(): void {
@@ -110,8 +113,7 @@ export class CompanyAdminDashboardComponent implements OnInit {
   }
 
   createService(serviceData: any): void {
-    console.log('Creating service:', serviceData);
-    // Mock implementation
+   //this.store.dispatch(CompanyActions.createService({ serviceData }));
   }
 
   assignEmployeeToBooking(bookingId: string, employeeId: string): void {

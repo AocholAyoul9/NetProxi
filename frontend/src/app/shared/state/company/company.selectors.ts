@@ -12,3 +12,17 @@ export const selectCurrentCompany = createSelector(selectCompanyState, state =>s
 export const selectNearbyCompanies = createSelector(selectCompanyState, state => state.nearbyCompanies);
 export const selectCompanyLoading = createSelector(selectCompanyState, state => state.loading);
 export const selectCompanyError = createSelector(selectCompanyState, state => state.error)
+
+export const selectCompanyServices = createSelector(
+  selectCompanyState,
+  (state) => state.companyServices
+);
+export const selectCompanyBookings = createSelector(
+  selectCompanyState,
+  (state) => state.companyBookings
+);
+
+export const selectCompanyEmployees = createSelector(
+  selectCompanyState,
+  (state) => state.companyEmployees
+);
