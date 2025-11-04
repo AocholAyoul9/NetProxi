@@ -106,7 +106,7 @@ export class ApiService {
     );
   }
 
-  getBookingForCompany(companyId: string): Observable<Booking[]> {
+  getCompanyBookings(companyId: string): Observable<Booking[]> {
     return this.http.get<Booking[]>(
       `${this.baseUrl}/companies/${companyId}/bookings`,
       {
@@ -118,6 +118,18 @@ export class ApiService {
   cancelBooking(companyId: string, bookingId: string): Observable<void> {
     return this.http.delete<void>(
       `${this.baseUrl}/companies/${companyId}/bookings/${bookingId}`,
+      {
+       // headers: this.getHeaders(),
+      }
+    );
+  }
+
+
+  //get company employess
+
+  getCompanyEmployees(companyId: string): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/companies/${companyId}/employees`,
       {
        // headers: this.getHeaders(),
       }
