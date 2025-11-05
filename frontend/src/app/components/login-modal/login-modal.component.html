@@ -1,0 +1,97 @@
+<!-- Login Modal en Français avec liaisons -->
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Content de vous revoir</h2>
+      <p>Connectez-vous à votre compte</p>
+      <button class="close-btn" (click)="close()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <form class="login-form" (submit)="onSubmit($event)">
+      <!-- Sélection du type d'utilisateur -->
+      <div class="user-type-selector">
+        <div class="user-type-options">
+          <input type="radio" id="client-login" name="userType" value="client" 
+                 [checked]="selectedUserType === 'client'" (change)="onUserTypeChange('client')">
+          <label for="client-login" class="user-type-btn">
+            <i class="fas fa-user"></i>
+            <span>Client</span>
+          </label>
+
+          <input type="radio" id="company-login" name="userType" value="company"
+                 [checked]="selectedUserType === 'company'" (change)="onUserTypeChange('company')">
+          <label for="company-login" class="user-type-btn">
+            <i class="fas fa-building"></i>
+            <span>Entreprise</span>
+          </label>
+
+          <input type="radio" id="employee-login" name="userType" value="employee"
+                 [checked]="selectedUserType === 'employee'" (change)="onUserTypeChange('employee')">
+          <label for="employee-login" class="user-type-btn">
+            <i class="fas fa-briefcase"></i>
+            <span>Employé</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Formulaire de connexion -->
+      <div class="form-group">
+        <label for="login-email">Adresse Email</label>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="login-email" placeholder="Entrez votre email" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="login-password">Mot de Passe</label>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="login-password" #passwordInput placeholder="Entrez votre mot de passe" required>
+          <button type="button" class="password-toggle" (click)="togglePasswordVisibility(passwordInput)">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Se souvenir de moi & Mot de passe oublié -->
+      <div class="form-options">
+        <div class="remember-me">
+          <input type="checkbox" id="remember-me">
+          <label for="remember-me">Se souvenir de moi</label>
+        </div>
+        <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+      </div>
+
+      <button type="submit" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i>
+        Se Connecter
+      </button>
+
+      <!-- Connexion sociale -->
+      <div class="social-login">
+        <div class="divider">
+          <span>Ou continuer avec</span>
+        </div>
+        
+        <div class="social-buttons">
+          <button type="button" class="social-btn google-btn">
+            <i class="fab fa-google"></i>
+            Google
+          </button>
+          <button type="button" class="social-btn microsoft-btn">
+            <i class="fab fa-microsoft"></i>
+            Microsoft
+          </button>
+        </div>
+      </div>
+
+      <!-- Lien d'inscription -->
+      <div class="login-footer">
+        <p>Vous n'avez pas de compte ? <a href="#" class="signup-link">S'inscrire</a></p>
+      </div>
+    </form>
+  </div>
+</div>

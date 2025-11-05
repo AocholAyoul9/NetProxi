@@ -1,0 +1,138 @@
+<!-- Modal d'Inscription Unifié (Version sans ngModel) -->
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Créer un Compte</h2>
+      <button class="close-btn" (click)="close()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Sélection du type de compte -->
+    <div class="account-type-selector">
+      <div class="type-options">
+        <input type="radio" id="client-type" name="accountType" value="client" 
+               [checked]="accountType === 'client'" (change)="onAccountTypeChange('client')">
+        <label for="client-type" class="type-btn">
+          <i class="fas fa-user"></i>
+          <span>Client</span>
+          <small>Pour les particuliers</small>
+        </label>
+
+        <input type="radio" id="company-type" name="accountType" value="company"
+               [checked]="accountType === 'company'" (change)="onAccountTypeChange('company')">
+        <label for="company-type" class="type-btn">
+          <i class="fas fa-building"></i>
+          <span>Entreprise</span>
+          <small>Pour les professionnels</small>
+        </label>
+      </div>
+    </div>
+    
+    <form class="signup-form" (submit)="onSubmit($event)">
+      <!-- Champs communs -->
+      <div class="form-group">
+        <label for="email">Adresse Email</label>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="email" #email placeholder="Entrez votre email" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de Passe</label>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" #password placeholder="Créez un mot de passe" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Numéro de Téléphone</label>
+        <div class="input-group">
+          <i class="fas fa-phone"></i>
+          <input type="tel" id="phone" #phone placeholder="+33 1 23 45 67 89">
+        </div>
+      </div>
+
+      <!-- Champs spécifiques au Client -->
+      <div *ngIf="accountType === 'client'" class="form-fields">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstname">Prénom</label>
+            <div class="input-group">
+              <i class="fas fa-user"></i>
+              <input type="text" id="firstname" #firstname placeholder="Votre prénom" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lastname">Nom</label>
+            <div class="input-group">
+              <i class="fas fa-user"></i>
+              <input type="text" id="lastname" #lastname placeholder="Votre nom" required>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Champs spécifiques à l'Entreprise -->
+      <div *ngIf="accountType === 'company'" class="form-fields">
+        <div class="form-group">
+          <label for="company-name">Nom de l'Entreprise</label>
+          <div class="input-group">
+            <i class="fas fa-building"></i>
+            <input type="text" id="company-name" #companyName placeholder="Nom de votre entreprise" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Adresse</label>
+          <div class="input-group">
+            <i class="fas fa-map-marker-alt"></i>
+            <input type="text" id="address" #address placeholder="Adresse de l'entreprise" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="website">Site Web</label>
+          <div class="input-group">
+            <i class="fas fa-globe"></i>
+            <input type="url" id="website" #website placeholder="https://example.com">
+          </div>
+        </div>
+
+       <div class="form-group">
+    <label for="description">Description</label>
+    <div class="input-group">
+        <i class="fas fa-file-alt"></i>
+        <textarea 
+            id="description" 
+            #description 
+            placeholder="Description de votre entreprise" 
+            rows="5">
+        </textarea>
+    </div>
+</div>
+      </div>
+
+      <div class="form-checkbox">
+        <input type="checkbox" id="terms" #terms required>
+        <label for="terms">
+          J'accepte les <a href="#">Conditions d'Utilisation</a> et la <a href="#">Politique de Confidentialité</a>
+        </label>
+      </div>
+
+      <button type="submit" class="signup-btn" [disabled]="isLoading">
+        <i class="fas" [class.fa-spinner]="isLoading" [class.fa-spin]="isLoading" 
+           [class.fa-user-plus]="!isLoading && accountType === 'client'"
+           [class.fa-building]="!isLoading && accountType === 'company'"></i>
+        {{ isLoading ? 'Création en cours...' : (accountType === 'client' ? 'Créer mon Compte Client' : 'Créer mon Compte Entreprise') }}
+      </button>
+      
+      <div class="signup-footer">
+        <p>Vous avez déjà un compte ? <a href="#" class="login-link">Se Connecter</a></p>
+      </div>
+    </form>
+  </div>
+</div>

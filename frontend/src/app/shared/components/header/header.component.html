@@ -36,6 +36,9 @@
       </button>
     </div>
 
+
+    <app-login-modal *ngIf="showLogin" (closeModal)="closeLogin()"></app-login-modal>
+    <app-signup-modal *ngIf="showSignup" (closeModal)="closeSignup()"></app-signup-modal>
     <!-- Hamburger menu for mobile -->
     <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu" [class.active]="menuOpen()">
       <span></span>
