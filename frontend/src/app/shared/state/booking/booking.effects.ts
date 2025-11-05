@@ -27,7 +27,7 @@ export class BookingEffects {
       this.actions$.pipe(
         ofType(BookingActions.loadCompanyBookings),
         mergeMap(({ companyId }) =>
-          this.api.getBookingForCompany(companyId).pipe(
+          this.api.getCompanyBookings(companyId).pipe(
             map((bookings) =>
               BookingActions.loadCompanyBookingsSuccess({ bookings })
             ),
