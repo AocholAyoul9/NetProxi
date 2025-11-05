@@ -1,4 +1,3 @@
-<!-- Modal d'Inscription Unifié (Version sans ngModel) -->
 <div class="modal-overlay" (click)="close()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -130,9 +129,9 @@
         {{ isLoading ? 'Création en cours...' : (accountType === 'client' ? 'Créer mon Compte Client' : 'Créer mon Compte Entreprise') }}
       </button>
       
-      <div class="signup-footer">
+     <!----<div class="signup-footer">
         <p>Vous avez déjà un compte ? <a href="#" class="login-link">Se Connecter</a></p>
-      </div>
+      </div>-->
     </form>
   </div>
 </div>

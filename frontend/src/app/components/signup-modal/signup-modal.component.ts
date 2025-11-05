@@ -28,8 +28,6 @@ export class SignupModalComponent {
     // Company fields
     companyName: '',
     address: '',
-    latitude: null as number | null,
-    longitude: null as number | null,
     website: '',
     description: '',
     
@@ -51,7 +49,6 @@ export class SignupModalComponent {
   // Changer le type de compte
   onAccountTypeChange(type: 'client' | 'company') {
     this.accountType = type;
-    console.log('Type de compte sélectionné:', type);
   }
 
   // Soumission du formulaire
@@ -119,12 +116,10 @@ export class SignupModalComponent {
       password: this.formData.password,
       phone: this.formData.phone,
       address: this.formData.address,
-      latitude: this.formData.latitude,
-      longitude: this.formData.longitude,
       website: this.formData.website,
       description: this.formData.description,
-      pricing: "Contactez-nous pour les tarifs", // Valeur par défaut
-      openingHours: "Lundi - Vendredi: 9h-18h"   // Valeur par défaut
+      pricing: "Contactez-nous pour les tarifs",
+      openingHours: "Lundi - Vendredi: 9h-18h"  
     };
 
     // Appel API pour l'inscription entreprise
@@ -144,7 +139,7 @@ export class SignupModalComponent {
   }
 
   // Géolocalisation automatique pour l'entreprise
-  async getCurrentLocation() {
+ /* async getCurrentLocation() {
     if (this.accountType === 'company' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -156,5 +151,5 @@ export class SignupModalComponent {
         }
       );
     }
-  }
+  }*/
 }
