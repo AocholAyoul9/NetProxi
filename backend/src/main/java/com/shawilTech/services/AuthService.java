@@ -56,6 +56,8 @@ public class AuthService {
 
         User user = User.builder()
                 .username(request.getUsername())
+                .address(request.getAddress())
+                .phone(request.getPhone())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Collections.singleton(role))
@@ -67,6 +69,8 @@ public class AuthService {
         return AuthResponse.builder()
                 .token(token)
                 .username(user.getUsername())
+                .address(user.getAddress())
+                .phone(user.getPhone())
                 .role("CLIENT")
                 .message("Client registered successfully")
                 .build();
