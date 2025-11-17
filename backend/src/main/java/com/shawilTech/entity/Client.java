@@ -21,9 +21,14 @@ public class Client {
     private UUID id;
 
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    private String password;
     private String phone;
     private String address;
+    private String token;
 
     @OneToMany(mappedBy = "client")
     private Set<Booking> bookings;
