@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.shawilTech.identityservice.service.GeocodingService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.shawilTech.identityservice.security.JwtTokenProvider;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +24,8 @@ public class CompanyService {
     private final ServiceRepository serviceRepository;
     private final GeocodingService geocodingService; // <-- Add this
 
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtProvider;
 
     /**
      * Find companies near a point (lat, lng) within radius in km
@@ -29,6 +33,8 @@ public class CompanyService {
 
     public List<CompanyResponseDto> findNearbyCompanies(double lat, double lng, double radiusKm) {
         List<Company> activeCompanies = companyRepository.findByActiveTrue();
+
+
 
         return activeCompanies.stream()
                 .filter(c -> c.getLatitude() != null && c.getLongitude() != null)
@@ -94,17 +100,22 @@ public class CompanyService {
      */
     @Transactional
     public CompanyResponseDto registerCompany(CompanyRequestDto dto) {
+
+        String token = jwtProvider.generateToken(dto.getName());
+
         // Build company from DTO
         Company company = Company.builder()
                 .name(dto.getName())
                 .address(dto.getAddress())
                 .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .phone(dto.getPhone())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .logoUrl(dto.getLogoUrl())
                 .website(dto.getWebsite())
                 .description(dto.getDescription())
+                .token(token)
                 .pricing(dto.getPricing())
                 .openingHours(dto.getOpeningHours())
                 .active(true)
@@ -145,6 +156,35 @@ public class CompanyService {
                 .build();
     }
 
+
+    /**
+     * Login company
+     */
+    public CompanyResponseDto loginCompany(CompanyLoginRequestDto dto){
+
+        Company company = companyRepository.findByEmail(dto.getEmail())
+                .orElseThrow(()-> new RuntimeException("Invalid email or password"));
+
+        if(!passwordEncoder.matches(dto.getPassword(), company.getPassword())){
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        String token = jwtProvider.generateToken(dto.getEmail());
+        company.setToken(token);
+
+        companyRepository.save(company);
+        return CompanyResponseDto.builder()
+                .name(company.getName())
+                .address(company.getAddress())
+                .email(company.getEmail())
+                .phone(company.getPhone())
+                .logoUrl(company.getLogoUrl())
+                .website(company.getWebsite())
+                .description(company.getDescription())
+                .token(company.getToken())
+                .build();
+
+    }
     /**
      * Fetch company by ID
      */

@@ -1,7 +1,6 @@
 package com.shawilTech.identityservice.controller;
 
-import com.shawilTech.identityservice.dto.CompanyRequestDto;
-import com.shawilTech.identityservice.dto.CompanyResponseDto;
+import com.shawilTech.identityservice.dto.*;
 import com.shawilTech.identityservice.entity.Company;
 import com.shawilTech.identityservice.service.CompanyService;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +36,15 @@ public class CompanyController {
 
     //  Register a new company
     @Operation(summary = "Register a new  company")
-    @PostMapping
+    @PostMapping("/register")
     public CompanyResponseDto registerCompany(@RequestBody CompanyRequestDto dto) {
         return companyService.registerCompany(dto);
+    }
+
+    @Operation(summary = "Login company")
+    @PostMapping("/login")
+    public CompanyResponseDto loginCompany(@RequestBody CompanyLoginRequestDto dto) {
+        return companyService.loginCompany(dto);
     }
 
     // Get company details by ID

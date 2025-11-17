@@ -10,4 +10,6 @@ import java.util.*;
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, UUID> {
     List<Company> findByActiveTrue();
+    Optional<Company> findByEmail(String email);
+
 }

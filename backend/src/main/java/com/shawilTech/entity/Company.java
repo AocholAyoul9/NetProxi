@@ -25,6 +25,7 @@ public class Company {
     @Column(name = "address")
     private String address;
     private String email;
+    private  String password;
     private String phone;
 
     private boolean active = true;
@@ -43,6 +44,8 @@ public class Company {
     @Column(length = 2000)
     private String description;
 
+
+    private  String token;
 
     private String pricing;
     private String openingHours;
