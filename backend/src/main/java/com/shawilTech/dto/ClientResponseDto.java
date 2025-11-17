@@ -12,6 +12,8 @@ public class ClientResponseDto {
     private  UUID id;
     private String name;
     private String email;
+    private  String password;
+    private String token;
     private String phone;
     private String address;
 }

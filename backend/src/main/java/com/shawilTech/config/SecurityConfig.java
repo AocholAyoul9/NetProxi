@@ -44,7 +44,6 @@ public class SecurityConfig {
                         .permitAll()
 
                         // Public API endpoints
-                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/bookings/**").permitAll()
                         .requestMatchers("/api/companies/**").permitAll()
                         .requestMatchers("/api/subscriptions/**").permitAll()

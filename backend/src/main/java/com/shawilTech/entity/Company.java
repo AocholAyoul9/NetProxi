@@ -55,9 +55,9 @@ public class Company {
 
     @OneToMany(mappedBy = "company")
     @JsonManagedReference
-    private Set<Subscription> subscriptions; // history of subscriptions
+    private Set<Subscription> subscriptions;
 
     @OneToOne
     @JoinColumn(name = "active_subscription_id")
-    private Subscription activeSubscription; // current subscription
+    private Subscription activeSubscription;
 }
