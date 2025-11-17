@@ -24,6 +24,7 @@ public class CompanyResponseDto {
     private String logoUrl;
     private String website;
     private String description;
+    private  String token;
 
     // Location
     private Double latitude;

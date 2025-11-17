@@ -9,6 +9,7 @@ public  class CompanyRequestDto {
     private  String name;
     private  String address;
     private  String email;
+    private  String password;
     private  String phone;
 
     private Double latitude;
@@ -19,6 +20,7 @@ public  class CompanyRequestDto {
 
     private String description;
 
+    private String token;
 
     private String pricing;
     private String openingHours;
