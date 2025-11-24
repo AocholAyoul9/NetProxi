@@ -1,16 +1,17 @@
 import { createReducer, on } from '@ngrx/store';
 import * as AuthActions from './auth.actions';
 import { User } from '../../models/user.model';
+import { Company } from '../../models/company.model';
 
 export interface AuthState {
-  user: User | null;
+  company: Company | null;
   token: string | null;
   loading: boolean;
   error: any;
 }
 
 export const initialState: AuthState = {
-  user: null,
+  company: null,
   token: null,
   loading: false,
   error: null,
@@ -18,30 +19,38 @@ export const initialState: AuthState = {
 
 export const authReducer = createReducer(
   initialState,
-  //login
-  on(AuthActions.login, (state) => ({ ...state, loading: true, error: null })),
-  on(AuthActions.loginSuccess, (state, { user, token }) => ({
+  //login company
+  on(AuthActions.loginCompany, (state) => ({ ...state, loading: true, error: null })),
+  on(AuthActions.loginCompanySuccess, (state, { company, token }) => ({
     ...state,
-    user,
+    company,
     token,
     loading: false,
   })),
-  on(AuthActions.loginFailure, (state, { error }) => ({
+  on(AuthActions.loginCompanyFailure, (state, { error }) => ({
     ...state,
     error,
     loading: false,
   })),
 
-  //logout
+  //logout company
+  on(AuthActions.logOutCompany, () => initialState),
 
-  on(AuthActions.logOut, () => initialState),
-
-  // register
-  on(AuthActions.register, (state) => ({
+  // register  company
+  on(AuthActions.registerCompany, (state) => ({
     ...state,
     loading: true,
     error: null,
   })),
-  on(AuthActions.registerSuccess, (state, {user})=>({...state, user, loading: false})),
-  on(AuthActions.registerFailure,(state, {error})=>({ ...state, error, loading: false}))
+  on(AuthActions.registerCompanySuccess, (state, {company})=>({...state, company, loading: false})),
+  on(AuthActions.registerCompanyFailure,(state, {error})=>({ ...state, error, loading: false})),
+
+    // register  client
+  on(AuthActions.registerClient, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(AuthActions.registerClientSuccess, (state, {client})=>({...state, client, loading: false})),
+  on(AuthActions.registerClientFailure,(state, {error})=>({ ...state, error, loading: false}))
 );

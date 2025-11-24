@@ -3,6 +3,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { User } from '../shared/models/user.model';
+import { Company} from '../shared/models/company.model';
+import { Client } from '../shared/models/client.model';
+
 import { isPlatformBrowser } from '@angular/common';
 
 
@@ -10,35 +13,42 @@ import { isPlatformBrowser } from '@angular/common';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8082/api/auth';
-  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
-  public currentUser$ = this.currentUserSubject.asObservable();
+  private baseUrl = 'http://localhost:8082/api';
+  private currentCompanySubject = new BehaviorSubject<Company | null>(this.getUserFromStorage());
+  public currentCompany$ = this.currentCompanySubject.asObservable();
 
-    private platformId = inject(PLATFORM_ID);
+  private platformId = inject(PLATFORM_ID);
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  /** Register a new client or company */
-  register(user: Partial<User>): Observable<User> {
-    return this.http.post<User>(`${this.baseUrl}/register`, user);
+  /** Register a new  company */
+  registerCompany(Company: Partial<Company>): Observable<Company> {
+    return this.http.post<User>(`${this.baseUrl}/companies/register`, Company);
   }
 
-  /** Login with email/password */
-  login(email: string, password: string): Observable<{ token: string; user: User }> {
-    return this.http.post<{ token: string; user: User }>(`${this.baseUrl}/login`, { email, password }).pipe(
+
+   /** Register a new client */
+  registerClient(Client: Partial<Client>): Observable<Client> {
+    return this.http.post<Client>(`${this.baseUrl}/clients/register`, Client);
+  }
+
+
+  /** Login company with email/password */
+  loginCompany(email: string, password: string): Observable<{ token: string; company: Company }> {
+    return this.http.post<{ token: string; company: Company }>(`${this.baseUrl}/companies/login`, { email, password }).pipe(
       tap(res => {
         localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.user));
-        this.currentUserSubject.next(res.user);
+        localStorage.setItem('company', JSON.stringify(res.company));
+        this.currentCompanySubject.next(res.company);
       })
     );
   }
 
-  /** Logout user */
-  logout(): void {
+  /** Logout  company */
+  logoutCompany(): void {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    this.currentUserSubject.next(null);
+    localStorage.removeItem('company');
+    this.currentCompanySubject.next(null);
     this.router.navigate(['/login']);
   }
 
@@ -47,9 +57,9 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  /** Get currently logged in user */
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
+  /** Get currently logged in  company */
+  getCurrentCompany(): Company | null {
+    return this.currentCompanySubject.value;
   }
 
   private getUserFromStorage(): User | null {

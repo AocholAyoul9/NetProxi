@@ -1,14 +1,17 @@
 import { Component, Output, EventEmitter, HostListener } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // ← Add this
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
+import * as AuthActions from '../../shared/state/auth/auth.actions';
 
 @Component({
   selector: 'app-signup-modal',
   imports: [FormsModule, CommonModule],
   templateUrl: './signup-modal.component.html',
-  styleUrl: './signup-modal.component.scss'
+  styleUrl: './signup-modal.component.scss',
 })
 export class SignupModalComponent {
+  constructor(private store: Store) {}
 
   @Output() closeModal = new EventEmitter<void>();
   @Output() signupSuccess = new EventEmitter<any>();
@@ -20,19 +23,22 @@ export class SignupModalComponent {
     email: '',
     password: '',
     phone: '',
-    
+
     // Client fields
     firstName: '',
-    lastName: '',
-    
+
     // Company fields
     companyName: '',
     address: '',
+
     website: '',
     description: '',
-    
+    latitude: 0,
+    longitude: 0,
+    logoUrl: '',
+
     // Common
-    acceptedTerms: false
+    acceptedTerms: false,
   };
 
   // Méthode pour fermer le modal
@@ -42,7 +48,7 @@ export class SignupModalComponent {
 
   // Fermer avec la touche Escape
   @HostListener('document:keydown.escape', ['$event'])
-  onEscapeKey(event: KeyboardEvent) {
+  onEscapeKey(event: Event) {
     this.close();
   }
 
@@ -52,94 +58,76 @@ export class SignupModalComponent {
   }
 
   // Soumission du formulaire
-  async onSubmit(event: Event) {
-    event.preventDefault();
-    
-    if (!this.formData.acceptedTerms) {
-      alert('Veuillez accepter les conditions d\'utilisation');
-      return;
-    }
+ onSubmit(event: Event) {
+  event.preventDefault();
 
-    this.isLoading = true;
-
-    try {
-      let result;
-      
-      if (this.accountType === 'client') {
-        result = await this.registerClient();
-      } else {
-        result = await this.registerCompany();
-      }
-
-      this.signupSuccess.emit(result);
-      this.close();
-      
-    } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error);
-      alert('Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
-    } finally {
-      this.isLoading = false;
-    }
+  if (!this.formData.acceptedTerms) {
+    alert('Veuillez accepter les conditions d\'utilisation');
+    return;
   }
+
+  this.isLoading = true;
+
+  try {
+    if (this.accountType === 'client') {
+      this.registerClient();
+    } else {
+      this.registerCompany();
+    }
+
+    this.close();
+  } catch (error) {
+    console.error("Erreur lors de l'inscription:", error);
+    alert("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
+  } finally {
+    this.isLoading = false;
+  }
+}
+
 
   // Inscription Client
-  private async registerClient() {
-    const clientData = {
-      email: this.formData.email,
-      password: this.formData.password,
-      phone: this.formData.phone,
-      firstName: this.formData.firstName,
-      lastName: this.formData.lastName
-    };
+  private registerClient() {
+  const clientData = {
 
-    // Appel API pour l'inscription client
-    const response = await fetch('/api/auth/register/client', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(clientData)
-    });
+    name: this.formData.firstName,
+    email: this.formData.email,
+    address: this.formData.address,
+    password: this.formData.password,
+    phone: this.formData.phone,
+  
+  };
 
-    if (!response.ok) {
-      throw new Error('Erreur lors de l\'inscription client');
-    }
+  this.store.dispatch(AuthActions.registerClient({ client: clientData }));
+}
 
-    return await response.json();
-  }
 
   // Inscription Entreprise
-  private async registerCompany() {
-    const companyData = {
-      name: this.formData.companyName,
-      email: this.formData.email,
-      password: this.formData.password,
-      phone: this.formData.phone,
-      address: this.formData.address,
-      website: this.formData.website,
-      description: this.formData.description,
-      pricing: "Contactez-nous pour les tarifs",
-      openingHours: "Lundi - Vendredi: 9h-18h"  
-    };
+private async registerCompany() {
 
-    // Appel API pour l'inscription entreprise
-    const response = await fetch('/api/auth/register/company', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(companyData)
-    });
+    await this.getCurrentLocation();
 
-    if (!response.ok) {
-      throw new Error('Erreur lors de l\'inscription entreprise');
-    }
+  const companyData = {
+    name: this.formData.companyName,
+    address: this.formData.address,
+    email: this.formData.email,
+    password: this.formData.password,
+    phone: this.formData.phone,
+    latitude: this.formData.latitude || 0,
+    longitude: this.formData.longitude || 0,
+    logoUrl: this.formData.logoUrl || "",
+    website: this.formData.website,
+    description: this.formData.description,
+    token: "", // backend will typically generate this
+    pricing: "Contactez-nous pour les tarifs",
+    openingHours: "Lundi - Vendredi: 9h-18h"
+  };
 
-    return await response.json();
-  }
+  this.store.dispatch(AuthActions.registerCompany({ company: companyData }));
+}
+
 
   // Géolocalisation automatique pour l'entreprise
- /* async getCurrentLocation() {
+   async getCurrentLocation() {
     if (this.accountType === 'company' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -151,5 +139,5 @@ export class SignupModalComponent {
         }
       );
     }
-  }*/
+  }
 }

@@ -49,7 +49,8 @@
           <input
             type="email"
             id="email"
-            #email
+            name="email"
+            [(ngModel)]="formData.email"
             placeholder="Entrez votre email"
             required
           />
@@ -63,7 +64,8 @@
           <input
             type="password"
             id="password"
-            #password
+            name="password"
+            [(ngModel)]="formData.password"
             placeholder="Créez un mot de passe"
             required
           />
@@ -74,7 +76,13 @@
         <label for="phone">Numéro de Téléphone</label>
         <div class="input-group">
           <i class="fas fa-phone"></i>
-          <input type="tel" id="phone" #phone placeholder="+33 1 23 45 67 89" />
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            [(ngModel)]="formData.phone"
+            placeholder="+33 1 23 45 67 89"
+          />
         </div>
       </div>
 
@@ -82,28 +90,31 @@
       <div *ngIf="accountType === 'client'" class="form-fields">
         <div class="form-row">
           <div class="form-group">
-            <label for="lastname">Nom</label>
+            <label for="firstName">Prénom</label>
             <div class="input-group">
               <i class="fas fa-user"></i>
               <input
                 type="text"
-                id="lastname"
-                #lastname
-                placeholder="Votre nom"
+                id="firstName"
+                name="firstName"
+                [(ngModel)]="formData.firstName"
+                placeholder="Votre prénom"
                 required
               />
             </div>
           </div>
 
+
           <div class="form-group">
-            <label for="address">Adresse</label>
+            <label for="clientAddress">Adresse</label>
             <div class="input-group">
               <i class="fas fa-map-marker-alt"></i>
               <input
-                type="tel"
-                id="address"
-                #Adress
-                placeholder="Entrez votre adresse"
+                type="text"
+                id="clientAddress"
+                name="clientAddress"
+                [(ngModel)]="formData.address"
+                placeholder="Votre adresse"
               />
             </div>
           </div>
@@ -119,7 +130,8 @@
             <input
               type="text"
               id="company-name"
-              #companyName
+              name="companyName"
+              [(ngModel)]="formData.companyName"
               placeholder="Nom de votre entreprise"
               required
             />
@@ -127,13 +139,14 @@
         </div>
 
         <div class="form-group">
-          <label for="address">Adresse</label>
+          <label for="companyAddress">Adresse</label>
           <div class="input-group">
             <i class="fas fa-map-marker-alt"></i>
             <input
               type="text"
-              id="address"
-              #address
+              id="companyAddress"
+              name="address"
+              [(ngModel)]="formData.address"
               placeholder="Adresse de l'entreprise"
               required
             />
@@ -147,7 +160,8 @@
             <input
               type="url"
               id="website"
-              #website
+              name="website"
+              [(ngModel)]="formData.website"
               placeholder="https://example.com"
             />
           </div>
@@ -159,17 +173,23 @@
             <i class="fas fa-file-alt"></i>
             <textarea
               id="description"
-              #description
+              name="description"
+              [(ngModel)]="formData.description"
               placeholder="Description de votre entreprise"
               rows="5"
-            >
-            </textarea>
+            ></textarea>
           </div>
         </div>
       </div>
 
       <div class="form-checkbox">
-        <input type="checkbox" id="terms" #terms required />
+        <input
+          type="checkbox"
+          id="terms"
+          name="acceptedTerms"
+          [(ngModel)]="formData.acceptedTerms"
+          required
+        />
         <label for="terms">
           J'accepte les <a href="#">Conditions d'Utilisation</a> et la
           <a href="#">Politique de Confidentialité</a>
@@ -192,10 +212,6 @@
             : "Créer mon Compte Entreprise"
         }}
       </button>
-
-      <!----<div class="signup-footer">
-        <p>Vous avez déjà un compte ? <a href="#" class="login-link">Se Connecter</a></p>
-      </div>-->
     </form>
   </div>
 </div>

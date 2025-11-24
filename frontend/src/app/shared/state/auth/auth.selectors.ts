@@ -3,9 +3,9 @@ import { AuthState } from "./auth.reducer";
 
 export const selectAuthState = createFeatureSelector<AuthState>('auth');
 
-export const selectCurrentUser = createSelector(
+export const selectCurrentCompany = createSelector(
     selectAuthState,
-    state => state.user
+    state => state.company
 );
 
 export const selectAuthToken = createSelector(

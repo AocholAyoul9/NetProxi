@@ -38,9 +38,21 @@ export class CompanyAdminDashboardComponent implements OnInit {
     this.loading$ = this.store.select(CompanySelectors.selectCompanyLoading);
   }
 
-  ngOnInit(): void {
-    // No API calls needed for mock data
+  ngOnInit() {
+  const companyId = localStorage.getItem('companyId');
+  if (companyId) {
+    this.store.dispatch(AuthActions.loadCompanyDetails({ companyId }));
   }
+
+  this.company$ = this.store.select(state => state.company.company);
+  this.loading$ = this.store.select(state => state.company.loading);
+
+  // Load other related entities (services, bookings, employees) filtered by companyId
+  this.store.dispatch(AuthActions.loadCompanyServices({ companyId }));
+  this.store.dispatch(AuthActions.loadCompanyBookings({ companyId }));
+  this.store.dispatch(AuthActions.loadCompanyEmployees({ companyId }));
+}
+
 
   setActiveTab(tab: 'overview' | 'services' | 'bookings' | 'employees'): void {
     this.activeTab = tab;

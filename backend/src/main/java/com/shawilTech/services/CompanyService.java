@@ -170,13 +170,16 @@ public class CompanyService {
         }
 
         String token = jwtProvider.generateToken(dto.getEmail());
+        
         company.setToken(token);
 
         companyRepository.save(company);
+
         return CompanyResponseDto.builder()
                 .name(company.getName())
                 .address(company.getAddress())
                 .email(company.getEmail())
+                .password(company.getPassword())
                 .phone(company.getPhone())
                 .logoUrl(company.getLogoUrl())
                 .website(company.getWebsite())
