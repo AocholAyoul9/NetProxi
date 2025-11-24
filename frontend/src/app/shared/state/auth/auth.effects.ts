@@ -8,35 +8,46 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthEffects {
-  login$;
-  loginSuccess$;
-  register$;
-  logout$;
+  loginCompany$;
+  loginCompanySuccess$;
+  registerCompany$;
+  registerClient$;
+  logoutCompany$;
 
   constructor(
     private action$: Actions,
     private authService: AuthService,
     private router: Router
   ) {
-    this.login$ = createEffect(() =>
+    this.loginCompany$ = createEffect(() =>
       this.action$.pipe(
-        ofType(AuthActions.login),
+        ofType(AuthActions.loginCompany),
         mergeMap(({ email, password }) =>
-          this.authService.login(email, password).pipe(
+          this.authService.loginCompany(email, password).pipe(
             map((res) =>
-              AuthActions.loginSuccess({ user: res.user, token: res.token })
+              AuthActions.loginCompanySuccess({
+                company: res.company,
+                token: res.token,
+              })
             ),
-            catchError((error) => of(AuthActions.loginFailure({ error })))
+            catchError((error) =>
+              of(AuthActions.loginCompanyFailure({ error }))
+            )
           )
         )
       )
     );
-    this.loginSuccess$ = createEffect(
+    this.loginCompanySuccess$ = createEffect(
       () =>
         this.action$.pipe(
-          ofType(AuthActions.loginSuccess),
-          tap(() => {
-            this.router.navigate(['/dashboard']);
+          ofType(AuthActions.loginCompanySuccess),
+          tap(({ token, company }) => {
+            localStorage.setItem('companyId', company.id);
+            localStorage.setItem('authToken', token);
+
+        
+
+            this.router.navigate(['/company-admin']);
           })
         ),
       {
@@ -44,24 +55,44 @@ export class AuthEffects {
       }
     );
 
-    this.register$ = createEffect(() =>
+    this.registerCompany$ = createEffect(() =>
       this.action$.pipe(
-        ofType(AuthActions.register),
-        mergeMap(({ user }) =>
-          this.authService.register(user).pipe(
-            map((newUser) => AuthActions.registerSuccess({ user: newUser })),
-            catchError((error) => of(AuthActions.registerFailure({ error })))
+        ofType(AuthActions.registerCompany),
+        mergeMap(({ company }) =>
+          this.authService.registerCompany(company).pipe(
+            map((newCompany) =>
+              AuthActions.registerCompanySuccess({ company: newCompany })
+            ),
+            catchError((error) =>
+              of(AuthActions.registerCompanyFailure({ error }))
+            )
           )
         )
       )
     );
 
-    this.logout$ = createEffect(
+    this.registerClient$ = createEffect(() =>
+      this.action$.pipe(
+        ofType(AuthActions.registerClient),
+        mergeMap(({ client }) =>
+          this.authService.registerClient(client).pipe(
+            map((newClient) =>
+              AuthActions.registerClientSuccess({ client: newClient })
+            ),
+            catchError((error) =>
+              of(AuthActions.registerClientFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+
+    this.logoutCompany$ = createEffect(
       () =>
         this.action$.pipe(
-          ofType(AuthActions.logOut),
+          ofType(AuthActions.logOutCompany),
           tap(() => {
-            this.authService.logout();
+            this.authService.logoutCompany();
           })
         ),
       { dispatch: false }

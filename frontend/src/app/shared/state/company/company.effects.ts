@@ -74,8 +74,8 @@ export class CompanyEffects {
     this.loadCompany$ = createEffect(() =>
       this.actions$.pipe(
         ofType(CompanyActions.loadCompany),
-        mergeMap(({ id }) =>
-          this.api.getCompanyById(id).pipe(
+        mergeMap(({ companyId }) =>
+          this.api.getCompanyById(companyId).pipe(
             map(company =>
               CompanyActions.loadCompanySuccess({ company })
             ),

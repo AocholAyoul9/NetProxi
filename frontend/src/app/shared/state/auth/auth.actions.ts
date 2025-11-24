@@ -1,35 +1,53 @@
 import {createAction, props} from '@ngrx/store';
 import {User} from '../../models/user.model';
+import {Company} from '../../models/company.model';
+import {Client} from '../../models/client.model';
 
-//login
-export const login = createAction(
-    '[Auth] login',
+
+
+//login company
+export const loginCompany = createAction(
+    '[Auth] login company',
     props<{email: string; password: string}>()
 );
 
-export const loginSuccess = createAction(
-    '[Auth] Login Success',
-    props<{user: User; token: string}>()
+export const loginCompanySuccess = createAction(
+    '[Auth] Login company Success',
+    props<{company: Company; token: string}>()
 );
 
-export const loginFailure = createAction(
-    '[Auth] Login Failure',
+export const loginCompanyFailure = createAction(
+    '[Auth] Login company Failure',
     props<{error: any}>()
 )
 
-//logout
-export const logOut = createAction('[Auth] logOut')
+//logout company
+export const logOutCompany = createAction('[Auth] logOut company')
 
-//register
+//register company
 
-export const register = createAction('[Auth] register',
-    props<{user: Partial<User>}>()
+export const registerCompany = createAction('[Auth] register company',
+    props<{company: Partial<Company>}>()
 )
 
-export const registerSuccess = createAction('[Auth] register success',
-    props<{user: User}>()
+export const registerCompanySuccess = createAction('[Auth] register company success',
+    props<{company: Company}>()
 )
 
-export const registerFailure = createAction('[Auth] register Failure',
+export const registerCompanyFailure = createAction('[Auth] register company Failure',
+    props<{error: any}>()
+)
+
+//register client
+
+export const registerClient = createAction('[Auth] register client',
+    props<{client: Partial<Client>}>()
+)
+
+export const registerClientSuccess = createAction('[Auth] register client success',
+    props<{client: Client}>()
+)
+
+export const registerClientFailure = createAction('[Auth] register client Failure',
     props<{error: any}>()
 )

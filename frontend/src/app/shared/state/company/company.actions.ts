@@ -64,15 +64,15 @@ export const loadAllCompaniesFailure = createAction(
 
 // Load single company by ID
 export const loadCompany = createAction(
-  '[Company] Load Company',
-  props<{ id: string }>()
+  '[Company admin] Load Company',
+  props<{ companyId: string }>()
 );
 export const loadCompanySuccess = createAction(
-  '[Company] Load Company Success',
+  '[Company admin] Load Company Success',
   props<{ company: Company }>()
 );
 export const loadCompanyFailure = createAction(
-  '[Company] Load Company Failure',
+  '[Company admin ] Load Company Failure',
   props<{ error: any }>()
 );
 

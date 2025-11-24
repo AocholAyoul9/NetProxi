@@ -2,8 +2,8 @@ export interface ServiceResponseDto {
   id?: string;
   name: string;
   description?: string;
-  isPopular?: boolean; // Added for highlighting popular services
-  basePrice?: number; // Added for service-specific pricing
+  isPopular?: boolean;
+  basePrice?: number; 
 }
 
 export interface Company {
@@ -19,44 +19,40 @@ export interface Company {
   description?: string;
   latitude?: number;
   longitude?: number;
-  distance?: number; // Distance from user in km
+  distance?: number; 
   rating?: number;
   reviewsCount?: number;
   services?: ServiceResponseDto[];
 
   // Enhanced pricing information
-  startingPrice?: number; // Starting price for services
-  endingPrice?: number; // Maximum price for services
-  minimumPrice?: number; // Minimum booking price
-  pricingRange?: string; // Formatted price range (e.g., "€50 - €150")
+  startingPrice?: number;
+  endingPrice?: number; 
+  minimumPrice?: number; 
+  pricingRange?: string; 
 
-  // Availability & operations
   openingHours?: string;
-  isAvailableNow?: boolean; // Real-time availability
-  responseTime?: number; // Average response time in hours
+  isAvailableNow?: boolean;
+  responseTime?: number; 
 
   // Trust & verification signals
-  isVerified?: boolean; // Company verification status
-  yearsExperience?: number; // Years in business
-  employeeCount?: number; // Number of employees
+  isVerified?: boolean; 
+  yearsExperience?: number; 
+  employeeCount?: number; 
 
-  // Additional metadata
-  specialties?: string[]; // Company specialties
-  insuranceVerified?: boolean; // Insurance status
-  languages?: string[]; // Languages spoken
+  specialties?: string[]; 
+  insuranceVerified?: boolean;
+  languages?: string[];
 }
 
-// Optional: Create a more detailed company interface for the details page
 export interface CompanyDetails extends Company {
-  // Additional details for company profile page
   foundedYear?: number;
-  serviceAreas?: string[]; // Areas they serve
-  certifications?: string[]; // Professional certifications
-  portfolioImages?: string[]; // Work portfolio
-  teamMembers?: TeamMember[]; // Team information
-  paymentMethods?: string[]; // Accepted payment methods
-  cancellationPolicy?: string; // Cancellation policy
-  averageResponseTime?: string; // Formatted response time
+  serviceAreas?: string[]; 
+  certifications?: string[];
+  portfolioImages?: string[];
+  teamMembers?: TeamMember[];
+  paymentMethods?: string[];
+  cancellationPolicy?: string; 
+  averageResponseTime?: string;
 }
 
 export interface TeamMember {
