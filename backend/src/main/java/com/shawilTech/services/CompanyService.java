@@ -176,6 +176,7 @@ public class CompanyService {
         companyRepository.save(company);
 
         return CompanyResponseDto.builder()
+                .id(company.getId())
                 .name(company.getName())
                 .address(company.getAddress())
                 .email(company.getEmail())

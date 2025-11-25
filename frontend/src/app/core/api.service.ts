@@ -71,7 +71,7 @@ export class ApiService {
 
   getCompanyService(companyId: string): Observable<ServiceModel[]> {
     return this.http.get<ServiceModel[]>(
-      `${this.baseUrl}/companies/${companyId}/services`,
+      `${this.baseUrl}/services/company/${companyId}`,
       {
        // headers: this.getHeaders(),
       }

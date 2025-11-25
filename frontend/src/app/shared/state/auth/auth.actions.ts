@@ -1,5 +1,4 @@
 import {createAction, props} from '@ngrx/store';
-import {User} from '../../models/user.model';
 import {Company} from '../../models/company.model';
 import {Client} from '../../models/client.model';
 
@@ -13,7 +12,7 @@ export const loginCompany = createAction(
 
 export const loginCompanySuccess = createAction(
     '[Auth] Login company Success',
-    props<{company: Company; token: string}>()
+    props<{company: any; token: string}>()
 );
 
 export const loginCompanyFailure = createAction(
