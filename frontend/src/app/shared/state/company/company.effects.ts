@@ -67,10 +67,6 @@ export class CompanyEffects {
     );
     
 
-
-
-
-
     this.loadCompany$ = createEffect(() =>
       this.actions$.pipe(
         ofType(CompanyActions.loadCompany),

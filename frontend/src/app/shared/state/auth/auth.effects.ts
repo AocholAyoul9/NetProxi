@@ -3,8 +3,10 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { AuthService } from '../../../core/auth.service';
 
 import * as AuthActions from './auth.actions';
+import * as CompanyActions from '../company/company.actions';
 import { catchError, map, mergeMap, of, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { Company } from '../../models/company.model';
 
 @Injectable()
 export class AuthEffects {
@@ -13,6 +15,7 @@ export class AuthEffects {
   registerCompany$;
   registerClient$;
   logoutCompany$;
+  loadCompanyDataAfterLogin$;
 
   constructor(
     private action$: Actions,
@@ -24,9 +27,10 @@ export class AuthEffects {
         ofType(AuthActions.loginCompany),
         mergeMap(({ email, password }) =>
           this.authService.loginCompany(email, password).pipe(
+            tap((res) => console.log('LOGIN RESPONSE =', res)),
             map((res) =>
               AuthActions.loginCompanySuccess({
-                company: res.company,
+                company: res, 
                 token: res.token,
               })
             ),
@@ -37,16 +41,24 @@ export class AuthEffects {
         )
       )
     );
+
+    this.loadCompanyDataAfterLogin$ = createEffect(() =>
+      this.action$.pipe(
+        ofType(AuthActions.loginCompanySuccess),
+        mergeMap(({ company, token }) => [
+          CompanyActions.loadCompany({ companyId: company.id }),
+          CompanyActions.loadCompanyServices({ companyId: company.id }),
+          CompanyActions.loadCompanyBookings({ companyId: company.id }),
+          CompanyActions.loadCompanyEmployees({ companyId: company.id }),
+        ])
+      )
+    );
+
     this.loginCompanySuccess$ = createEffect(
       () =>
         this.action$.pipe(
           ofType(AuthActions.loginCompanySuccess),
-          tap(({ token, company }) => {
-            localStorage.setItem('companyId', company.id);
-            localStorage.setItem('authToken', token);
-
-        
-
+          tap(() => {
             this.router.navigate(['/company-admin']);
           })
         ),

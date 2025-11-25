@@ -31,7 +31,7 @@ export class CompanyDetailComponent implements OnInit {
   ngOnInit(): void {
     const companyId = this.route.snapshot.paramMap.get('id');
     if (companyId) {
-      this.store.dispatch(CompanyActions.loadCompany({ id: companyId }));
+      this.store.dispatch(CompanyActions.loadCompany({ companyId: companyId }));
     }
 
     this.company$ = this.store.select(CompanySelectors.selectCurrentCompany);
@@ -78,7 +78,7 @@ export class CompanyDetailComponent implements OnInit {
   retry(): void {
     const companyId = this.route.snapshot.paramMap.get('id');
     if (companyId) {
-      this.store.dispatch(CompanyActions.loadCompany({ id: companyId }));
+      this.store.dispatch(CompanyActions.loadCompany({ companyId: companyId }));
     }
   }
 
