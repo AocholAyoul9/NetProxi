@@ -1,4 +1,3 @@
-<!-- company-admin-dashboard.component.html -->
 <div class="company-admin-dashboard">
   <!-- Header -->
   <header class="dashboard-header">
@@ -30,46 +29,16 @@
   <!-- Main Content -->
   <main class="dashboard-main">
     <!-- Navigation Tabs -->
-     <div class="dashboard-tap-main">
     <nav class="dashboard-tabs">
       <button
-        [class.active]="activeTab === 'overview'"
-        (click)="setActiveTab('overview')"
+        *ngFor="let tab of tabs"
+        [class.active]="activeTab === tab.id"
+        (click)="setActiveTab(tab.id)"
       >
-        <div class="tab-icon">
-          <i class="fas fa-chart-pie"></i>
-        </div>
-        <span>Vue d'ensemble</span>
-      </button>
-      <button
-        [class.active]="activeTab === 'services'"
-        (click)="setActiveTab('services')"
-      >
-        <div class="tab-icon">
-          <i class="fas fa-concierge-bell"></i>
-        </div>
-        <span>Services</span>
-      </button>
-      <button
-        [class.active]="activeTab === 'bookings'"
-        (click)="setActiveTab('bookings')"
-      >
-        <div class="tab-icon">
-          <i class="fas fa-calendar-check"></i>
-        </div>
-        <span>Réservations</span>
-      </button>
-      <button
-        [class.active]="activeTab === 'employees'"
-        (click)="setActiveTab('employees')"
-      >
-        <div class="tab-icon">
-          <i class="fas fa-users"></i>
-        </div>
-        <span>Employés</span>
+        <div class="tab-icon"><i [class]="tab.icon"></i></div>
+        <span>{{ tab.label }}</span>
       </button>
     </nav>
-    </div>
 
     <!-- Loading State -->
     <div *ngIf="loading$ | async" class="loading-container">
@@ -82,45 +51,48 @@
       <!-- Overview Tab -->
       <div *ngIf="activeTab === 'overview'" class="tab-content">
         <div class="stats-grid">
-          <div class="stat-card">
+          <div class="stat-card services" *ngIf="services$ | async as services">
             <div class="stat-icon services">
               <i class="fas fa-concierge-bell"></i>
             </div>
             <div class="stat-info">
-              <h3>{{ (services$ | async)?.length || 0 }}</h3>
+              <h3>{{ services.length }}</h3>
               <p>Services Actifs</p>
             </div>
             <div class="stat-decoration"></div>
           </div>
 
-          <div class="stat-card">
+          <div class="stat-card bookings" *ngIf="bookings$ | async as bookings">
             <div class="stat-icon bookings">
               <i class="fas fa-calendar-check"></i>
             </div>
             <div class="stat-info">
-              <h3>{{ (bookings$ | async)?.length || 0 }}</h3>
+              <h3>{{ bookings.length }}</h3>
               <p>Réservations Total</p>
             </div>
             <div class="stat-decoration"></div>
           </div>
 
-          <div class="stat-card">
+          <div
+            class="stat-card employees"
+            *ngIf="employees$ | async as employees"
+          >
             <div class="stat-icon employees">
               <i class="fas fa-users"></i>
             </div>
             <div class="stat-info">
-              <h3>{{ (employees$ | async)?.length || 0 }}</h3>
+              <h3>{{ employees.length }}</h3>
               <p>Employés</p>
             </div>
             <div class="stat-decoration"></div>
           </div>
 
-          <div class="stat-card">
+          <div class="stat-card revenue" *ngIf="bookings$ | async as bookings">
             <div class="stat-icon revenue">
               <i class="fas fa-euro-sign"></i>
             </div>
             <div class="stat-info">
-              <h3>{{ getTotalRevenue(bookings$ | async) }}€</h3>
+              <h3>{{ getTotalRevenue(bookings) }}€</h3>
               <p>Revenu Total</p>
             </div>
             <div class="stat-decoration"></div>
@@ -128,45 +100,43 @@
         </div>
 
         <!-- Recent Bookings -->
-        <div class="recent-section">
+        <div class="card">
           <div class="section-header">
             <h3>Réservations Récentes</h3>
-            <a href="#" class="view-all-link">Voir tout</a>
+            <a class="view-all-link">Voir tout</a>
           </div>
           <div class="bookings-list">
             <div
-              *ngFor="let booking of (bookings$ | async)?.slice(0, 5)"
+              *ngFor="let booking of recentBookings$ | async"
               class="booking-item"
               [class]="booking.status.toLowerCase()"
             >
               <div class="booking-info">
-                <div class="booking-service">
-                  <strong>{{ booking.serviceName }}</strong>
-                  <span class="booking-date">{{ booking.startTime | date : "dd/MM/yyyy HH:mm" }}</span>
-                </div>
+                <strong>{{ booking.serviceName }}</strong>
+                <span class="booking-date">{{
+                  booking.startTime | date : "dd/MM/yyyy HH:mm"
+                }}</span>
                 <div class="booking-client">{{ booking.clientName }}</div>
               </div>
-              <div class="booking-status">
-                <span class="status-badge" [class]="booking.status.toLowerCase()">
-                  {{ booking.status }}
-                </span>
-              </div>
+              <span class="status-badge" [class]="booking.status.toLowerCase()">
+                {{ booking.status }}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Services Tab -->
+      <!-- Services Tab -->
       <div *ngIf="activeTab === 'services'" class="tab-content">
         <div class="section-header">
           <h2>Gestion des Services</h2>
           <button class="btn-primary" (click)="openServiceModal()">
-            <i class="fas fa-plus"></i>
-            Nouveau Service
+            <i class="fas fa-plus"></i>Nouveau Service
           </button>
         </div>
 
-        <div class="services-grid">
+        <div class="grid">
           <div *ngFor="let service of services$ | async" class="service-card">
             <div class="service-header">
               <h3>{{ service.name }}</h3>
@@ -174,17 +144,18 @@
             </div>
             <p class="service-description">{{ service.description }}</p>
             <div class="service-footer">
-              <div class="service-meta">
-                <span class="service-duration">
-                  <i class="fas fa-clock"></i>
-                  {{ service.durationInMinutes}} min
-                </span>
-              </div>
+              <span class="service-duration"
+                ><i class="fas fa-clock"></i
+                >{{ service.durationInMinutes }} min</span
+              >
               <div class="service-actions">
-                <button class="btn-edit">
+                <button
+                  class="btn-edit"
+                  (click)="openEditServiceModal(service)"
+                >
                   <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-delete">
+                <button class="btn-delete" (click)="deleteService(service.id)">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -193,22 +164,149 @@
         </div>
       </div>
 
+      <!-- Create Service Modal -->
+      <div class="modal" *ngIf="isServiceModalOpen">
+        <div class="modal-overlay" (click)="closeServiceModal()"></div>
+        <div class="modal-content">
+          <h2>Ajouter un Service</h2>
+          <form #serviceForm="ngForm" (ngSubmit)="createService()">
+            <div class="form-group">
+              <label>Nom du Service</label>
+              <input
+                type="text"
+                name="name"
+                [(ngModel)]="newService.name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                [(ngModel)]="newService.description"
+                required
+              ></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Prix (€)</label>
+                <input
+                  type="number"
+                  name="basePrice"
+                  min="1"
+                  [(ngModel)]="newService.basePrice"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Durée (min)</label>
+                <input
+                  type="number"
+                  name="durationInMinutes"
+                  min="10"
+                  [(ngModel)]="newService.durationInMinutes"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="closeServiceModal()"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn-primary"
+                [disabled]="serviceForm.invalid"
+              >
+                Ajouter
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Edit Service Modal -->
+      <div class="modal" *ngIf="isEditServiceModalOpen && editingService">
+        <div class="modal-overlay" (click)="closeEditServiceModal()"></div>
+        <div class="modal-content">
+          <h2>Modifier le Service</h2>
+          <form #editServiceForm="ngForm" (ngSubmit)="updateService()">
+            <div class="form-group">
+              <label>Nom du Service</label>
+              <input
+                type="text"
+                name="name"
+                [(ngModel)]="editingService.name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                [(ngModel)]="editingService.description"
+                required
+              ></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Prix (€)</label>
+                <input
+                  type="number"
+                  name="basePrice"
+                  min="1"
+                  [(ngModel)]="editingService.basePrice"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Durée (min)</label>
+                <input
+                  type="number"
+                  name="durationInMinutes"
+                  min="10"
+                  [(ngModel)]="editingService.durationInMinutes"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="closeEditServiceModal()"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn-primary"
+                [disabled]="editServiceForm.invalid"
+              >
+                Modifier
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <!-- Bookings Tab -->
       <div *ngIf="activeTab === 'bookings'" class="tab-content">
         <div class="section-header">
           <h2>Gestion des Réservations</h2>
-          <div class="filter-controls">
-            <select class="filter-select">
-              <option>Toutes les réservations</option>
-              <option>En attente</option>
-              <option>Confirmées</option>
-              <option>Terminées</option>
-            </select>
-          </div>
+          <select class="filter-select">
+            <option>Toutes les réservations</option>
+            <option>En attente</option>
+            <option>Confirmées</option>
+          </select>
         </div>
 
-        <div class="bookings-table-container">
-          <div class="bookings-table">
+        <div class="card table-container">
+          <div class="table">
             <div class="table-header">
               <div>Client</div>
               <div>Service</div>
@@ -218,21 +316,20 @@
               <div>Employé</div>
               <div>Actions</div>
             </div>
-
             <div *ngFor="let booking of bookings$ | async" class="table-row">
               <div class="client-cell">
-                <div class="client-avatar">
-                  {{ booking.clientName.charAt(0) }}
-                </div>
-                <span>{{ booking.clientName }}</span>
+                <div class="avatar">{{ booking.clientName.charAt(0) }}</div>
+                {{ booking.clientName }}
               </div>
               <div>{{ booking.serviceName }}</div>
               <div>{{ booking.startTime | date : "dd/MM/yyyy HH:mm" }}</div>
-              <div class="price-cell">{{ booking.price }}€</div>
+              <div class="price">{{ booking.price }}€</div>
               <div>
-                <span class="status-badge" [class]="booking.status.toLowerCase()">
-                  {{ booking.status }}
-                </span>
+                <span
+                  class="status-badge"
+                  [class]="booking.status.toLowerCase()"
+                  >{{ booking.status }}</span
+                >
               </div>
               <div>
                 <select
@@ -241,9 +338,9 @@
                   (change)="
                     assignEmployeeToBooking(booking.id, employeeSelect.value)
                   "
-                  class="employee-select"
+                  class="select-sm"
                 >
-                  <option value="">Assigner un employé</option>
+                  <option value="">Assigner</option>
                   <option
                     *ngFor="let employee of employees$ | async"
                     [value]="employee.id"
@@ -251,10 +348,9 @@
                     {{ employee.name }}
                   </option>
                 </select>
-
-                <span *ngIf="booking.assignedEmployeeName" class="assigned-employee">
-                  {{ booking.assignedEmployeeName }}
-                </span>
+                <span *ngIf="booking.assignedEmployeeName">{{
+                  booking.assignedEmployeeName
+                }}</span>
               </div>
               <div class="actions">
                 <button
@@ -278,34 +374,186 @@
       </div>
 
       <!-- Employees Tab -->
+      <!-- Employees Tab -->
       <div *ngIf="activeTab === 'employees'" class="tab-content">
         <div class="section-header">
           <h2>Gestion des Employés</h2>
           <button class="btn-primary" (click)="openEmployeeModal()">
-            <i class="fas fa-user-plus"></i>
-            Nouvel Employé
+            <i class="fas fa-user-plus"></i>Nouvel Employé
           </button>
         </div>
 
-        <div class="employees-grid">
-          <div *ngFor="let employee of employees$ | async" class="employee-card">
-            <div class="employee-avatar">
-              {{ employee.name.charAt(0) }}
-            </div>
+        <div class="grid">
+          <div
+            *ngFor="let employee of employees$ | async"
+            class="card employee-card"
+          >
+            <div class="avatar">{{ employee.name.charAt(0) }}</div>
             <div class="employee-info">
               <h3>{{ employee.name }}</h3>
+              <p class="employee-role">{{ getRoleLabel(employee.role) }}</p>
               <p class="employee-email">{{ employee.email }}</p>
               <p class="employee-phone">{{ employee.phone }}</p>
+              <p class="employee-address">{{ employee.address }}</p>
             </div>
-            <div class="employee-actions">
-              <button class="btn-edit">
+            <div class="actions">
+              <button
+                class="btn-edit"
+                (click)="openEditEmployeeModal(employee)"
+              >
                 <i class="fas fa-edit"></i>
               </button>
-              <button class="btn-delete">
+              <button class="btn-delete" (click)="deleteEmployee(employee.id)">
                 <i class="fas fa-trash"></i>
               </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Create Employee Modal -->
+      <div class="modal" *ngIf="isEmployeeModalOpen">
+        <div class="modal-overlay" (click)="closeEmployeeModal()"></div>
+        <div class="modal-content">
+          <h2>Ajouter un Employé</h2>
+          <form #employeeForm="ngForm" (ngSubmit)="createEmployee()">
+            <div class="form-group">
+              <label>Nom Complet</label>
+              <input
+                type="text"
+                name="name"
+                [(ngModel)]="newEmployee.name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                [(ngModel)]="newEmployee.email"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input
+                type="tel"
+                name="phone"
+                [(ngModel)]="newEmployee.phone"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Adresse</label>
+              <textarea
+                name="address"
+                [(ngModel)]="newEmployee.address"
+                required
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Rôle</label>
+              <select
+                name="role"
+                [(ngModel)]="newEmployee.role"
+                class="filter-select"
+              >
+                <option *ngFor="let role of employeeRoles" [value]="role.value">
+                  {{ role.label }}
+                </option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="closeEmployeeModal()"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn-primary"
+                [disabled]="employeeForm.invalid"
+              >
+                Ajouter
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Edit Employee Modal -->
+      <div class="modal" *ngIf="isEditEmployeeModalOpen && editingEmployee">
+        <div class="modal-overlay" (click)="closeEditEmployeeModal()"></div>
+        <div class="modal-content">
+          <h2>Modifier l'Employé</h2>
+          <form #editEmployeeForm="ngForm" (ngSubmit)="updateEmployee()">
+            <div class="form-group">
+              <label>Nom Complet</label>
+              <input
+                type="text"
+                name="name"
+                [(ngModel)]="editingEmployee.name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                [(ngModel)]="editingEmployee.email"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input
+                type="tel"
+                name="phone"
+                [(ngModel)]="editingEmployee.phone"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Adresse</label>
+              <textarea
+                name="address"
+                [(ngModel)]="editingEmployee.address"
+                required
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Rôle</label>
+              <select
+                name="role"
+                [(ngModel)]="editingEmployee.role"
+                class="filter-select"
+              >
+                <option *ngFor="let role of employeeRoles" [value]="role.value">
+                  {{ role.label }}
+                </option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="closeEditEmployeeModal()"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn-primary"
+                [disabled]="editEmployeeForm.invalid"
+              >
+                Modifier
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

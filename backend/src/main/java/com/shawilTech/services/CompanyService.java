@@ -378,6 +378,18 @@ public class CompanyService {
         serviceRepository.save(service);
     }
 
+
+    /**
+     * delete a service
+     */
+    @Transactional
+    public void deleteService(UUID serviceId){
+        ServiceEntity service =  serviceRepository.findById(serviceId)
+        .orElseThrow(()-> new RuntimeException("Service not found"));
+
+
+        serviceRepository.delete(service);
+    }
     /**
      * Check subscription plan limitations for service creation
      */

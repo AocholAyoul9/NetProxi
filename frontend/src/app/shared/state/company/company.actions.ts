@@ -1,5 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { Company } from '../../models/company.model';
+import { ServiceModel } from '../../models/service.model';
 
 
 
@@ -48,6 +49,42 @@ export const loadCompanyServicesFailure = createAction(
   '[Company] Load Company Services Failure',
   props<{ error: any }>()
 );
+
+
+//createCompanyServices
+export const createCompanyService = createAction(
+  '[Company] create Company Services',
+  props<{ services: ServiceModel}>()
+);
+
+export const createCompanyServiceSuccess = createAction(
+  '[Company] create Company Services Success',
+  props<{ services: ServiceModel }>()
+);
+
+export const createCompanyServiceFailure = createAction(
+  '[Company] create Company Services Failure',
+  props<{ error: any }>()
+);
+
+
+//delete Company Services
+export const deleteCompanyService = createAction(
+  '[Company] delete Company Services',
+  props<{ serviceId: string}>()
+);
+
+export const deleteCompanyServiceSuccess = createAction(
+  '[Company] delete Company Services Success',
+  props<{ serviceId: string }>()
+);
+
+export const deleteCompanyServiceFailure = createAction(
+  '[Company] delete Company Services Failure',
+  props<{ error: any }>()
+);
+
+
 
 // Load all companies
 export const loadAllCompanies = createAction('[Company] Load All Companies');

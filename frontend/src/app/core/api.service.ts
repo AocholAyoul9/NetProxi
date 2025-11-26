@@ -14,7 +14,7 @@ export class ApiService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
- /* private getHeaders(): HttpHeaders {
+  /* private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();
 
     return new HttpHeaders({
@@ -33,11 +33,15 @@ export class ApiService {
     return this.http.get<Company[]>(`${this.baseUrl}/companies/nearby`, {
       //headers: this.getHeaders(),
       //params: { lat, lng, radiusKm },
-      params: { lat: lat.toString(), lng: lng.toString(), radiusKm: radiusKm.toString() }
+      params: {
+        lat: lat.toString(),
+        lng: lng.toString(),
+        radiusKm: radiusKm.toString(),
+      },
     });
   }
 
-/*getNearByCompanies(lat: number, lng: number, radiusKm: number) {
+  /*getNearByCompanies(lat: number, lng: number, radiusKm: number) {
   console.log('API called with:', { lat, lng, radiusKm });
   return this.http.get<Company[]>(`/api/companies/nearby`, {
     params: { lat: lat.toString(), lng: lng.toString(), radiusKm: radiusKm.toString() }
@@ -50,7 +54,7 @@ export class ApiService {
     });
   }
 
-   getCompanyAllCompanies(): Observable<Company[]> {
+  getCompanyAllCompanies(): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.baseUrl}/companies`, {
       //headers: this.getHeaders(),
     });
@@ -73,22 +77,30 @@ export class ApiService {
     return this.http.get<ServiceModel[]>(
       `${this.baseUrl}/services/company/${companyId}`,
       {
-       // headers: this.getHeaders(),
+        // headers: this.getHeaders(),
       }
     );
   }
 
-  addCompanyService(
-    companyId: string,
-    data: Partial<ServiceModel>
+  createCompanyService(service: ServiceModel): Observable<ServiceModel> {
+    return this.http.post<ServiceModel>(`${this.baseUrl}/services`, service, {
+      // headers: this.getHeaders(),
+    });
+  }
+
+  updateCompanyService(
+    serviceId: string,
+    service: ServiceModel
   ): Observable<ServiceModel> {
-    return this.http.post<ServiceModel>(
-      `${this.baseUrl}/companies/${companyId}/services`,
-      data,
-      {
-       // headers: this.getHeaders(),
-      }
-    );
+    return this.http.put<ServiceModel>(`${this.baseUrl}/services/${serviceId}`, service, {
+      // headers: this.getHeaders(),
+    });
+  }
+
+  deleteCompanyService(serviceId: string): Observable<ServiceModel> {
+    return this.http.delete<ServiceModel>(`${this.baseUrl}/services/delete/${serviceId}`,{
+      // headers: this.getHeaders(),
+    });
   }
 
   //-----------------Booking------------------
@@ -101,7 +113,7 @@ export class ApiService {
       `${this.baseUrl}/companies/${companyId}/bookings`,
       booking,
       {
-       // headers: this.getHeaders(),
+        // headers: this.getHeaders(),
       }
     );
   }
@@ -110,7 +122,7 @@ export class ApiService {
     return this.http.get<Booking[]>(
       `${this.baseUrl}/companies/${companyId}/bookings`,
       {
-       // headers: this.getHeaders(),
+        // headers: this.getHeaders(),
       }
     );
   }
@@ -119,11 +131,10 @@ export class ApiService {
     return this.http.delete<void>(
       `${this.baseUrl}/companies/${companyId}/bookings/${bookingId}`,
       {
-       // headers: this.getHeaders(),
+        // headers: this.getHeaders(),
       }
     );
   }
-
 
   //get company employess
 
@@ -131,7 +142,7 @@ export class ApiService {
     return this.http.get<any[]>(
       `${this.baseUrl}/companies/${companyId}/employees`,
       {
-       // headers: this.getHeaders(),
+        // headers: this.getHeaders(),
       }
     );
   }
@@ -146,7 +157,7 @@ export class ApiService {
         plan,
       },
       {
-      //  headers: this.getHeaders(),
+        //  headers: this.getHeaders(),
       }
     );
   }
@@ -156,14 +167,14 @@ export class ApiService {
       `${this.baseUrl}/subscribes/${companyId}`,
       {},
       {
-       // headers: this.getHeaders(),
+        // headers: this.getHeaders(),
       }
     );
   }
 
   getCompanySubscription(companyId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/subscribes/${companyId}`, {
-     // headers: this.getHeaders(),
+      // headers: this.getHeaders(),
     });
   }
 }
