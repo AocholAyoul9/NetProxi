@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import * as CompanyAction from './company.actions';
 import { Company } from '../../models/company.model';
+import { ServiceModel } from '../../models/service.model';
 
 export interface CompanyState {
   companyEmployees: any[];
@@ -111,4 +112,49 @@ export const companyReducer = createReducer(
     error,
     loading: false,
   }))
+);
+
+
+
+export interface ServiceState {
+  services: ServiceModel[];
+  loading: boolean;
+  error: any;
+}
+
+export const initialStateService: ServiceState = {
+  services: [],
+  loading: false,
+  error: null,
+};
+
+export const serviceReducer = createReducer(
+  initialStateService,
+
+  // Start creating service
+  on(CompanyAction.createCompanyService, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
+  // Success
+  on(CompanyAction.createCompanyServiceSuccess, (state, { services }) => ({
+    ...state,
+    services: [...state.services, services],
+    loading: false,
+    error: null,
+  })),
+
+  // Failure
+  on(CompanyAction.createCompanyServiceFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error: error,
+  })),
+
+  on(CompanyAction.deleteCompanyServiceSuccess, (state, { serviceId }) => ({
+  ...state,
+  services: state.services.filter(s => s.id !== serviceId)
+}))
 );

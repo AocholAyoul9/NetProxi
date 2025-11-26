@@ -52,10 +52,19 @@ public class ServiceController {
         return ResponseEntity.ok(updatedService);
     }
 
-    @Operation(summary = "Delete a service")
-    @DeleteMapping("/{serviceId}")
+    @Operation(summary = "DeActivate a service")
+    @DeleteMapping("deactivate/{serviceId}")
     public ResponseEntity<Void> deactivateService(@PathVariable UUID serviceId) {
         companyService.deactivateService(serviceId);
         return ResponseEntity.noContent().build();
     }
+    
+    @Operation(summary ="Delete a service")
+    @DeleteMapping("delete/{serviceId}")
+    public ResponseEntity<Void> deleteService(@PathVariable UUID serviceId){
+        companyService.deactivateService(serviceId);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }
