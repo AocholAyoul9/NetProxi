@@ -111,50 +111,42 @@ export const companyReducer = createReducer(
     ...state,
     error,
     loading: false,
-  }))
-);
-
-
-
-export interface ServiceState {
-  services: ServiceModel[];
-  loading: boolean;
-  error: any;
-}
-
-export const initialStateService: ServiceState = {
-  services: [],
-  loading: false,
-  error: null,
-};
-
-export const serviceReducer = createReducer(
-  initialStateService,
-
-  // Start creating service
-  on(CompanyAction.createCompanyService, (state) => ({
-    ...state,
-    loading: true,
-    error: null,
   })),
 
-  // Success
+  on(CompanyAction.addCompanyEmployeeSuccess, (state, { employee }) => ({
+    ...state,
+    companyEmployees: [...state.companyEmployees, employee],
+  })),
+
+  on(CompanyAction.updateCompanyEmployeeSuccess, (state, { employee }) => ({
+    ...state,
+    companyEmployees: state.companyEmployees.map(emp =>
+      emp.id === employee.id ? employee : emp
+    ),
+  })),
+on(CompanyAction.deleteCompanyEmployeeSuccess, (state, { employeeId }) => ({
+    ...state,
+    companyEmployees: state.companyEmployees.filter(emp => emp.id !== employeeId)
+  })),
+  
   on(CompanyAction.createCompanyServiceSuccess, (state, { services }) => ({
     ...state,
-    services: [...state.services, services],
-    loading: false,
-    error: null,
+    companyServices: [...state.companyServices, services],
   })),
-
-  // Failure
-  on(CompanyAction.createCompanyServiceFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error: error,
-  })),
-
   on(CompanyAction.deleteCompanyServiceSuccess, (state, { serviceId }) => ({
-  ...state,
-  services: state.services.filter(s => s.id !== serviceId)
-}))
+    ...state,
+    companyServices: state.companyServices.filter(s => s.id !== serviceId)
+})),
+
+on(CompanyAction.updateCompanyServiceSuccess, (state, { service }) => ({
+    ...state,
+    companyServices: state.companyServices.map(s =>
+      s.id === service.id ? service : s
+    ),
+  }))
+
 );
+
+
+
+

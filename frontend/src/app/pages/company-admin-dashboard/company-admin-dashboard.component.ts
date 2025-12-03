@@ -183,9 +183,7 @@ export class CompanyAdminDashboardComponent {
 
   // Service Deletion Method
   deleteService(serviceId: string): void {
-    
-      this.store.dispatch(CompanyActions.deleteCompanyService({ serviceId }));
-    
+    this.store.dispatch(CompanyActions.deleteCompanyService({ serviceId }));
   }
 
   // Employee Creation Methods
@@ -212,9 +210,12 @@ export class CompanyAdminDashboardComponent {
       this.newEmployee.phone
     ) {
       // Dispatch action to create employee
-      /* this.store.dispatch(CompanyActions.createEmployee({ 
-        employee: this.newEmployee 
-      }));*/
+      this.store.dispatch(
+        CompanyActions.addCompanyEmployee({
+          companyId: this.companyId,
+          employeeData: this.newEmployee,
+        })
+      );
       this.closeEmployeeModal();
     }
   }
@@ -242,19 +243,27 @@ export class CompanyAdminDashboardComponent {
       };
 
       // Dispatch action to update employee
-      /* this.store.dispatch(CompanyActions.updateEmployee({ 
-        employeeId: this.editingEmployee.id, 
-        updates: updateData 
-      }));*/
+      this.store.dispatch(
+        CompanyActions.updateCompanyEmployee({
+          companyId: this.companyId,
+          employeeId: this.editingEmployee.id,
+          employeeData: updateData,
+        })
+      );
       this.closeEditEmployeeModal();
     }
   }
 
   // Employee Deletion Method
   deleteEmployee(employeeId: string): void {
-    /*if (confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')) {
-      this.store.dispatch(CompanyActions.deleteEmployee({ employeeId }));
-    }*/
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')) {
+      this.store.dispatch(
+        CompanyActions.deleteCompanyEmployee({
+          companyId: this.companyId,
+          employeeId,
+        })
+      );
+    }
   }
 
   // Get role label for display
