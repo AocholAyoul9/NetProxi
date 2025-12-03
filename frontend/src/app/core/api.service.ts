@@ -136,7 +136,7 @@ export class ApiService {
     );
   }
 
-  //get company employess
+  // employess
 
   getCompanyEmployees(companyId: string): Observable<any[]> {
     return this.http.get<any[]>(
@@ -147,6 +147,46 @@ export class ApiService {
     );
   }
 
+  addCompanyEmployee(
+    companyId: string,
+    employeeData: any
+  ): Observable<any> { {
+    return this.http.post<any>(
+      `${this.baseUrl}/companies/${companyId}/employees`,
+      employeeData,
+      {
+        // headers: this.getHeaders(),
+      }
+    );
+  }
+  }
+
+  deleteCompanyEmployee(
+    companyId: string,
+    employeeId: string
+  ): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}/companies/${companyId}/employees/${employeeId}`,
+      {
+        // headers: this.getHeaders(),
+      }
+    );
+  }
+
+  updateCompanyEmployee(
+    companyId: string,
+    employeeId: string,
+    employeeData: any
+  ): Observable<any> {
+    return this.http.put<any>(
+      `${this.baseUrl}/companies/${companyId}/employees/${employeeId}`,
+      employeeData,
+      {
+        // headers: this.getHeaders(),
+      }
+    );
+  }
+ 
   //---------------------- subscriptions ---------------------------
 
   subscripCompany(companyId: string, plan: string): Observable<any> {

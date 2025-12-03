@@ -14,6 +14,9 @@ export class CompanyEffects {
   loadCompanyEmployees$;
   createCompanyService$;
   deleteCompanyService$;
+  addCompanyEmployee$;
+  updateCompanyEmployee$;
+  deleteCompanyEmployee$;
 
   constructor(private actions$: Actions, private api: ApiService) {
     this.loadCompanyEmployees$ = createEffect(() =>
@@ -138,6 +141,54 @@ export class CompanyEffects {
               of(
                 CompanyActions.loadAllCompaniesFailure({ error: error.message })
               )
+            )
+          )
+        )
+      )
+    );
+
+    this.addCompanyEmployee$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(CompanyActions.addCompanyEmployee),
+        mergeMap(({ companyId, employeeData }) =>
+          this.api.addCompanyEmployee(companyId, employeeData).pipe(
+            map((newEmployee) =>
+              CompanyActions.addCompanyEmployeeSuccess({ employee: newEmployee })
+            ),
+            catchError((error) =>
+              of(CompanyActions.addCompanyEmployeeFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+
+    this.updateCompanyEmployee$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(CompanyActions.updateCompanyEmployee),
+        mergeMap(({  companyId, employeeId, employeeData }) =>
+          this.api.updateCompanyEmployee(companyId ,employeeId, employeeData).pipe(
+            map((updatedEmployee) =>
+              CompanyActions.updateCompanyEmployeeSuccess({ employee: updatedEmployee })
+            ),
+            catchError((error) =>
+              of(CompanyActions.updateCompanyEmployeeFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+
+    this.deleteCompanyEmployee$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(CompanyActions.deleteCompanyEmployee),
+        mergeMap(({  companyId ,employeeId,}) =>
+          this.api.deleteCompanyEmployee(companyId ,employeeId, ).pipe(
+            map(() =>
+              CompanyActions.deleteCompanyEmployeeSuccess({  companyId,employeeId })
+            ),
+            catchError((error) =>
+              of(CompanyActions.deleteCompanyEmployeeFailure({ error }))
             )
           )
         )

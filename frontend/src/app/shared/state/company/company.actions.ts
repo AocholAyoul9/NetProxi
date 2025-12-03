@@ -19,6 +19,48 @@ export const loadCompanyEmployeesFailure = createAction(
   props<{ error: any }>()
 );
 
+// addcomanyEmployee
+export const addCompanyEmployee = createAction(
+  '[Company] Add Company Employee',
+  props<{ companyId: string; employeeData: any }>()
+);
+export const addCompanyEmployeeSuccess = createAction(
+  '[Company] Add Company Employee Success',
+  props<{ employee: any }>()
+);
+export const addCompanyEmployeeFailure = createAction(
+  '[Company] Add Company Employee Failure',
+  props<{ error: any }>()
+);
+
+// updataCompanyEmployee
+export const updateCompanyEmployee = createAction(
+  '[Company] Update Company Employee',
+  props<{ companyId: string; employeeId: string;   employeeData: any }>()
+);
+export const updateCompanyEmployeeSuccess = createAction(
+  '[Company] Update Company Employee Success',
+  props<{ employee: any }>()
+);
+export const updateCompanyEmployeeFailure = createAction(
+  '[Company] Update Company Employee Failure',
+  props<{ error: any }>()
+);
+
+// deleteCompanyEmployee
+export const deleteCompanyEmployee = createAction(
+  '[Company] Delete Company Employee',
+  props<{ companyId: string; employeeId: string }>()
+);
+export const deleteCompanyEmployeeSuccess = createAction(
+  '[Company] Delete Company Employee Success',
+  props<{companyId: string;  employeeId: string }>()
+);
+export const deleteCompanyEmployeeFailure = createAction(
+  '[Company] Delete Company Employee Failure',
+  props<{ error: any }>()
+);
+
 //getCompanyBookings
 export const loadCompanyBookings = createAction(
   '[Company] Load Company Bookings',
@@ -84,6 +126,20 @@ export const deleteCompanyServiceFailure = createAction(
   props<{ error: any }>()
 );
 
+
+//update Company Services
+export const updateCompanyService = createAction(
+  '[Company] update Company Services',
+  props<{ service: ServiceModel}>()
+);
+export const updateCompanyServiceSuccess = createAction(
+  '[Company] update Company Services Success',
+  props<{ service: ServiceModel }>()
+);
+export const updateCompanyServiceFailure = createAction(
+  '[Company] update Company Services Failure',
+  props<{ error: any }>()
+);
 
 
 // Load all companies
