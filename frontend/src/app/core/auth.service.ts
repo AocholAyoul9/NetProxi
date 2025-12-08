@@ -83,33 +83,20 @@ export class AuthService {
     return this.http.post<Client>(`${this.baseUrl}/clients/register`, Client);
   }
 
-  /** Login client */
-  loginClient(email: string, password: string): Observable<{ token: string; client: Client }> {
-    return this.http.post<{ token: string; client: Client }>(
-      `${this.baseUrl}/clients/login`,
-      { email, password }
-    ).pipe(
-      tap(res => {
-        console.log("DEBUG - loginClient response:", res);
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('client', JSON.stringify(res));
-      })
-    );
-  }
+  /*** login Client */
 
-  loutClient(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('client');
-    this.router.navigate(['/']);
-  }
+ loginClient(email: string, password: string): Observable<{ token: string; client: Client }> {
+  return this.http.post<{ token: string; client: Client }>(
+    `${this.baseUrl}/clients/login`,
+    { email, password }
+  ).pipe(
+    tap(res => {
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('client', JSON.stringify(res.client));
+    })
+  );
+}
 
-  logOutEmployee(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('employee');
-    this.router.navigate(['/']);
-  }
 
   /** Login company with email/password */
   loginCompany(email: string, password: string): Observable<{ token: string; company: Company }> {
