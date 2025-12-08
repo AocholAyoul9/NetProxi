@@ -130,7 +130,7 @@ export const deleteCompanyServiceFailure = createAction(
 //update Company Services
 export const updateCompanyService = createAction(
   '[Company] update Company Services',
-  props<{ service: ServiceModel}>()
+  props<{serviceId: string,  service: ServiceModel}>()
 );
 export const updateCompanyServiceSuccess = createAction(
   '[Company] update Company Services Success',

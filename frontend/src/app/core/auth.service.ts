@@ -32,6 +32,20 @@ export class AuthService {
     return this.http.post<Client>(`${this.baseUrl}/clients/register`, Client);
   }
 
+  /*** login Client */
+
+ loginClient(email: string, password: string): Observable<{ token: string; client: Client }> {
+  return this.http.post<{ token: string; client: Client }>(
+    `${this.baseUrl}/clients/login`,
+    { email, password }
+  ).pipe(
+    tap(res => {
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('client', JSON.stringify(res.client));
+    })
+  );
+}
+
 
   /** Login company with email/password */
   loginCompany(email: string, password: string): Observable<{ token: string; company: Company }> {
