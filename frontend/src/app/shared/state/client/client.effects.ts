@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
+import { map, mergeMap, catchError } from 'rxjs/operators';
+import * as ClientActions from './client.actions';
+import * as AuthActions from '../auth/auth.actions';
 import { ApiService } from '../../../core/api.service';
 import { AuthService } from '../../../core/auth.service';
 import * as ClientActions from '../client/client.actions';
@@ -10,6 +14,14 @@ import { selectClientState } from './client.selector';
 
 @Injectable()
 export class ClientEffects {
+  loadClientReservations$;
+  loadNearbyCompanies$;
+  searchCompanies$;
+  updateReservationStatus$;
+  addReservationReview$;
+  toggleFavoriteCompany$;
+  loadClientProfileAfterLogin$;
+  loadClientProfile$;
   constructor(
     private actions$: Actions,
     private api: ApiService,
@@ -88,9 +100,39 @@ loginClient$ = createEffect(() =>
                 map(booking => ClientActions.confirmBookingSuccess({booking})),
                 catchError(error => of(ClientActions.confirmBookingFailure({error})))
             )
-        })
-    )
-)
+          )
+        )
+      )
+    );
+
+// ---------------- Load client reservations ----------------
+this.loadClientReservations$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(ClientActions.loadClientReservations),
+    mergeMap(({ clientId }) => {
+      if (!clientId) {
+        return of(
+          ClientActions.loadClientReservationsFailure({
+            error: 'Client ID not found',
+          })
+        );
+      }
+
+      return this.api.getClientReservations(clientId).pipe(
+        map((reservations: Booking[]) =>
+          ClientActions.loadClientReservationsSuccess({ reservations })
+        ),
+        catchError((error) =>
+          of(
+            ClientActions.loadClientReservationsFailure({
+              error: error.message,
+            })
+          )
+        )
+      );
+    })
+  )
+);
 
 
 
