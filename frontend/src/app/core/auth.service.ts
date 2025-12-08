@@ -40,26 +40,11 @@ export class AuthService {
     { email, password }
   ).pipe(
     tap(res => {
-        console.log("DEBUG - loginClient response:", res);
-
       localStorage.setItem('token', res.token);
-      localStorage.setItem('client', JSON.stringify(res));
+      localStorage.setItem('client', JSON.stringify(res.client));
     })
   );
 }
-
-loutClient(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('client');
-    this.router.navigate(['/']);
-  }
-
-  logOutEmployee(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('employee');
-    this.router.navigate(['/']);
-  }
-
 
 
   /** Login company with email/password */
@@ -81,17 +66,6 @@ loutClient(): void {
     this.router.navigate(['/login']);
   }
 
-
-  loginEmployee(email: string, password: string): Observable<{ token: string; employee: any }> {
-    return this.http.post<{ token: string; employee: any }>(`${this.baseUrl}/companies/employees/login`, { email, password }).pipe(
-      tap(res => {
-        localStorage.setItem('token', res.token);
-          localStorage.setItem('employeeId', res.employee.id);
-        localStorage.setItem('employee', JSON.stringify(res.employee));
-      })
-    );
-  }
-
   /** Get JWT token */
   getToken(): string | null {
     return localStorage.getItem('token');
@@ -103,7 +77,7 @@ loutClient(): void {
   }
 
   private getUserFromStorage(): User | null {
-
+    
 
     if (isPlatformBrowser(this.platformId)) {
       const userJson = localStorage.getItem('user');
@@ -118,40 +92,5 @@ loutClient(): void {
     return new HttpHeaders({
       'Authorization': token ? `Bearer ${token}` : ''
     });
-  }
-
-// Get currently logged in client ID
-getClientId(): string {
-  if (!isPlatformBrowser(this.platformId)) return '';
-
-  const client = localStorage.getItem('client');
-
-  console.log("DEBUG - raw client in localStorage =", client);
-  if (!client) return '';
-
-  try {
-    return JSON.parse(client).id || '';
-  } catch {
-    return '';
-  }
-}
-
-getEmployeeId(): string{
-
-  if (!isPlatformBrowser(this.platformId)) return '';
-
-    const employee = localStorage.getItem('employee');
-
-    console.log("DEBUG - raw client in localStorage =", employee);
-    if (!employee) return '';
-
-    try {
-      return JSON.parse(employee).id || '';
-    } catch {
-      return '';
-    }
-
-    //return localStorage.getItem('employeeId') || '';
-
   }
 }

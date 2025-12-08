@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, mergeMap, of } from 'rxjs';
 import { ApiService } from '../../../core/api.service';
 import * as CompanyActions from './company.actions';
-import { Action } from '@ngrx/store';
 
 @Injectable()
 export class CompanyEffects {
@@ -19,27 +18,8 @@ export class CompanyEffects {
   addCompanyEmployee$;
   updateCompanyEmployee$;
   deleteCompanyEmployee$;
-  assignEmployeeToBooking$;
 
   constructor(private actions$: Actions, private api: ApiService) {
-
-    this.assignEmployeeToBooking$ = createEffect((): Observable<Action> =>
-  this.actions$.pipe(
-    ofType(CompanyActions.assignEmployeeToBooking),
-    switchMap(({ companyId, bookingId, employeeId }) =>
-      this.api.assignBookingToEmployee(companyId, bookingId, employeeId).pipe(
-        map((booking) =>
-          CompanyActions.assignEmployeeToBookingSuccess({ booking })
-        ),
-        catchError((error) =>
-          of(CompanyActions.assignEmployeeToBookingFailure({ error }))
-        )
-      )
-    )
-  )
-);
-
-
     this.loadCompanyEmployees$ = createEffect(() =>
       this.actions$.pipe(
         ofType(CompanyActions.loadCompanyEmployees),
@@ -111,9 +91,7 @@ export class CompanyEffects {
         ofType(CompanyActions.deleteCompanyService),
         mergeMap(({ serviceId }) =>
           this.api.deleteCompanyService(serviceId).pipe(
-            map(() =>
-              CompanyActions.deleteCompanyServiceSuccess({ serviceId })
-            ),
+            map(() => CompanyActions.deleteCompanyServiceSuccess({ serviceId })),
             catchError((error) =>
               of(CompanyActions.deleteCompanyServiceFailure({ error }))
             )
@@ -160,6 +138,7 @@ export class CompanyEffects {
         mergeMap(({ lat, lng, radiusKm }) =>
           this.api.getNearByCompanies(lat, lng, radiusKm).pipe(
             map((companies) => {
+              console.log('Nearby companies from API:', companies);
               return CompanyActions.loadNearbyCompaniesSuccess({ companies });
             }),
             catchError((error) =>
