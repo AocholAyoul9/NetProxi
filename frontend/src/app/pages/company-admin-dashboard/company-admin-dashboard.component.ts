@@ -164,22 +164,23 @@ export class CompanyAdminDashboardComponent {
   }
 
   updateService(): void {
-    /*if (this.editingService && this.editingService.id) {
+    if (this.editingService && this.editingService.id) {
       const updateData: ServiceUpdateModel = {
         id: this.editingService.id,
         name: this.editingService.name,
         description: this.editingService.description,
         basePrice: this.editingService.basePrice,
-        durationInMinutes: this.editingService.durationInMinutes
+        durationInMinutes: this.editingService.durationInMinutes,
+        companyId: this.companyId
       };
 
       // Dispatch action to update service
-      this.store.dispatch(CompanyActions.updateService({ 
+      this.store.dispatch(CompanyActions.updateCompanyService({ 
         serviceId: this.editingService.id, 
-        updates: updateData 
-      }));*/
+        service: updateData 
+      }));
     this.closeEditServiceModal();
-  }
+  }}
 
   // Service Deletion Method
   deleteService(serviceId: string): void {
@@ -256,14 +257,12 @@ export class CompanyAdminDashboardComponent {
 
   // Employee Deletion Method
   deleteEmployee(employeeId: string): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')) {
       this.store.dispatch(
         CompanyActions.deleteCompanyEmployee({
           companyId: this.companyId,
           employeeId,
         })
       );
-    }
   }
 
   // Get role label for display

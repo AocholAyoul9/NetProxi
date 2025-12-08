@@ -14,6 +14,7 @@ export class CompanyEffects {
   loadCompanyEmployees$;
   createCompanyService$;
   deleteCompanyService$;
+  updateCompanyService$;
   addCompanyEmployee$;
   updateCompanyEmployee$;
   deleteCompanyEmployee$;
@@ -90,7 +91,7 @@ export class CompanyEffects {
         ofType(CompanyActions.deleteCompanyService),
         mergeMap(({ serviceId }) =>
           this.api.deleteCompanyService(serviceId).pipe(
-            map(() => CompanyActions.deleteCompanyService({ serviceId })),
+            map(() => CompanyActions.deleteCompanyServiceSuccess({ serviceId })),
             catchError((error) =>
               of(CompanyActions.deleteCompanyServiceFailure({ error }))
             )
@@ -98,6 +99,25 @@ export class CompanyEffects {
         )
       )
     );
+
+    this.updateCompanyService$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(CompanyActions.updateCompanyService),
+        mergeMap((action) =>
+          this.api.updateCompanyService(action.serviceId, action.service).pipe(
+            map((updatedService) =>
+              CompanyActions.updateCompanyServiceSuccess({
+                service: updatedService,
+              })
+            ),
+            catchError((error) =>
+              of(CompanyActions.updateCompanyServiceFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+
     this.loadCompany$ = createEffect(() =>
       this.actions$.pipe(
         ofType(CompanyActions.loadCompany),
@@ -153,7 +173,9 @@ export class CompanyEffects {
         mergeMap(({ companyId, employeeData }) =>
           this.api.addCompanyEmployee(companyId, employeeData).pipe(
             map((newEmployee) =>
-              CompanyActions.addCompanyEmployeeSuccess({ employee: newEmployee })
+              CompanyActions.addCompanyEmployeeSuccess({
+                employee: newEmployee,
+              })
             ),
             catchError((error) =>
               of(CompanyActions.addCompanyEmployeeFailure({ error }))
@@ -166,15 +188,19 @@ export class CompanyEffects {
     this.updateCompanyEmployee$ = createEffect(() =>
       this.actions$.pipe(
         ofType(CompanyActions.updateCompanyEmployee),
-        mergeMap(({  companyId, employeeId, employeeData }) =>
-          this.api.updateCompanyEmployee(companyId ,employeeId, employeeData).pipe(
-            map((updatedEmployee) =>
-              CompanyActions.updateCompanyEmployeeSuccess({ employee: updatedEmployee })
-            ),
-            catchError((error) =>
-              of(CompanyActions.updateCompanyEmployeeFailure({ error }))
+        mergeMap(({ companyId, employeeId, employeeData }) =>
+          this.api
+            .updateCompanyEmployee(companyId, employeeId, employeeData)
+            .pipe(
+              map((updatedEmployee) =>
+                CompanyActions.updateCompanyEmployeeSuccess({
+                  employee: updatedEmployee,
+                })
+              ),
+              catchError((error) =>
+                of(CompanyActions.updateCompanyEmployeeFailure({ error }))
+              )
             )
-          )
         )
       )
     );
@@ -182,10 +208,13 @@ export class CompanyEffects {
     this.deleteCompanyEmployee$ = createEffect(() =>
       this.actions$.pipe(
         ofType(CompanyActions.deleteCompanyEmployee),
-        mergeMap(({  companyId ,employeeId,}) =>
-          this.api.deleteCompanyEmployee(companyId ,employeeId, ).pipe(
+        mergeMap(({ companyId, employeeId }) =>
+          this.api.deleteCompanyEmployee(companyId, employeeId).pipe(
             map(() =>
-              CompanyActions.deleteCompanyEmployeeSuccess({  companyId,employeeId })
+              CompanyActions.deleteCompanyEmployeeSuccess({
+                companyId,
+                employeeId,
+              })
             ),
             catchError((error) =>
               of(CompanyActions.deleteCompanyEmployeeFailure({ error }))

@@ -32,6 +32,11 @@ export const initialState: ClientState = {
 
 export const clientReducer = createReducer(
   initialState,
+
+  on(ClientActions.registerClient, state => ({ ...state, loading: true })),
+  on(ClientActions.registerClientSuccess, (state) => ({ ...state, loading: false })),
+  on(ClientActions.registerClientFailure, (state, { error }) => ({ ...state, error, loading: false })),
+  
   on(ClientActions.setAddress, (state, { address, lat, lng }) => ({
     ...state,
     address,
