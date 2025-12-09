@@ -14,6 +14,8 @@ export class AuthEffects {
   loginCompanySuccess$;
   registerCompany$;
   registerClient$;
+  loginClient$;
+  loginClientSuccess$;
   logoutCompany$;
   loadCompanyDataAfterLogin$;
 
@@ -97,6 +99,38 @@ export class AuthEffects {
           )
         )
       )
+    );
+
+    this.loginClient$ = createEffect(() =>
+      this.action$.pipe(
+        ofType(AuthActions.loginClient),
+        mergeMap(({ email, password }) =>
+          this.authService.loginClient(email, password).pipe(
+            map((res) =>
+              AuthActions.loginClientSuccess({
+                client: res,
+                token: res.token,
+              })
+            ),
+            catchError((error) =>
+              of(AuthActions.loginClientFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+
+    this.loginClientSuccess$ = createEffect(
+      () =>
+        this.action$.pipe(
+          ofType(AuthActions.loginClientSuccess),
+          tap(() => {
+            this.router.navigate(['/client-dashboard']);
+          })
+        ),
+      {
+        dispatch: false,
+      }
     );
 
     this.logoutCompany$ = createEffect(

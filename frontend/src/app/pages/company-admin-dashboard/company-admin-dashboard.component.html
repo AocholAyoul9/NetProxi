@@ -127,7 +127,6 @@
       </div>
 
       <!-- Services Tab -->
-      <!-- Services Tab -->
       <div *ngIf="activeTab === 'services'" class="tab-content">
         <div class="section-header">
           <h2>Gestion des Services</h2>
@@ -374,7 +373,6 @@
       </div>
 
       <!-- Employees Tab -->
-      <!-- Employees Tab -->
       <div *ngIf="activeTab === 'employees'" class="tab-content">
         <div class="section-header">
           <h2>Gestion des Employés</h2>
@@ -388,7 +386,6 @@
             *ngFor="let employee of employees$ | async"
             class="card employee-card"
           >
-            <div class="avatar">{{ employee.name.charAt(0) }}</div>
             <div class="employee-info">
               <h3>{{ employee.name }}</h3>
               <p class="employee-role">{{ getRoleLabel(employee.role) }}</p>
