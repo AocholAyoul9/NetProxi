@@ -7,6 +7,7 @@ import {CompanyDetailComponent} from './pages/company-detail/company-detail.comp
 import { CompanyAdminDashboardComponent } from './pages/company-admin-dashboard/company-admin-dashboard.component';
 import { SuperAdminDashboardComponent } from './pages/super-admin-dashboard/super-admin-dashboard.component';
 import {SignupModalComponent} from './components/signup-modal/signup-modal.component'
+import { ClientDashboardComponent } from './pages/client-dashboard/client-dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: NearbyCompaniesComponent },
@@ -17,5 +18,6 @@ export const routes: Routes = [
   {path: 'company-admin', component: CompanyAdminDashboardComponent},
   {path: 'super-admin', component: SuperAdminDashboardComponent},
   {path: 'client-signup', component: SignupModalComponent},
+  {path: 'client-dashboard', component: ClientDashboardComponent},
   { path: '**', redirectTo: '' },
 ];

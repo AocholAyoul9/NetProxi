@@ -1,97 +1,120 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { ApiService } from '../../../core/api.service';
-import { AuthService } from '../../../core/auth.service';
-import * as ClientActions from '../client/client.actions';
+import { of } from 'rxjs';
+import { map, mergeMap, catchError, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
-import { catchError, map, mergeMap, of, switchMap, withLatestFrom } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { selectClientState } from './client.selector';
+import * as ClientActions from './client.actions';
+import { ClientReservation, NearbyCompany, ClientDashboardStats } from '../../models/client.model';
 
 @Injectable()
 export class ClientEffects {
+  private apiUrl = 'api/client';
+
   constructor(
     private actions$: Actions,
-    private api: ApiService,
-    private authService: AuthService,
-    private store: Store
+    private http: HttpClient
   ) {}
 
-
-  registerClient$ = createEffect(() =>
+  // Load client profile
+  loadClientProfile$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ClientActions.registerClient),
-      mergeMap(action =>
-        this.authService.registerClient({
-          name: action.name,
-          email: action.email,
-          password: action.password,
-          phone: action.phone,
-          address: action.address
-        }).pipe(
-          map(response => ClientActions.registerClientSuccess({ clientId: response.id })),
-          catchError(error => of(ClientActions.registerClientFailure({ error })))
+      ofType(ClientActions.loadClientProfile),
+      mergeMap(() =>
+        this.http.get<any>(`${this.apiUrl}/profile`).pipe(
+          map(profile => ClientActions.loadClientProfileSuccess({ profile })),
+          catchError(error => of(ClientActions.loadClientProfileFailure({ error: error.message })))
         )
       )
     )
   );
 
-loginClient$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(ClientActions.loginClient),
-    mergeMap(action =>
-      this.authService.loginClient(action.email, action.password).pipe(
-        map(response =>
-          ClientActions.loginClientSuccess({
-            clientId: response.client.id   // <-- correct field
-          })
-        ),
-        catchError(error =>
-          of(ClientActions.loginClientFailure({ error }))
+  // Load client reservations
+  loadClientReservations$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ClientActions.loadClientReservations),
+      mergeMap(() =>
+        this.http.get<ClientReservation[]>(`${this.apiUrl}/reservations`).pipe(
+          map(reservations => ClientActions.loadClientReservationsSuccess({ reservations }))
         )
       )
     )
-  )
-);
+  );
 
+  // Load nearby companies
   loadNearbyCompanies$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ClientActions.loadNearbyCompanies),
-      withLatestFrom(this.store.select(selectClientState)),
-      switchMap(([_, clientState]) => {
-        if (clientState.lat == null || clientState.lng == null) return of(ClientActions.loadNearbyCompaniesFailure({ error: 'No coordinates' }));
-        return this.api.getNearByCompanies(clientState.lat, clientState.lng, 5).pipe(
-          map(companies => ClientActions.loadNearbyCompaniesSuccess({ companies })),
-          catchError(error => of(ClientActions.loadNearbyCompaniesFailure({ error })))
+      mergeMap(({ location }) => {
+        let url = `${this.apiUrl}/nearby-companies`;
+        if (location) {
+          url += `?lat=${location.lat}&lng=${location.lng}`;
+        }
+        
+        return this.http.get<NearbyCompany[]>(url).pipe(
+          map(companies => ClientActions.loadNearbyCompaniesSuccess({ companies }))
         );
       })
     )
   );
 
-  confirmBooking$ = createEffect(()=>
+  // Search companies by address
+  searchCompanies$ = createEffect(() =>
     this.actions$.pipe(
-        ofType(ClientActions.confirmBooking),
-        withLatestFrom(this.store.select(selectClientState)),
-        switchMap(([_, clientstate])=>{
-            if(!clientstate.selectedCompany || !clientstate.selectedService || !clientstate.bookingDate )
-                 return of(ClientActions.confirmBookingFailure({error: 'Incomplete booking info'}));
-
-            const bookingPayload  ={
-                serviceType: clientstate.selectedService.name,
-                startTime: clientstate.bookingDate.toDateString(),
-                endTime: clientstate.bookingDate.toDateString(),
-                address: clientstate.address,
-                price: clientstate.selectedService.basePrice
-            };
-
-            return this.api.CreateBooking(clientstate.selectedCompany.id, bookingPayload).pipe(
-                map(booking => ClientActions.confirmBookingSuccess({booking})),
-                catchError(error => of(ClientActions.confirmBookingFailure({error})))
-            )
-        })
+      ofType(ClientActions.searchCompanies),
+      mergeMap(({ query }) =>
+        this.http.post<NearbyCompany[]>(`${this.apiUrl}/search`, { address: query }).pipe(
+          map(results => ClientActions.searchCompaniesSuccess({ results }))
+        )
+      )
     )
-)
+  );
 
+  // Load dashboard stats
+  loadDashboardStats$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ClientActions.loadDashboardStats),
+      mergeMap(() =>
+        this.http.get<ClientDashboardStats>(`${this.apiUrl}/stats`).pipe(
+          map(stats => ClientActions.loadDashboardStatsSuccess({ stats }))
+        )
+      )
+    )
+  );
 
+  // Update reservation status
+  updateReservationStatus$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ClientActions.updateReservationStatus),
+      mergeMap(({ reservationId, status, reason }) =>
+        this.http.put(`${this.apiUrl}/reservations/${reservationId}/status`, { status, reason }).pipe(
+          map(() => ClientActions.updateReservationStatusSuccess({ reservationId, status }))
+        )
+      )
+    )
+  );
 
+  // Add review to reservation
+  addReservationReview$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ClientActions.addReservationReview),
+      mergeMap(({ reservationId, rating, review }) =>
+        this.http.post(`${this.apiUrl}/reservations/${reservationId}/review`, { rating, review }).pipe(
+          map(() => ClientActions.addReservationReviewSuccess({ reservationId, rating, review }))
+        )
+      )
+    )
+  );
+
+  // Toggle favorite company
+  toggleFavoriteCompany$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ClientActions.toggleFavoriteCompany),
+      mergeMap(({ companyId, isFavorite }) =>
+        this.http.put(`${this.apiUrl}/companies/${companyId}/favorite`, { isFavorite }).pipe(
+          map(() => ClientActions.toggleFavoriteCompanySuccess({ companyId, isFavorite }))
+        )
+      )
+    )
+  );
 }

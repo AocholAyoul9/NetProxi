@@ -52,5 +52,20 @@ export const authReducer = createReducer(
     error: null,
   })),
   on(AuthActions.registerClientSuccess, (state, {client})=>({...state, client, loading: false})),
-  on(AuthActions.registerClientFailure,(state, {error})=>({ ...state, error, loading: false}))
+  on(AuthActions.registerClientFailure,(state, {error})=>({ ...state, error, loading: false})),
+
+  //login client
+  on(AuthActions.loginClient, (state) => ({ ...state, loading: true, error: null })),
+  on(AuthActions.loginClientSuccess, (state, { client, token }) => ({
+    ...state,
+    client,
+    token,
+    loading: false,
+  })),
+  on(AuthActions.loginClientFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  }))
+
 );

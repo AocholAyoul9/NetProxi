@@ -50,3 +50,17 @@ export const registerClientSuccess = createAction('[Auth] register client succes
 export const registerClientFailure = createAction('[Auth] register client Failure',
     props<{error: any}>()
 )
+
+//login client
+export const loginClient = createAction(
+    '[Auth] login client',
+    props<{email: string; password: string}>()
+);
+export const loginClientSuccess = createAction(
+    '[Auth] Login client Success',
+    props<{client: any; token: string}>()
+);
+export const loginClientFailure = createAction(
+    '[Auth] Login client Failure',
+    props<{error: any}>()
+)
