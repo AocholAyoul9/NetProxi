@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { Company } from '../shared/models/company.model';
 import { ServiceModel } from '../shared/models/service.model';
 import { Booking } from '../shared/models/booking.model';
-import { ClientReservation, NearbyCompany, ClientDashboardStats } from '../shared/models/client.model';
+import { ClientReservation, NearbyCompany, ClientDashboardStats, ClientProfile } from '../shared/models/client.model';
 
 
 @Injectable({
@@ -227,11 +227,15 @@ export class ApiService {
 
     // ---------------- Client Reservations ----------------
   getClientReservations(clientId: string): Observable<Booking[]> {
-    return this.http.get<Booking[]>(`${this.baseUrl}/clients/reservations`, {
-      headers: { clientId }, // Or use JWT if available
+    return this.http.get<Booking[]>(`${this.baseUrl}/clients/${clientId}/reservations`, {
+      //headers: { clientId }, // Or use JWT if available
     });
   }
 
+
+    getClientProfile() {
+    return this.http.get<ClientProfile>('/api/clients/profile'); // Adjust endpoint as needed
+  }
   // ---------------- Update Reservation Status ----------------
   updateReservationStatus(reservationId: string, status: string): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/clients/reservations/${reservationId}/status`, { status });

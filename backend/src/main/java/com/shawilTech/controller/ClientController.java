@@ -33,6 +33,15 @@ public class ClientController {
     }
 
 
+    // getClienPtProfile
+    @GetMapping("/profile")
+    public ResponseEntity<ClientResponseDto> getClientProfile(
+            @RequestHeader("clientId") UUID clientId // OR decode from JWT
+    ) {
+        ClientResponseDto response = clientService.getClientProfile(clientId);
+        return ResponseEntity.ok(response);
+    }
+
      // ------------------------------------------------------------------------
     // Load client reservations
     // ------------------------------------------------------------------------

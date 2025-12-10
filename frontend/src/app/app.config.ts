@@ -47,6 +47,6 @@ export const appConfig: ApplicationConfig = {
 
      
     }),
-    provideEffects([CompanyEffects, BookingEffects, AuthEffects,ClientEffects]),
+    provideEffects([CompanyEffects, BookingEffects, AuthEffects, ClientEffects]),
   ],
 };

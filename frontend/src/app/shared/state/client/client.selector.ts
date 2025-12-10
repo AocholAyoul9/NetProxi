@@ -2,7 +2,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { ClientState } from './client.reducer';
 
-// 1️⃣ Feature selector
+// Feature selector
 export const selectClientState = createFeatureSelector<ClientState>('client');
 
 
@@ -13,7 +13,7 @@ export const selectReservations = createSelector(
 );
 
 
-// 2️⃣ Basic selectors
+// Basic selectors
 export const selectClientProfile = createSelector(
   selectClientState,
   (state) => state.profile
