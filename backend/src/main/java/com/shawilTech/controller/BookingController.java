@@ -15,75 +15,77 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/bookings")
+@RequestMapping("/api/companies/{companyId}/bookings")
 @RequiredArgsConstructor
-@Tag(name = "Bookings", description = "APIs for managing bookings")
+@Tag(name = "Bookings", description = "APIs for managing company bookings")
 public class BookingController {
 
     private final BookingService bookingService;
 
     // ------------------- CREATE -------------------
-    @Operation(summary = "Create a new booking")
+    @Operation(summary = "Create a new booking for a company")
     @PostMapping
-    public ResponseEntity<BookingResponseDto> createBooking(@RequestBody BookingRequestDto request) {
+    public ResponseEntity<BookingResponseDto> createBooking(
+            @PathVariable UUID companyId,
+            @RequestBody BookingRequestDto request) {
+
+        request.setCompanyId(companyId); // enforce companyId from URL
         BookingResponseDto response = bookingService.createBooking(request);
         return ResponseEntity.ok(response);
     }
 
     // ------------------- GET BOOKINGS -------------------
-    @Operation(summary = "Get all bookings for a client")
-    @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<BookingResponseDto>> getClientBookings(@PathVariable UUID clientId) {
-        List<BookingResponseDto> bookings = bookingService.getClientBookings(clientId);
-        return ResponseEntity.ok(bookings);
-    }
-
     @Operation(summary = "Get all bookings for a company")
-    @GetMapping("/company/{companyId}")
+    @GetMapping
     public ResponseEntity<List<BookingResponseDto>> getCompanyBookings(@PathVariable UUID companyId) {
         List<BookingResponseDto> bookings = bookingService.getCompanyBookings(companyId);
         return ResponseEntity.ok(bookings);
     }
 
-    @Operation(summary = "Get all bookings for a client in a specific company")
-    @GetMapping("/client/{clientId}/company/{companyId}")
-    public ResponseEntity<List<BookingResponseDto>> getClientBookingsForCompany(
-            @PathVariable UUID clientId,
-            @PathVariable UUID companyId) {
-        List<BookingResponseDto> bookings = bookingService.getClientBookingsForCompany(clientId, companyId);
-        return ResponseEntity.ok(bookings);
-    }
-
-    @Operation(summary = "Get a booking by its ID")
-    @GetMapping("/{bookingId}")
-    public ResponseEntity<BookingResponseDto> getBooking(@PathVariable UUID bookingId) {
-        BookingResponseDto booking = bookingService.getBooking(bookingId);
-        return ResponseEntity.ok(booking);
-    }
-
-    // ------------------- UPDATE BOOKINGS -------------------
-    @Operation(summary = "Update booking status")
-    @PatchMapping("/{bookingId}/status")
-    public ResponseEntity<BookingResponseDto> updateBookingStatus(
-            @PathVariable UUID bookingId,
-            @RequestParam BookingStatus status) {
-        BookingResponseDto updatedBooking = bookingService.updateBookingStatus(bookingId, status);
-        return ResponseEntity.ok(updatedBooking);
-    }
-
+    // ------------------- CANCEL BOOKING -------------------
     @Operation(summary = "Cancel a booking")
     @PatchMapping("/{bookingId}/cancel")
-    public ResponseEntity<BookingResponseDto> cancelBooking(@PathVariable UUID bookingId) {
+    public ResponseEntity<BookingResponseDto> cancelBooking(
+            @PathVariable UUID companyId,
+            @PathVariable UUID bookingId) {
+
+        // Optional: Validate booking belongs to the company
         BookingResponseDto cancelledBooking = bookingService.cancelBooking(bookingId);
         return ResponseEntity.ok(cancelledBooking);
     }
 
+    // ------------------- UPDATE BOOKING STATUS -------------------
+    @Operation(summary = "Update booking status")
+    @PatchMapping("/{bookingId}/status")
+    public ResponseEntity<BookingResponseDto> updateBookingStatus(
+            @PathVariable UUID companyId,
+            @PathVariable UUID bookingId,
+            @RequestParam BookingStatus status) {
+
+        BookingResponseDto updatedBooking = bookingService.updateBookingStatus(bookingId, status);
+        return ResponseEntity.ok(updatedBooking);
+    }
+
+    // ------------------- ASSIGN EMPLOYEE -------------------
     @Operation(summary = "Assign an employee to a booking")
     @PatchMapping("/{bookingId}/assign")
     public ResponseEntity<BookingResponseDto> assignBooking(
+            @PathVariable UUID companyId,
             @PathVariable UUID bookingId,
             @RequestParam UUID employeeId) {
+
         BookingResponseDto updatedBooking = bookingService.assignBookingToEmployee(bookingId, employeeId);
         return ResponseEntity.ok(updatedBooking);
+    }
+
+    // ------------------- GET BOOKING BY ID -------------------
+    @Operation(summary = "Get a booking by ID")
+    @GetMapping("/{bookingId}")
+    public ResponseEntity<BookingResponseDto> getBooking(
+            @PathVariable UUID companyId,
+            @PathVariable UUID bookingId) {
+
+        BookingResponseDto booking = bookingService.getBooking(bookingId);
+        return ResponseEntity.ok(booking);
     }
 }

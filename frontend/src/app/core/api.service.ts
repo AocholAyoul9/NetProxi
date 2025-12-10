@@ -5,6 +5,8 @@ import { AuthService } from './auth.service';
 import { Company } from '../shared/models/company.model';
 import { ServiceModel } from '../shared/models/service.model';
 import { Booking } from '../shared/models/booking.model';
+import { ClientReservation, NearbyCompany, ClientDashboardStats } from '../shared/models/client.model';
+
 
 @Injectable({
   providedIn: 'root',
@@ -92,15 +94,22 @@ export class ApiService {
     serviceId: string,
     service: ServiceModel
   ): Observable<ServiceModel> {
-    return this.http.put<ServiceModel>(`${this.baseUrl}/services/${serviceId}`, service, {
-      // headers: this.getHeaders(),
-    });
+    return this.http.put<ServiceModel>(
+      `${this.baseUrl}/services/${serviceId}`,
+      service,
+      {
+        // headers: this.getHeaders(),
+      }
+    );
   }
 
   deleteCompanyService(serviceId: string): Observable<ServiceModel> {
-    return this.http.delete<ServiceModel>(`${this.baseUrl}/services/delete/${serviceId}`,{
-      // headers: this.getHeaders(),
-    });
+    return this.http.delete<ServiceModel>(
+      `${this.baseUrl}/services/delete/${serviceId}`,
+      {
+        // headers: this.getHeaders(),
+      }
+    );
   }
 
   //-----------------Booking------------------
@@ -147,18 +156,16 @@ export class ApiService {
     );
   }
 
-  addCompanyEmployee(
-    companyId: string,
-    employeeData: any
-  ): Observable<any> { {
-    return this.http.post<any>(
-      `${this.baseUrl}/companies/${companyId}/employees`,
-      employeeData,
-      {
-        // headers: this.getHeaders(),
-      }
-    );
-  }
+  addCompanyEmployee(companyId: string, employeeData: any): Observable<any> {
+    {
+      return this.http.post<any>(
+        `${this.baseUrl}/companies/${companyId}/employees`,
+        employeeData,
+        {
+          // headers: this.getHeaders(),
+        }
+      );
+    }
   }
 
   deleteCompanyEmployee(
@@ -186,7 +193,7 @@ export class ApiService {
       }
     );
   }
- 
+
   //---------------------- subscriptions ---------------------------
 
   subscripCompany(companyId: string, plan: string): Observable<any> {
@@ -217,4 +224,38 @@ export class ApiService {
       // headers: this.getHeaders(),
     });
   }
+
+    // ---------------- Client Reservations ----------------
+  getClientReservations(clientId: string): Observable<Booking[]> {
+    return this.http.get<Booking[]>(`${this.baseUrl}/clients/reservations`, {
+      headers: { clientId }, // Or use JWT if available
+    });
+  }
+
+  // ---------------- Update Reservation Status ----------------
+  updateReservationStatus(reservationId: string, status: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/clients/reservations/${reservationId}/status`, { status });
+  }
+
+  // ---------------- Add Review ----------------
+  addReservationReview(reservationId: string, rating: number, review: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/clients/reservations/${reservationId}/review`, { rating, review });
+  }
+
+  // ---------------- Search Companies by Address ----------------
+  searchCompanies(query: string): Observable<NearbyCompany[]> {
+    return this.http.post<NearbyCompany[]>(`${this.baseUrl}/companies/search`, { address: query });
+  }
+
+  // ---------------- Get Dashboard Stats ----------------
+  getDashboardStats(): Observable<ClientDashboardStats> {
+    return this.http.get<ClientDashboardStats>(`${this.baseUrl}/clients/stats`);
+  }
+
+  // ---------------- Update Favorite Company ----------------
+  updateFavoriteCompany(companyId: string, isFavorite: boolean): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/clients/companies/${companyId}/favorite`, { isFavorite });
+  }
+
+
 }

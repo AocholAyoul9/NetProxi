@@ -18,5 +18,11 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             LocalDateTime endTime,
             LocalDateTime startTime
     );
+    boolean existsByAssignedEmployeeIdAndStartTimeLessThanAndEndTimeGreaterThan(
+        UUID employeeId,
+        LocalDateTime newEnd,
+        LocalDateTime newStart
+);
+
     List<Booking> findByClientIdAndCompanyId(UUID clientId, UUID companyId);
 }

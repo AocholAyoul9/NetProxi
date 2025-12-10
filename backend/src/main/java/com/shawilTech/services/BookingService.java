@@ -1,8 +1,11 @@
 package com.shawilTech.identityservice.service;
-import com.shawilTech.identityservice.dto.BookingRequestDto;
-import com.shawilTech.identityservice.dto.BookingResponseDto;
+
+
+import com.shawilTech.identityservice.dto.*;
 import com.shawilTech.identityservice.entity.*;
 import com.shawilTech.identityservice.repository.*;
+
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +16,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -22,70 +24,109 @@ public class BookingService {
     private final ClientRepository clientRepository;
     private final ServiceRepository serviceRepository;
     private final CompanyRepository companyRepository;
-    private  final EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
-    /**
-     * Create a new booking for a client
-     */
-    @Transactional
-    public BookingResponseDto createBooking(BookingRequestDto request) {
-        // Validate client exists
-        Client client = clientRepository.findById(request.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client not found with ID: " + request.getClientId()));
+ @Transactional
+public BookingResponseDto createBooking(BookingRequestDto request) {
 
-        // Validate service exists
-        ServiceEntity service = serviceRepository.findById(request.getServiceId())
-                .orElseThrow(() -> new RuntimeException("Service not found with ID: " + request.getServiceId()));
+    // ---------------------------
+    // Validate client
+    // ---------------------------
+    Client client = clientRepository.findById(request.getClientId())
+            .orElseThrow(() -> new RuntimeException("Client not found"));
 
-        // Validate company exists
-        Company company = companyRepository.findById(request.getCompanyId())
-                .orElseThrow(() -> new RuntimeException("Company not found with ID: " + request.getCompanyId()));
+    // ---------------------------
+    // Validate service
+    // ---------------------------
+    ServiceEntity service = serviceRepository.findById(request.getServiceId())
+            .orElseThrow(() -> new RuntimeException("Service not found"));
 
-        // Validate that the service belongs to the specified company
-        if (!service.getCompany().getId().equals(request.getCompanyId())) {
-            throw new RuntimeException("Service does not belong to the specified company");
-        }
+    // ---------------------------
+    // Validate company
+    // ---------------------------
+    Company company = companyRepository.findById(request.getCompanyId())
+            .orElseThrow(() -> new RuntimeException("Company not found"));
 
-        // Check for booking time conflicts
-        LocalDateTime endTime = request.getStartTime().plusMinutes(service.getDurationInMinutes());
-
-
-        boolean hasConflict = bookingRepository.existsByClientIdAndStartTimeLessThanAndEndTimeGreaterThan(
-                request.getClientId(),
-                endTime,
-                request.getStartTime()
-        );
-
-
-       /* if (hasConflict) {
-            throw new RuntimeException("Client has a conflicting booking at the requested time");
-        }*/
-
-        // Check if service is active
-        if (!service.isActive()) {
-            throw new RuntimeException("Service is not active and cannot be booked");
-        }
-
-        // Check if company is active
-        if (!company.isActive()) {
-            throw new RuntimeException("Company is not active and cannot accept bookings");
-        }
-
-        // Create booking
-        Booking booking = new Booking();
-        booking.setClient(client);
-        booking.setService(service);
-        booking.setCompany(company);
-        booking.setStartTime(request.getStartTime());
-        booking.setEndTime(endTime);
-        booking.setAddress(request.getAddress());
-        booking.setPrice(request.getPrice() != null ? request.getPrice() : BigDecimal.valueOf(service.getBasePrice()));
-        booking.setStatus(BookingStatus.PENDING);
-
-        Booking savedBooking = bookingRepository.save(booking);
-
-        return mapToBookingResponseDto(savedBooking);
+    // Service must belong to company
+    if (!service.getCompany().getId().equals(company.getId())) {
+        throw new RuntimeException("Service does not belong to this company");
     }
+
+    // ---------------------------
+    // Validate employee
+    // ---------------------------
+    Employee employee = employeeRepository.findById(request.getEmployeeId())
+            .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+    if (!employee.getCompany().getId().equals(company.getId())) {
+        throw new RuntimeException("Employee does not belong to this company");
+    }
+
+    // ---------------------------
+    // Validate timestamps
+    // ---------------------------
+    LocalDateTime start = request.getStartTime();
+    LocalDateTime end = start.plusMinutes(service.getDurationInMinutes());
+
+    if (start.isBefore(LocalDateTime.now())) {
+        throw new RuntimeException("Cannot book a time in the past");
+    }
+
+    // ---------------------------
+    // Conflict check: client
+    // ---------------------------
+    boolean clientConflict =
+            bookingRepository.existsByClientIdAndStartTimeLessThanAndEndTimeGreaterThan(
+                    request.getClientId(), end, start);
+
+    if (clientConflict) {
+        throw new RuntimeException("You already have another booking at this time");
+    }
+
+    // ---------------------------
+    // Conflict check: employee
+    // ---------------------------
+    boolean employeeConflict =
+            bookingRepository.existsByAssignedEmployeeIdAndStartTimeLessThanAndEndTimeGreaterThan(
+                    request.getEmployeeId(), end, start);
+
+    if (employeeConflict) {
+        throw new RuntimeException("This employee is already booked at the selected time");
+    }
+
+    // ---------------------------
+    // Service & company active check
+    // ---------------------------
+    if (!service.isActive()) {
+        throw new RuntimeException("Service is inactive");
+    }
+
+    if (!company.isActive()) {
+        throw new RuntimeException("Company is inactive");
+    }
+
+    // ---------------------------
+    // Create booking
+    // ---------------------------
+    Booking booking = new Booking();
+    booking.setClient(client);
+    booking.setService(service);
+    booking.setCompany(company);
+    booking.setAssignedEmployee(employee);
+    booking.setStartTime(start);
+    booking.setEndTime(end);
+    booking.setAddress(request.getAddress());
+    booking.setPrice(BigDecimal.valueOf(service.getBasePrice()));
+    booking.setStatus(BookingStatus.PENDING);
+
+    Booking savedBooking = bookingRepository.save(booking);
+
+    return mapToBookingResponseDto(savedBooking);
+}
+
+
+
+
 
 
     @Transactional
@@ -186,7 +227,8 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
 
-        // Check if booking can be cancelled (only pending or confirmed bookings can be cancelled)
+        // Check if booking can be cancelled (only pending or confirmed bookings can be
+        // cancelled)
         if (booking.getStatus() == BookingStatus.COMPLETED) {
             throw new RuntimeException("Cannot cancel a completed booking");
         }
@@ -195,6 +237,26 @@ public class BookingService {
         Booking cancelledBooking = bookingRepository.save(booking);
 
         return mapToBookingResponseDto(cancelledBooking);
+    }
+
+    /**
+     * 
+     * @param bookingId
+     * @param dto
+     */
+    @Transactional
+    public void addReviewToBooking(UUID bookingId, ReviewRequestDto dto) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
+
+        if (booking.getStatus() != BookingStatus.COMPLETED) {
+            throw new RuntimeException("You can only review completed bookings");
+        }
+
+        booking.setRating(dto.getRating());
+        booking.setReview(dto.getReview());
+
+        bookingRepository.save(booking);
     }
 
     /**

@@ -1,54 +1,105 @@
-import { createSelector } from '@ngrx/store';
-import * as fromClient from './client.state';
+// client.selectors.ts
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { ClientState } from './client.reducer';
 
-// Base selectors
-export const selectClientState = fromClient.selectClientState;
-export const selectProfile = fromClient.selectProfile;
-export const selectReservations = fromClient.selectReservations;
-export const selectNearbyCompanies = fromClient.selectNearbyCompanies;
-export const selectFavoriteCompanies = fromClient.selectFavoriteCompanies;
-export const selectDashboardStats = fromClient.selectDashboardStats;
-export const selectLoading = fromClient.selectLoading;
-export const selectError = fromClient.selectError;
-export const selectSearchResults = fromClient.selectSearchResults;
-export const selectSearchQuery = fromClient.selectSearchQuery;
-export const selectActiveTab = fromClient.selectActiveTab;
-export const selectReservationFilter = fromClient.selectReservationFilter;
-export const selectPagination = fromClient.selectPagination;
+// 1️⃣ Feature selector
+export const selectClientState = createFeatureSelector<ClientState>('client');
 
-// Derived selectors
+
+
+export const selectReservations = createSelector(
+  selectClientState,
+  (state) => state.reservations
+);
+
+
+// 2️⃣ Basic selectors
+export const selectClientProfile = createSelector(
+  selectClientState,
+  (state) => state.profile
+);
+
+export const selectClientReservations = createSelector(
+  selectClientState,
+  (state) => state.reservations
+);
+
+export const selectNearbyCompanies = createSelector(
+  selectClientState,
+  (state) => state.nearbyCompanies
+);
+
+export const selectFavoriteCompanies = createSelector(
+  selectClientState,
+  (state) => state.favoriteCompanies
+);
+
+export const selectDashboardStats = createSelector(
+  selectClientState,
+  (state) => state.dashboardStats
+);
+
+export const selectClientLoading = createSelector(
+  selectClientState,
+  (state) => state.loading
+);
+
+export const selectClientError = createSelector(
+  selectClientState,
+  (state) => state.error
+);
+
+export const selectSearchResults = createSelector(
+  selectClientState,
+  (state) => state.searchResults
+);
+
+export const selectSearchQuery = createSelector(
+  selectClientState,
+  (state) => state.searchQuery
+);
+
+export const selectActiveTab = createSelector(
+  selectClientState,
+  (state) => state.activeTab
+);
+
+export const selectReservationFilter = createSelector(
+  selectClientState,
+  (state) => state.reservationFilter
+);
+
+export const selectPagination = createSelector(
+  selectClientState,
+  (state) => state.pagination
+);
+
+// 3️⃣ Derived selectors
 export const selectUpcomingReservations = createSelector(
-  selectReservations,
+  selectClientReservations,
   (reservations) => {
     const now = new Date();
     return reservations
-      .filter(r => 
-        new Date(r.bookingDate) >= now && 
-        r.status !== 'CANCELLED' && 
-        r.status !== 'COMPLETED'
-      )
+      .filter(r => new Date(r.bookingDate) >= now && r.status !== 'CANCELLED' && r.status !== 'COMPLETED')
       .sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
   }
 );
 
 export const selectRecentReservations = createSelector(
-  selectReservations,
-  (reservations) => {
-    return reservations
+  selectClientReservations,
+  (reservations) =>
+    reservations
       .sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime())
-      .slice(0, 5);
-  }
+      .slice(0, 5)
 );
 
 export const selectFilteredReservations = createSelector(
-  selectReservations,
+  selectClientReservations,
   selectReservationFilter,
   (reservations, filter) => {
     switch (filter) {
       case 'upcoming':
-        return reservations.filter(r => 
-          ['PENDING', 'CONFIRMED', 'IN_PROGRESS'].includes(r.status)
-        );
+        return reservations.filter(r => ['PENDING', 'CONFIRMED', 'IN_PROGRESS'].includes(r.status));
       case 'completed':
         return reservations.filter(r => r.status === 'COMPLETED');
       case 'cancelled':
@@ -71,21 +122,34 @@ export const selectPaginatedReservations = createSelector(
 export const selectTotalPages = createSelector(
   selectFilteredReservations,
   selectPagination,
-  (reservations, pagination) => {
-    return Math.ceil(reservations.length / pagination.itemsPerPage);
-  }
+  (reservations, pagination) => Math.ceil(reservations.length / pagination.itemsPerPage)
 );
 
 export const selectDisplayedCompanies = createSelector(
   selectNearbyCompanies,
   selectSearchResults,
   selectSearchQuery,
-  (nearbyCompanies, searchResults, searchQuery) => {
-    return searchQuery ? searchResults : nearbyCompanies;
-  }
+  (nearbyCompanies, searchResults, searchQuery) => searchQuery ? searchResults : nearbyCompanies
 );
 
 export const selectHasSearchResults = createSelector(
   selectSearchQuery,
   (query) => query.length > 0
 );
+
+// Selector for the latest booking created
+export const selectLatestBooking = createSelector(
+  selectClientReservations,
+  (reservations) => {
+    if (!reservations || reservations.length === 0) return null;
+    return reservations.reduce((latest, current) =>
+      new Date(current.bookingDate) > new Date(latest.bookingDate) ? current : latest
+    );
+  }
+);
+
+// Selector to check if a booking is being created
+export const selectIsCreatingBooking = selectClientLoading;
+
+// Selector for booking-related errors
+export const selectBookingError = selectClientError;

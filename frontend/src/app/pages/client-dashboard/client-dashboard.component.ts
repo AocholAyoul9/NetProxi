@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription, map } from 'rxjs';
+import { Observable, Subscription} from 'rxjs';
 
 import { ClientReservation,NearbyCompany } from '../../shared/models/client.model';
 import * as ClientSelectors from '../../shared/state/client/client.selector';
@@ -80,7 +80,7 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     });
 
     // Select data from store
-    this.profile$ = this.store.select(ClientSelectors.selectProfile);
+    this.profile$ = this.store.select(ClientSelectors.selectClientProfile);
     this.reservations$ = this.store.select(ClientSelectors.selectReservations);
     this.upcomingReservations$ = this.store.select(ClientSelectors.selectUpcomingReservations);
     this.recentReservations$ = this.store.select(ClientSelectors.selectRecentReservations);
@@ -89,7 +89,7 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     this.nearbyCompanies$ = this.store.select(ClientSelectors.selectNearbyCompanies);
     this.displayedCompanies$ = this.store.select(ClientSelectors.selectDisplayedCompanies);
     this.dashboardStats$ = this.store.select(ClientSelectors.selectDashboardStats);
-    this.loading$ = this.store.select(ClientSelectors.selectLoading);
+    this.loading$ = this.store.select(ClientSelectors.selectClientLoading);
     this.activeTab$ = this.store.select(ClientSelectors.selectActiveTab);
     this.reservationFilter$ = this.store.select(ClientSelectors.selectReservationFilter);
     this.pagination$ = this.store.select(ClientSelectors.selectPagination);
