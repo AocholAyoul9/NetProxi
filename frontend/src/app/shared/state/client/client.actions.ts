@@ -5,7 +5,28 @@ import {
   ClientDashboardStats, 
   ClientProfile 
 } from '../../models/client.model';
+import { Booking } from '../../models/booking.model';
 
+
+
+// Create booking
+export const createBooking = createAction(
+  '[Client] Create Booking',
+  props<{ companyId: string; booking: Partial<ClientReservation> }>()
+);
+
+
+// Booking creation succeeded
+export const createBookingSuccess = createAction(
+  '[Client] Create Booking Success',
+  props<{ reservation: ClientReservation }>() 
+);
+
+// Booking creation failed
+export const createBookingFailure = createAction(
+  '[Client] Create Booking Failure',
+  props<{ error: string }>()
+);
 
 // Load client profile
 export const loadClientProfile = createAction('[Client] Load Profile');
@@ -25,6 +46,11 @@ export const loadClientReservationsSuccess = createAction(
   props<{ reservations: ClientReservation[] }>()
 );
 
+export const loadClientReservationsFailure = createAction(
+  '[Client] Load Reservations Failure',
+  props<{ error: string }>()
+);
+
 // Load nearby companies
 export const loadNearbyCompanies = createAction(
   '[Client] Load Nearby Companies',
@@ -35,6 +61,10 @@ export const loadNearbyCompaniesSuccess = createAction(
   props<{ companies: NearbyCompany[] }>()
 );
 
+export const loadNearbyCompaniesFailure = createAction(
+  '[Client] Load Nearby Companies Failure',
+  props<{ error: string }>()
+);
 // Search companies by address
 export const searchCompanies = createAction(
   '[Client] Search Companies',
@@ -43,6 +73,11 @@ export const searchCompanies = createAction(
 export const searchCompaniesSuccess = createAction(
   '[Client] Search Companies Success',
   props<{ results: NearbyCompany[] }>()
+);
+
+export const searchCompaniesFailure = createAction(
+  '[Client] Search Companies Failure',
+  props<{ error: string }>()
 );
 export const clearSearchResults = createAction('[Client] Clear Search Results');
 
@@ -53,6 +88,10 @@ export const loadDashboardStatsSuccess = createAction(
   props<{ stats: ClientDashboardStats }>()
 );
 
+export const loadDashboardStatsFailure = createAction(
+  '[Client] Load Dashboard Stats Failure',
+  props<{ error: string }>()
+);
 // Update reservation status
 export const updateReservationStatus = createAction(
   '[Client] Update Reservation Status',
@@ -63,6 +102,10 @@ export const updateReservationStatusSuccess = createAction(
   props<{ reservationId: string; status: string }>()
 );
 
+export const updateReservationStatusFailure = createAction(
+  '[Client] Update Reservation Status Failure',
+  props<{ error: string }>()
+);
 // Add review to reservation
 export const addReservationReview = createAction(
   '[Client] Add Reservation Review',
@@ -73,6 +116,10 @@ export const addReservationReviewSuccess = createAction(
   props<{ reservationId: string; rating: number; review: string }>()
 );
 
+export const addReservationReviewFailure = createAction(
+  '[Client] Add Reservation Review Failure',
+  props<{ error: string }>()
+);
 // Toggle favorite company
 export const toggleFavoriteCompany = createAction(
   '[Client] Toggle Favorite Company',

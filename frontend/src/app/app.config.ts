@@ -1,4 +1,8 @@
-import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -7,7 +11,11 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
 
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
@@ -18,7 +26,8 @@ import { BookingEffects } from './shared/state/booking/booking.effects';
 import { authReducer } from './shared/state/auth/auth.reducer';
 import { AuthEffects } from './shared/state/auth/auth.effects';
 import { GoogleMapsModule } from '@angular/google-maps';
-
+import { ClientEffects } from './shared/state/client/client.effects';
+import { clientReducer } from './shared/state/client/client.reducer';
 
 
 export const appConfig: ApplicationConfig = {
@@ -27,16 +36,17 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
 
-    provideHttpClient(
-       withFetch()
-    ),
+    provideHttpClient(withFetch()),
     importProvidersFrom(GoogleMapsModule),
 
     provideStore({
       company: companyReducer,
       booking: bookingReducer,
-      auth: authReducer
+      auth: authReducer,
+      client: clientReducer,
+
+     
     }),
-    provideEffects([CompanyEffects, BookingEffects, AuthEffects]),
+    provideEffects([CompanyEffects, BookingEffects, AuthEffects,ClientEffects]),
   ],
 };

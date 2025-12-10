@@ -1,4 +1,5 @@
 package com.shawilTech.identityservice.entity;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,8 +38,9 @@ public class Booking {
     private LocalDateTime endTime;
     private String address;
     private BigDecimal price;
+    private Integer rating;
+    private String review;
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 }
-

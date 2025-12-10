@@ -13,6 +13,8 @@ export interface Client{
 export interface ClientReservation {
   id: string;
   companyId: string;
+  clientId: string;
+  employeeId: string;
   companyName: string;
   companyLogoUrl?: string;
   companyAddress: string;
@@ -22,7 +24,7 @@ export interface ClientReservation {
   servicePrice: number;
   serviceDuration: number;
   bookingDate: Date;
-  bookingTime: string;
+  bookingTime: Date;
   // Accepter les strings ou les valeurs spécifiques
   status: string; // ou | 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
   assignedEmployeeName?: string;
@@ -34,6 +36,7 @@ export interface ClientReservation {
   estimatedArrivalTime?: Date;
   actualStartTime?: Date;
   actualEndTime?: Date;
+
 }
 
 export interface NearbyCompany {
