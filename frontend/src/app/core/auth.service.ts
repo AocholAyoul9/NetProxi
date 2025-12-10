@@ -94,12 +94,21 @@ export class AuthService {
     });
   }
 
-  getClientId(): string {
+getClientId(): string {
+  if (!isPlatformBrowser(this.platformId)) {
+    return ''; // SSR safety
+  }
+
   const token = localStorage.getItem('token');
   if (!token) return '';
   
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  return payload.clientId; // depends on backend JWT payload
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.clientId || '';
+  } catch {
+    return '';
+  }
 }
+
 
 }
