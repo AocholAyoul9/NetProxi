@@ -232,10 +232,20 @@ export class ApiService {
     });
   }
 
+// ---------------- Client Profile ----------------
+getClientProfile(): Observable<ClientProfile> {
+  const clientId = this.authService.getClientId();
+  console.log("Sending clientId header:", clientId);
 
-    getClientProfile() {
-    return this.http.get<ClientProfile>('/api/clients/profile'); // Adjust endpoint as needed
-  }
+  return this.http.get<ClientProfile>(`${this.baseUrl}/clients/profile`, {
+    headers: new HttpHeaders({
+      clientId: clientId
+    })
+  });
+}
+
+
+
   // ---------------- Update Reservation Status ----------------
   updateReservationStatus(reservationId: string, status: string): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/clients/reservations/${reservationId}/status`, { status });
