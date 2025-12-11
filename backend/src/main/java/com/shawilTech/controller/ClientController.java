@@ -36,7 +36,7 @@ public class ClientController {
     // getClienPtProfile
     @GetMapping("/profile")
     public ResponseEntity<ClientResponseDto> getClientProfile(
-            @RequestHeader("clientId") UUID clientId // OR decode from JWT
+            @RequestHeader("clientId") UUID clientId 
     ) {
         ClientResponseDto response = clientService.getClientProfile(clientId);
         return ResponseEntity.ok(response);

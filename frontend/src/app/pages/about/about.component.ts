@@ -42,4 +42,11 @@ export class AboutComponent {
       }
     }, interval);
   }
+
+  navigateToCompanies() {
+    window.location.href = '/companies';
+  }
+  navigateToSignup() {
+    window.location.href = '/signup';
+  }
 }

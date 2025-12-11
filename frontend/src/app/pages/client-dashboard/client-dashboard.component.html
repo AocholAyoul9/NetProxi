@@ -6,39 +6,46 @@
         <h1>Mon Tableau de Bord</h1>
         <div class="client-info" *ngIf="profile$ | async as profile">
           <div class="client-avatar">
-            <img *ngIf="profile.avatarUrl" [src]="profile.avatarUrl" [alt]="profile.name">
+            <img
+              *ngIf="profile.avatarUrl"
+              [src]="profile.avatarUrl"
+              [alt]="profile.name"
+            />
             <div *ngIf="!profile.avatarUrl" class="avatar-placeholder">
               {{ profile.name.charAt(0) }}
             </div>
           </div>
           <div class="client-details">
             <h2>{{ profile.name }}</h2>
-            <p>Membre depuis {{ profile.joinDate | date:'yyyy' }}</p>
+            <p>Membre depuis {{ profile.joinDate | date : "yyyy" }}</p>
           </div>
         </div>
       </div>
 
-      <!-- Barre de recherche -->
       <div class="search-container">
-        <form [formGroup]="searchForm" (ngSubmit)="onSearchAddress()" class="address-search-form">
+        <form
+          [formGroup]="searchForm"
+          (ngSubmit)="onSearchAddress()"
+          class="address-search-form"
+        >
           <div class="search-input-group">
             <i class="fas fa-search search-icon"></i>
-            <input 
-              type="text" 
-              formControlName="address" 
-              placeholder="Entrez votre adresse pour trouver des entreprises..."
+            <input
+              type="text"
+              formControlName="address"
+              placeholder="Entrez votre adresse..."
               class="address-search-input"
-            >
-            <button 
-              type="button" 
-              class="btn-location" 
+            />
+            <button
+              type="button"
+              class="btn-location"
               (click)="useCurrentLocation()"
               title="Utiliser ma position actuelle"
             >
               <i class="fas fa-location-crosshairs"></i>
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               class="btn-search"
               [disabled]="!searchForm.valid || (loading$ | async)"
             >
@@ -51,9 +58,7 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <main class="dashboard-main">
-    <!-- Navigation Tabs -->
     <nav class="dashboard-tabs">
       <button
         *ngFor="let tab of tabs"
@@ -66,537 +71,577 @@
       </button>
     </nav>
 
-    <!-- Loading State -->
     <div *ngIf="loading$ | async" class="loading-container">
       <div class="loading-spinner"></div>
       <p>Chargement...</p>
     </div>
 
-    <!-- Dashboard Content -->
     <ng-container *ngIf="!(loading$ | async)">
-      
       <!-- Vue d'ensemble -->
       <div *ngIf="(activeTab$ | async) === 'overview'" class="tab-content">
-        <!-- Statistiques -->
-        <div class="stats-grid" *ngIf="dashboardStats$ | async as stats">
-          <div class="stat-card">
-            <div class="stat-icon upcoming">
-              <i class="fas fa-clock"></i>
+        <div class="ensamble-tab">
+          <div class="stats-grid" *ngIf="dashboardStats$ | async as stats">
+            <div class="stat-card">
+              <div class="stat-icon upcoming"><i class="fas fa-clock"></i></div>
+              <div class="stat-info">
+                <h3>{{ stats.upcomingReservations }}</h3>
+                <p>Réservations à venir</p>
+              </div>
             </div>
-            <div class="stat-info">
-              <h3>{{ stats.upcomingReservations }}</h3>
-              <p>Réservations à venir</p>
+
+            <div class="stat-card">
+              <div class="stat-icon total">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="stat-info">
+                <h3>{{ stats.totalReservations }}</h3>
+                <p>Réservations totales</p>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon completed">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="stat-info">
+                <h3>{{ stats.completedReservations }}</h3>
+                <p>Services terminés</p>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon revenue">
+                <i class="fas fa-euro-sign"></i>
+              </div>
+              <div class="stat-info">
+                <h3>{{ formatCurrency(stats.totalSpent) }}</h3>
+                <p>Total dépensé</p>
+              </div>
             </div>
           </div>
 
-          <div class="stat-card">
-            <div class="stat-icon total">
-              <i class="fas fa-calendar-alt"></i>
+          <div class="card upcoming-bookings">
+            <div class="section-header">
+              <h3><i class="fas fa-clock"></i> Mes prochaines réservations</h3>
             </div>
-            <div class="stat-info">
-              <h3>{{ stats.totalReservations }}</h3>
-              <p>Réservations totales</p>
-            </div>
-          </div>
 
-          <div class="stat-card">
-            <div class="stat-icon completed">
-              <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-info">
-              <h3>{{ stats.completedReservations }}</h3>
-              <p>Services terminés</p>
-            </div>
-          </div>
+            <ng-container
+              *ngIf="upcomingReservations$ | async as upcomingReservations"
+            >
+              <div
+                *ngIf="upcomingReservations.length === 0"
+                class="empty-state"
+              >
+                <i class="fas fa-calendar-plus empty-icon"></i>
+                <p>Aucune réservation à venir</p>
+                <button class="btn-primary" (click)="setActiveTab('companies')">
+                  Réserver un service
+                </button>
+              </div>
 
-          <div class="stat-card">
-            <div class="stat-icon revenue">
-              <i class="fas fa-euro-sign"></i>
-            </div>
-            <div class="stat-info">
-              <h3>{{ formatCurrency(stats.totalSpent) }}</h3>
-              <p>Total dépensé</p>
-            </div>
+              <div
+                class="bookings-grid"
+                *ngIf="upcomingReservations.length > 0"
+              >
+                <div
+                  *ngFor="let reservation of upcomingReservations.slice(0, 3)"
+                  class="booking-card"
+                  [class]="reservation.status.toLowerCase()"
+                >
+                  <div class="booking-header">
+                    <div class="company-info">
+                      <div class="company-avatar">
+                        <img
+                          *ngIf="reservation.companyLogoUrl"
+                          [src]="reservation.companyLogoUrl"
+                          [alt]="reservation.companyName"
+                        />
+                        <div
+                          *ngIf="!reservation.companyLogoUrl"
+                          class="avatar-placeholder"
+                        >
+                          {{ reservation.companyName.charAt(0) }}
+                        </div>
+                      </div>
+                      <div class="company-details">
+                        <h4>{{ reservation.companyName }}</h4>
+                        <p class="company-address">
+                          <i class="fas fa-map-marker-alt"></i
+                          >{{ reservation.companyAddress }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="booking-status">
+                      <span
+                        class="status-badge"
+                        [class]="reservation.status.toLowerCase()"
+                        >{{ getStatusLabel(reservation.status) }}</span
+                      >
+                      <span class="booking-time-until"
+                        ><i class="fas fa-clock"></i
+                        >{{
+                          calculateTimeUntilBooking(reservation.bookingDate)
+                        }}</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="booking-details">
+                    <div class="service-info">
+                      <h5>{{ reservation.serviceName }}</h5>
+                      <p class="service-description">
+                        {{ reservation.serviceDescription }}
+                      </p>
+                    </div>
+                    <div class="booking-meta">
+                      <div class="meta-item">
+                        <i class="fas fa-calendar"></i
+                        >{{ formatDate(reservation.bookingDate) }}
+                      </div>
+                      <div class="meta-item">
+                        <i class="fas fa-clock"></i
+                        >{{ reservation.bookingTime }}
+                      </div>
+                      <div class="meta-item">
+                        <i class="fas fa-euro-sign"></i
+                        >{{ formatCurrency(reservation.servicePrice) }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="booking-actions">
+                    <button
+                      class="btn-secondary btn-sm"
+                      *ngIf="
+                        reservation.status === 'PENDING' ||
+                        reservation.status === 'CONFIRMED'
+                      "
+                      (click)="openCancelModal(reservation)"
+                    >
+                      Annuler
+                    </button>
+                    <a
+                      class="btn-primary btn-sm"
+                      [routerLink]="['/company', reservation.companyId]"
+                      >Voir l'entreprise</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </ng-container>
           </div>
         </div>
-
-        <!-- Réservations à venir -->
-        <div class="card upcoming-bookings">
+      </div>
+      <!-- Réservations -->
+      <div *ngIf="(activeTab$ | async) === 'reservations'" class="tab-content">
+        <div class="reservations-tab">
           <div class="section-header">
-            <h3><i class="fas fa-clock"></i> Mes prochaines réservations</h3>
-           <!-- <button 
-              class="btn-text" 
-              (click)="setActiveTab('reservations')"
-              *ngIf="(upcomingReservations$ | async)?.length > 0"
-            >
-              Voir tout
-            </button>-->
+            <h2>Mes Réservations</h2>
+            <div class="filter-buttons">
+              <button
+                [class.active]="(reservationFilter$ | async) === 'all'"
+                (click)="setReservationFilter('all')"
+                class="filter-btn"
+              >
+                Toutes
+              </button>
+              <button
+                [class.active]="(reservationFilter$ | async) === 'upcoming'"
+                (click)="setReservationFilter('upcoming')"
+                class="filter-btn"
+              >
+                À venir
+              </button>
+              <button
+                [class.active]="(reservationFilter$ | async) === 'completed'"
+                (click)="setReservationFilter('completed')"
+                class="filter-btn"
+              >
+                Terminées
+              </button>
+              <button
+                [class.active]="(reservationFilter$ | async) === 'cancelled'"
+                (click)="setReservationFilter('cancelled')"
+                class="filter-btn"
+              >
+                Annulées
+              </button>
+            </div>
           </div>
-          
-          <ng-container *ngIf="upcomingReservations$ | async as upcomingReservations">
-            <div *ngIf="upcomingReservations.length === 0" class="empty-state">
-              <i class="fas fa-calendar-plus empty-icon"></i>
-              <p>Aucune réservation à venir</p>
+
+          <ng-container
+            *ngIf="paginatedReservations$ | async as paginatedReservations"
+          >
+            <div *ngIf="paginatedReservations.length === 0" class="empty-state">
+              <i class="fas fa-calendar-times empty-icon"></i>
+              <p>Aucune réservation trouvée</p>
               <button class="btn-primary" (click)="setActiveTab('companies')">
                 Réserver un service
               </button>
             </div>
 
-            <div class="bookings-grid" *ngIf="upcomingReservations.length > 0">
-              <div 
-                *ngFor="let reservation of upcomingReservations.slice(0, 3)" 
-                class="booking-card"
-                [class]="reservation.status.toLowerCase()"
+            <div
+              class="reservations-list"
+              *ngIf="paginatedReservations.length > 0"
+            >
+              <div
+                *ngFor="let reservation of paginatedReservations"
+                class="reservation-card"
               >
-                <!-- Contenu de la carte de réservation -->
-                <div class="booking-header">
+                <div class="reservation-header">
                   <div class="company-info">
                     <div class="company-avatar">
-                      <img 
-                        *ngIf="reservation.companyLogoUrl" 
-                        [src]="reservation.companyLogoUrl" 
+                      <img
+                        *ngIf="reservation.companyLogoUrl"
+                        [src]="reservation.companyLogoUrl"
                         [alt]="reservation.companyName"
+                      />
+                      <div
+                        *ngIf="!reservation.companyLogoUrl"
+                        class="avatar-placeholder"
                       >
-                      <div *ngIf="!reservation.companyLogoUrl" class="avatar-placeholder">
                         {{ reservation.companyName.charAt(0) }}
                       </div>
                     </div>
-                    <div class="company-details">
+                    <div>
                       <h4>{{ reservation.companyName }}</h4>
-                      <p class="company-address">
-                        <i class="fas fa-map-marker-alt"></i>
-                        {{ reservation.companyAddress }}
+                      <p class="reservation-date">
+                        <i class="fas fa-calendar"></i
+                        >{{ formatDate(reservation.bookingDate) }} à
+                        {{ reservation.bookingTime }}
                       </p>
                     </div>
                   </div>
-                  <div class="booking-status">
-                    <span class="status-badge" [class]="reservation.status.toLowerCase()">
-                      {{ getStatusLabel(reservation.status) }}
-                    </span>
-                    <span class="booking-time-until">
-                      <i class="fas fa-clock"></i>
-                      {{ calculateTimeUntilBooking(reservation.bookingDate) }}
-                    </span>
+                  <div class="reservation-status">
+                    <span
+                      class="status-badge"
+                      [class]="reservation.status.toLowerCase()"
+                      >{{ getStatusLabel(reservation.status) }}</span
+                    >
                   </div>
                 </div>
 
-                <div class="booking-details">
+                <div class="reservation-details">
                   <div class="service-info">
                     <h5>{{ reservation.serviceName }}</h5>
-                    <p class="service-description">{{ reservation.serviceDescription }}</p>
+                    <p>{{ reservation.serviceDescription }}</p>
+                    <div class="service-meta">
+                      <span class="meta-item"
+                        ><i class="fas fa-clock"></i>
+                        {{ reservation.serviceDuration }} min</span
+                      >
+                      <span class="meta-item"
+                        ><i class="fas fa-euro-sign"></i>
+                        {{ formatCurrency(reservation.servicePrice) }}</span
+                      >
+                      <span
+                        class="meta-item"
+                        *ngIf="reservation.assignedEmployeeName"
+                        ><i class="fas fa-user"></i>
+                        {{ reservation.assignedEmployeeName }}</span
+                      >
+                    </div>
                   </div>
-                  <div class="booking-meta">
-                    <div class="meta-item">
-                      <i class="fas fa-calendar"></i>
-                      {{ formatDate(reservation.bookingDate) }}
-                    </div>
-                    <div class="meta-item">
-                      <i class="fas fa-clock"></i>
-                      {{ reservation.bookingTime }}
-                    </div>
-                    <div class="meta-item">
-                      <i class="fas fa-euro-sign"></i>
-                      {{ formatCurrency(reservation.servicePrice) }}
-                    </div>
-                  </div>
-                </div>
 
-                <div class="booking-actions">
-                  <button 
-                    class="btn-secondary btn-sm" 
-                    *ngIf="reservation.status === 'PENDING' || reservation.status === 'CONFIRMED'"
-                    (click)="openCancelModal(reservation)"
-                  >
-                    Annuler
-                  </button>
-                  <a 
-                    class="btn-primary btn-sm" 
-                    [routerLink]="['/company', reservation.companyId]"
-                  >
-                    Voir l'entreprise
-                  </a>
+                  <div class="reservation-actions">
+                    <button
+                      *ngIf="
+                        reservation.status === 'COMPLETED' &&
+                        !reservation.rating
+                      "
+                      class="btn-review"
+                      (click)="openReviewModal(reservation)"
+                    >
+                      <i class="fas fa-star"></i> Noter
+                    </button>
+                    <button
+                      *ngIf="
+                        reservation.status === 'PENDING' ||
+                        reservation.status === 'CONFIRMED'
+                      "
+                      class="btn-cancel"
+                      (click)="openCancelModal(reservation)"
+                    >
+                      Annuler
+                    </button>
+                    <a
+                      [routerLink]="['/company', reservation.companyId]"
+                      class="btn-view-company"
+                      >Voir l'entreprise</a
+                    >
+                  </div>
                 </div>
               </div>
             </div>
           </ng-container>
         </div>
       </div>
-
-      <!-- Réservations -->
-      <div *ngIf="(activeTab$ | async) === 'reservations'" class="tab-content">
-        <div class="section-header">
-          <h2>Mes Réservations</h2>
-          <div class="filter-buttons">
-            <button 
-              [class.active]="(reservationFilter$ | async) === 'all'"
-              (click)="setReservationFilter('all')"
-              class="filter-btn"
-            >
-              Toutes
-            </button>
-            <button 
-              [class.active]="(reservationFilter$ | async) === 'upcoming'"
-              (click)="setReservationFilter('upcoming')"
-              class="filter-btn"
-            >
-              À venir
-            </button>
-            <button 
-              [class.active]="(reservationFilter$ | async) === 'completed'"
-              (click)="setReservationFilter('completed')"
-              class="filter-btn"
-            >
-              Terminées
-            </button>
-            <button 
-              [class.active]="(reservationFilter$ | async) === 'cancelled'"
-              (click)="setReservationFilter('cancelled')"
-              class="filter-btn"
-            >
-              Annulées
-            </button>
-          </div>
-        </div>
-
-        <ng-container *ngIf="paginatedReservations$ | async as paginatedReservations">
-          <div *ngIf="paginatedReservations.length === 0" class="empty-state">
-            <i class="fas fa-calendar-times empty-icon"></i>
-            <p>Aucune réservation trouvée</p>
-            <button class="btn-primary" (click)="setActiveTab('companies')">
-              Réserver un service
-            </button>
-          </div>
-
-          <div class="reservations-list" *ngIf="paginatedReservations.length > 0">
-            <div *ngFor="let reservation of paginatedReservations" class="reservation-card">
-              <!-- Contenu de la carte de réservation -->
-              <div class="reservation-header">
-                <div class="company-info">
-                  <div class="company-avatar">
-                    <img 
-                      *ngIf="reservation.companyLogoUrl" 
-                      [src]="reservation.companyLogoUrl" 
-                      [alt]="reservation.companyName"
-                    >
-                    <div *ngIf="!reservation.companyLogoUrl" class="avatar-placeholder">
-                      {{ reservation.companyName.charAt(0) }}
-                    </div>
-                  </div>
-                  <div>
-                    <h4>{{ reservation.companyName }}</h4>
-                    <p class="reservation-date">
-                      <i class="fas fa-calendar"></i>
-                      {{ formatDate(reservation.bookingDate) }} à {{ reservation.bookingTime }}
-                    </p>
-                  </div>
-                </div>
-                <div class="reservation-status">
-                  <span class="status-badge" [class]="reservation.status.toLowerCase()">
-                    {{ getStatusLabel(reservation.status) }}
-                  </span>
-                </div>
-              </div>
-
-              <div class="reservation-details">
-                <div class="service-info">
-                  <h5>{{ reservation.serviceName }}</h5>
-                  <p>{{ reservation.serviceDescription }}</p>
-                  <div class="service-meta">
-                    <span class="meta-item">
-                      <i class="fas fa-clock"></i> {{ reservation.serviceDuration }} min
-                    </span>
-                    <span class="meta-item">
-                      <i class="fas fa-euro-sign"></i> {{ formatCurrency(reservation.servicePrice) }}
-                    </span>
-                    <span class="meta-item" *ngIf="reservation.assignedEmployeeName">
-                      <i class="fas fa-user"></i> {{ reservation.assignedEmployeeName }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="reservation-actions">
-                  <button 
-                    *ngIf="reservation.status === 'COMPLETED' && !reservation.rating"
-                    class="btn-review"
-                    (click)="openReviewModal(reservation)"
-                  >
-                    <i class="fas fa-star"></i> Noter
-                  </button>
-                  <button 
-                    *ngIf="reservation.status === 'PENDING' || reservation.status === 'CONFIRMED'"
-                    class="btn-cancel"
-                    (click)="openCancelModal(reservation)"
-                  >
-                    Annuler
-                  </button>
-                  <a 
-                    [routerLink]="['/company', reservation.companyId]" 
-                    class="btn-view-company"
-                  >
-                    Voir l'entreprise
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pagination 
-          <div class="pagination" *ngIf="(totalPages$ | async)! > 1">
-            <button 
-              [disabled]="(pagination$ | async)?.currentPage === 1" 
-              (click)="setPaginationPage((pagination$ | async)!.currentPage - 1)"
-              class="pagination-btn"
-            >
-              <i class="fas fa-chevron-left"></i>
-            </button>
-            
-            <span class="page-info">
-              Page {{ (pagination$ | async)?.currentPage }} sur {{ totalPages$ | async }}
-            </span>
-            
-            <button 
-              [disabled]="(pagination$ | async)?.currentPage === (totalPages$ | async)" 
-              (click)="setPaginationPage((pagination$ | async)!.currentPage + 1)"
-              class="pagination-btn"
-            >
-              <i class="fas fa-chevron-right"></i>
-            </button>
-          </div> -->
-        </ng-container>
-      </div>
-
       <!-- Entreprises -->
       <div *ngIf="(activeTab$ | async) === 'companies'" class="tab-content">
-        <div class="section-header">
-          <h2>
-            <span *ngIf="(hasSearchResults$ | async) && (searchQuery$ | async)">
-              Entreprises près de "{{ searchQuery$ | async }}"
-            </span>
-            <span *ngIf="!(hasSearchResults$ | async)">
-              Entreprises à proximité
-            </span>
-          </h2>
-          <button 
-            *ngIf="hasSearchResults$ | async" 
-            class="btn-secondary"
-            (click)="clearSearch()"
-          >
-            Effacer la recherche
-          </button>
-        </div>
-
-        <ng-container *ngIf="displayedCompanies$ | async as companies">
-          <div *ngIf="companies.length === 0" class="empty-state">
-            <i class="fas fa-store-slash empty-icon"></i>
-            <p>Aucune entreprise trouvée près de cette adresse</p>
-            <p class="hint">Essayez une autre adresse ou utilisez votre position actuelle</p>
+        <div class="entreprises-tab">
+          <div class="section-header">
+            <h2>
+              <span
+                *ngIf="(hasSearchResults$ | async) && (searchQuery$ | async)"
+                >Entreprises près de "{{ searchQuery$ | async }}"</span
+              >
+              <span *ngIf="!(hasSearchResults$ | async)"
+                >Entreprises à proximité</span
+              >
+            </h2>
+            <button
+              *ngIf="hasSearchResults$ | async"
+              class="btn-secondary"
+              (click)="clearSearch()"
+            >
+              Effacer la recherche
+            </button>
           </div>
 
-          <div class="companies-grid" *ngIf="companies.length > 0">
-            <div *ngFor="let company of companies" class="company-card">
-              <div class="company-card-header">
-                <div class="company-logo">
-                  <img 
-                    *ngIf="company.logoUrl" 
-                    [src]="company.logoUrl" 
-                    [alt]="company.name"
-                  >
-                  <div *ngIf="!company.logoUrl" class="logo-placeholder">
-                    {{ company.name.charAt(0) }}
-                  </div>
-                </div>
-                <div class="company-info">
-                  <h3>{{ company.name }}</h3>
-                  <div class="company-meta">
-                    <span class="rating">
-                      <i class="fas fa-star"></i> {{ company.rating | number:'1.1-1' }}
-                    </span>
-                    <span class="distance">
-                      <i class="fas fa-map-marker-alt"></i> {{ company.distance }} km
-                    </span>
-                  </div>
-                  <p class="company-address">
-                    <i class="fas fa-location-dot"></i> {{ company.address }}
-                  </p>
-                </div>
-                <button 
-                  class="favorite-btn" 
-                  [class.active]="company.isFavorite"
-                  (click)="toggleFavoriteCompany(company.id, !company.isFavorite)"
-                >
-                  <i [class]="company.isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
-                </button>
-              </div>
-
-              <div class="services-list">
-                <h4>Services disponibles:</h4>
-                <div class="services-grid">
-                  <div *ngFor="let service of company.services.slice(0, 3)" class="service-item">
-                    <div class="service-header">
-                      <h5>{{ service.name }}</h5>
-                      <span class="service-price">{{ formatCurrency(service.price) }}</span>
-                    </div>
-                    <p class="service-description">{{ service.description }}</p>
-                    <div class="service-footer">
-                      <span class="service-duration">
-                        <i class="fas fa-clock"></i> {{ service.duration }} min
-                      </span>
-                      <button 
-                        class="btn-book"
-                        [routerLink]="['/booking', company.id, service.id]"
-                      >
-                        Réserver
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="company-actions">
-                <a 
-                  [routerLink]="['/company', company.id]" 
-                  class="btn-view-company"
-                >
-                  <i class="fas fa-eye"></i> Voir les détails
-                </a>
-                <a 
-                  [routerLink]="['/booking', company.id]" 
-                  class="btn-primary"
-                >
-                  <i class="fas fa-calendar-plus"></i> Réserver
-                </a>
-              </div>
+          <ng-container *ngIf="displayedCompanies$ | async as companies">
+            <div *ngIf="companies.length === 0" class="empty-state">
+              <i class="fas fa-store-slash empty-icon"></i>
+              <p>Aucune entreprise trouvée près de cette adresse</p>
+              <p class="hint">
+                Essayez une autre adresse ou utilisez votre position actuelle
+              </p>
             </div>
-          </div>
-        </ng-container>
-      </div>
 
-      <!-- Historique -->
-      <div *ngIf="(activeTab$ | async) === 'history'" class="tab-content">
-        <div class="section-header">
-          <h2>Mon Historique</h2>
-        </div>
-
-        <div class="history-timeline">
-          <ng-container *ngIf="reservations$ | async as reservations">
-            <div *ngFor="let reservation of reservations" class="timeline-item">
-              <div class="timeline-date">
-                {{ formatDate(reservation.bookingDate) }}
-              </div>
-              <div class="timeline-content">
-                <div class="timeline-header">
-                  <h4>{{ reservation.companyName }}</h4>
-                  <span class="timeline-status" [class]="reservation.status.toLowerCase()">
-                    {{ getStatusLabel(reservation.status) }}
-                  </span>
+            <div class="companies-grid" *ngIf="companies.length > 0">
+              <div *ngFor="let company of companies" class="company-card">
+                <div class="company-card-header">
+                  <div class="company-logo">
+                    <img
+                      *ngIf="company.logoUrl"
+                      [src]="company.logoUrl"
+                      [alt]="company.name"
+                    />
+                    <div *ngIf="!company.logoUrl" class="logo-placeholder">
+                      {{ company.name.charAt(0) }}
+                    </div>
+                  </div>
+                  <div class="company-info">
+                    <h3>{{ company.name }}</h3>
+                    <div class="company-meta">
+                      <span class="rating"
+                        ><i class="fas fa-star"></i>
+                        {{ company.rating | number : "1.1-1" }}</span
+                      >
+                      <span class="distance"
+                        ><i class="fas fa-map-marker-alt"></i>
+                        {{ company.distance }} km</span
+                      >
+                    </div>
+                    <p class="company-address">
+                      <i class="fas fa-location-dot"></i> {{ company.address }}
+                    </p>
+                  </div>
+                  <button
+                    class="favorite-btn"
+                    [class.active]="company.isFavorite"
+                    (click)="
+                      toggleFavoriteCompany(company.id, !company.isFavorite)
+                    "
+                  >
+                    <i
+                      [class]="
+                        company.isFavorite ? 'fas fa-heart' : 'far fa-heart'
+                      "
+                    ></i>
+                  </button>
                 </div>
-                <p class="timeline-service">{{ reservation.serviceName }}</p>
-                <div class="timeline-meta">
-                  <span>
-                    <i class="fas fa-clock"></i> {{ reservation.bookingTime }}
-                  </span>
-                  <span>
-                    <i class="fas fa-euro-sign"></i> {{ formatCurrency(reservation.servicePrice) }}
-                  </span>
-                  <span *ngIf="reservation.rating">
-                    <i class="fas fa-star"></i> {{ reservation.rating }}/5
-                  </span>
+
+                <div class="services-list">
+                  <h4>Services disponibles:</h4>
+                  <div class="services-grid">
+                    <div
+                      *ngFor="let service of company.services.slice(0, 3)"
+                      class="service-item"
+                    >
+                      <div class="service-header">
+                        <h5>{{ service.name }}</h5>
+                        <span class="service-price">{{
+                          formatCurrency(service.price)
+                        }}</span>
+                      </div>
+                      <p class="service-description">
+                        {{ service.description }}
+                      </p>
+                      <div class="service-footer">
+                        <span class="service-duration"
+                          ><i class="fas fa-clock"></i>
+                          {{ service.duration }} min</span
+                        >
+                        <button
+                          class="btn-book"
+                          [routerLink]="['/booking', company.id, service.id]"
+                        >
+                          Réserver
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="company-actions">
+                  <a
+                    [routerLink]="['/company', company.id]"
+                    class="btn-view-company"
+                    ><i class="fas fa-eye"></i> Voir les détails</a
+                  >
+                  <a [routerLink]="['/booking', company.id]" class="btn-primary"
+                    ><i class="fas fa-calendar-plus"></i> Réserver</a
+                  >
                 </div>
               </div>
             </div>
           </ng-container>
         </div>
       </div>
-
+      <!-- Historique -->
+      <div *ngIf="(activeTab$ | async) === 'history'" class="tab-content">
+        <div class="historique-tab">
+          <div class="section-header"><h2>Mon Historique</h2></div>
+          <div class="history-timeline">
+            <ng-container *ngIf="reservations$ | async as reservations">
+              <div
+                *ngFor="let reservation of reservations"
+                class="timeline-item"
+              >
+                <div class="timeline-date">
+                  {{ formatDate(reservation.bookingDate) }}
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-header">
+                    <h4>{{ reservation.companyName }}</h4>
+                    <span
+                      class="timeline-status"
+                      [class]="reservation.status.toLowerCase()"
+                      >{{ getStatusLabel(reservation.status) }}</span
+                    >
+                  </div>
+                  <p class="timeline-service">{{ reservation.serviceName }}</p>
+                  <div class="timeline-meta">
+                    <span
+                      ><i class="fas fa-clock"></i>
+                      {{ reservation.bookingTime }}</span
+                    >
+                    <span
+                      ><i class="fas fa-euro-sign"></i>
+                      {{ formatCurrency(reservation.servicePrice) }}</span
+                    >
+                    <span *ngIf="reservation.rating"
+                      ><i class="fas fa-star"></i>
+                      {{ reservation.rating }}/5</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
     </ng-container>
   </main>
 
   <!-- Modals -->
- <!-- Modal d'évaluation -->
-<div class="modal" *ngIf="isReviewModalOpen && selectedReservation">
-  <div class="modal-overlay" (click)="closeReviewModal()"></div>
-  <div class="modal-content">
-    <h2>Noter votre expérience</h2>
-    <p class="modal-subtitle">Avec {{ selectedReservation.companyName }}</p>
-    
-    <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
-      <div class="form-group">
-        <label>Note (sur 5)</label>
-        <div class="rating-input">
-          <button 
-            type="button" 
-            *ngFor="let star of [1,2,3,4,5]" 
-            (click)="reviewForm.patchValue({ rating: star })"
-            class="star-btn"
+  <div class="modal" *ngIf="isReviewModalOpen && selectedReservation">
+    <div class="modal-overlay" (click)="closeReviewModal()"></div>
+    <div class="modal-content">
+      <h2>Noter votre expérience</h2>
+      <p class="modal-subtitle">Avec {{ selectedReservation.companyName }}</p>
+      <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+        <div class="form-group">
+          <label>Note (sur 5)</label>
+          <div class="rating-input">
+            <button
+              type="button"
+              *ngFor="let star of [1, 2, 3, 4, 5]"
+              (click)="reviewForm.patchValue({ rating: star })"
+              class="star-btn"
+            >
+              <i
+                [class]="
+                  star <= reviewForm.get('rating')?.value
+                    ? 'fas fa-star'
+                    : 'far fa-star'
+                "
+              ></i>
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Votre avis (optionnel)</label>
+          <textarea
+            formControlName="review"
+            placeholder="Partagez votre expérience..."
+            maxlength="500"
+            rows="4"
+          ></textarea>
+          <div class="char-count">
+            {{ reviewForm.get("review")?.value?.length || 0 }}/500 caractères
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="closeReviewModal()"
           >
-            <i 
-              [class]="star <= reviewForm.get('rating')?.value ? 'fas fa-star' : 'far fa-star'"
-            ></i>
+            Annuler
+          </button>
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="reviewForm.invalid"
+          >
+            Envoyer l'avis
           </button>
         </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Votre avis (optionnel)</label>
-        <textarea 
-          formControlName="review" 
-          placeholder="Partagez votre expérience..."
-          maxlength="500"
-          rows="4"
-        ></textarea>
-        <div class="char-count">
-          {{ reviewForm.get('review')?.value?.length || 0 }}/500 caractères
-        </div>
-      </div>
-      
-      <div class="modal-actions">
-        <button type="button" class="btn-secondary" (click)="closeReviewModal()">
-          Annuler
-        </button>
-        <button type="submit" class="btn-primary" [disabled]="reviewForm.invalid">
-          Envoyer l'avis
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
-</div>
 
-<!-- Modal d'annulation -->
-<div class="modal" *ngIf="isCancelModalOpen && selectedReservation">
-  <div class="modal-overlay" (click)="closeCancelModal()"></div>
-  <div class="modal-content">
-    <h2>Annuler la réservation</h2>
-    <p>Êtes-vous sûr de vouloir annuler votre réservation chez 
-      <strong>{{ selectedReservation.companyName }}</strong> ?</p>
-    
-    <div class="cancellation-details">
-      <p><strong>Service:</strong> {{ selectedReservation.serviceName }}</p>
-      <p><strong>Date:</strong> {{ formatDate(selectedReservation.bookingDate) }} à 
-        {{ selectedReservation.bookingTime }}</p>
-      <p><strong>Prix:</strong> {{ formatCurrency(selectedReservation.servicePrice) }}</p>
-    </div>
-    
-    <div class="form-group">
-      <label>Raison de l'annulation (optionnel)</label>
-      <textarea 
-        [(ngModel)]="cancelReason"
-        placeholder="Pourquoi annulez-vous cette réservation ?"
-        rows="3"
-      ></textarea>
-    </div>
-    
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" (click)="closeCancelModal()">
-        Non, garder
-      </button>
-      <button 
-        type="button" 
-        class="btn-danger" 
-        (click)="cancelReservation()"
-      >
-        Oui, annuler
-      </button>
+  <div class="modal" *ngIf="isCancelModalOpen && selectedReservation">
+    <div class="modal-overlay" (click)="closeCancelModal()"></div>
+    <div class="modal-content">
+      <h2>Annuler la réservation</h2>
+      <p>
+        Êtes-vous sûr de vouloir annuler votre réservation chez
+        <strong>{{ selectedReservation.companyName }}</strong> ?
+      </p>
+      <div class="cancellation-details">
+        <p><strong>Service:</strong> {{ selectedReservation.serviceName }}</p>
+        <p>
+          <strong>Date:</strong>
+          {{ formatDate(selectedReservation.bookingDate) }} à
+          {{ selectedReservation.bookingTime }}
+        </p>
+        <p>
+          <strong>Prix:</strong>
+          {{ formatCurrency(selectedReservation.servicePrice) }}
+        </p>
+      </div>
+      <div class="form-group">
+        <label>Raison de l'annulation (optionnel)</label>
+        <textarea
+          [(ngModel)]="cancelReason"
+          placeholder="Pourquoi annulez-vous cette réservation ?"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="closeCancelModal()"
+        >
+          Non, garder
+        </button>
+        <button type="button" class="btn-danger" (click)="cancelReservation()">
+          Oui, annuler
+        </button>
+      </div>
     </div>
   </div>
-</div>
 </div>

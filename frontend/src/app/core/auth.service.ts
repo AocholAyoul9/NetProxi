@@ -40,8 +40,10 @@ export class AuthService {
     { email, password }
   ).pipe(
     tap(res => {
+        console.log("DEBUG - loginClient response:", res);
+
       localStorage.setItem('token', res.token);
-      localStorage.setItem('client', JSON.stringify(res.client));
+      localStorage.setItem('client', JSON.stringify(res));
     })
   );
 }
@@ -94,17 +96,17 @@ export class AuthService {
     });
   }
 
+// Get currently logged in client ID
 getClientId(): string {
-  if (!isPlatformBrowser(this.platformId)) {
-    return ''; // SSR safety
-  }
+  if (!isPlatformBrowser(this.platformId)) return '';
 
-  const token = localStorage.getItem('token');
-  if (!token) return '';
-  
+  const client = localStorage.getItem('client');
+
+  console.log("DEBUG - raw client in localStorage =", client);
+  if (!client) return '';
+
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.clientId || '';
+    return JSON.parse(client).id || '';
   } catch {
     return '';
   }

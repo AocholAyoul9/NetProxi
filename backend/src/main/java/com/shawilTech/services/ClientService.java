@@ -1,5 +1,5 @@
 package com.shawilTech.identityservice.service;
-import com.shawilTech.identityservice.dto.ClientRequestDto;
+
 import com.shawilTech.identityservice.dto.*;
 import com.shawilTech.identityservice.entity.*;
 import com.shawilTech.identityservice.repository.*;
@@ -24,7 +24,6 @@ public class ClientService {
 
     public ClientResponseDto registerClient(ClientRequestDto clientDto) {
 
-
         Client client = new Client();
         client.setName(clientDto.getName());
         client.setEmail(clientDto.getEmail());
@@ -41,13 +40,19 @@ public class ClientService {
         return mapToResponse(savedClient);
     }
 
+    public ClientResponseDto getClientProfile(UUID clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
 
-    public ClientResponseDto loginClient(ClientLoginRequestDto dto){
+        return mapToResponse(client);
+    }
+
+    public ClientResponseDto loginClient(ClientLoginRequestDto dto) {
 
         Client client = clientRepository.findByEmail(dto.getEmail())
-                .orElseThrow(()-> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-        if(!passwordEncoder.matches(dto.getPassword(), client.getPassword())){
+        if (!passwordEncoder.matches(dto.getPassword(), client.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
 
@@ -56,12 +61,12 @@ public class ClientService {
 
         clientRepository.save(client);
 
-        return  mapToResponse(client);
+        return mapToResponse(client);
     }
-
 
     private ClientResponseDto mapToResponse(Client client) {
         return ClientResponseDto.builder()
+                .id(client.getId())
                 .name(client.getName())
                 .email(client.getEmail())
                 .phone(client.getPhone())

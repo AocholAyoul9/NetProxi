@@ -105,6 +105,7 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(ClientActions.loadDashboardStats());
     this.getUserLocation();
 
+
     // Subscribe to search query changes
     this.subscriptions.add(
       this.searchQuery$.subscribe(query => {
