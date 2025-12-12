@@ -2,15 +2,15 @@
 import { createReducer, on } from '@ngrx/store';
 import * as ClientActions from './client.actions';
 import {
-  ClientReservation,
   NearbyCompany,
   ClientDashboardStats,
   ClientProfile,
 } from '../../models/client.model';
+import { Booking } from '../../models/booking.model';
 
 export interface ClientState {
   profile: ClientProfile | null;
-  reservations: ClientReservation[];
+  reservations: Booking[];
   nearbyCompanies: NearbyCompany[];
   favoriteCompanies: NearbyCompany[];
   dashboardStats: ClientDashboardStats | null;
@@ -49,26 +49,6 @@ export const initialState: ClientState = {
 export const clientReducer = createReducer(
   initialState,
 
-  // ---------------- Create Booking ----------------
-  on(ClientActions.createBooking, (state) => ({
-    ...state,
-    loading: true,
-    error: null,
-  })),
-  on(ClientActions.createBookingSuccess, (state, { reservation }) => ({
-    ...state,
-    loading: false,
-    reservations: [...state.reservations, reservation],
-    pagination: {
-      ...state.pagination,
-      totalItems: state.reservations.length + 1,
-    },
-  })),
-  on(ClientActions.createBookingFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error,
-  })),
 
   // ---------------- Load Profile ----------------
   on(ClientActions.loadClientProfile, (state) => ({

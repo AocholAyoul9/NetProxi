@@ -5,7 +5,6 @@ import { Observable, map } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { Company } from '../../shared/models/company.model';
-import { Booking as BookingResponseDto } from '../../shared/models/booking.model';
 import {
   ServiceModel,
   ServiceModel as ServiceResponseDto,
@@ -20,6 +19,7 @@ import {
 import * as CompanySelectors from '../../shared/state/company/company.selectors';
 import * as CompanyActions from '../../shared/state/company/company.actions';
 import { FormsModule } from '@angular/forms';
+import { Booking } from '../../shared/models/booking.model';
 
 type TabType = 'overview' | 'services' | 'bookings' | 'employees';
 
@@ -40,7 +40,7 @@ export class CompanyAdminDashboardComponent {
   // Selectors
   company$: Observable<Company | null>;
   services$: Observable<ServiceResponseDto[]>;
-  bookings$: Observable<BookingResponseDto[]>;
+  bookings$: Observable<Booking[]>;
   employees$: Observable<Employee[]>;
   loading$: Observable<boolean>;
 
@@ -56,7 +56,7 @@ export class CompanyAdminDashboardComponent {
   ];
 
   // Recent bookings for overview tab
-  recentBookings$: Observable<BookingResponseDto[]>;
+  recentBookings$: Observable<Booking[]>;
 
   // Service modals
   newService: ServiceModel = {
@@ -123,7 +123,7 @@ export class CompanyAdminDashboardComponent {
   }
 
   // Compute revenue
-  getTotalRevenue(bookings: BookingResponseDto[] | null): number {
+  getTotalRevenue(bookings: Booking[] | null): number {
     if (!bookings) return 0;
     return bookings.reduce((total, booking) => total + (booking.price || 0), 0);
   }

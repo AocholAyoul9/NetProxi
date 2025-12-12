@@ -7,15 +7,14 @@ import * as AuthActions from '../auth/auth.actions';
 import { ApiService } from '../../../core/api.service';
 import { AuthService } from '../../../core/auth.service';
 import {
-  ClientReservation,
   NearbyCompany,
   ClientDashboardStats,
 } from '../../models/client.model';
+import { Booking } from '../../models/booking.model';
 
 @Injectable()
 export class ClientEffects {
   loadClientReservations$;
-  createBooking$;
   loadNearbyCompanies$;
   searchCompanies$;
   loadDashboardStats$;
@@ -60,7 +59,7 @@ export class ClientEffects {
         ofType(ClientActions.loadClientReservations),
         mergeMap(() =>
           this.api.getClientReservations(this.authService.getClientId()).pipe(
-            map((reservations: ClientReservation[]) =>
+            map((reservations: Booking[]) =>
               ClientActions.loadClientReservationsSuccess({ reservations })
             ),
             catchError((error) =>
@@ -75,24 +74,7 @@ export class ClientEffects {
       )
     );
 
-    // ---------------- Create Booking ----------------
-    this.createBooking$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(ClientActions.createBooking),
-        mergeMap(({ companyId, booking }) =>
-          this.api.CreateBooking(companyId, booking).pipe(
-            map((createdBooking) =>
-              ClientActions.createBookingSuccess({
-                reservation: createdBooking,
-              })
-            ),
-            catchError((error) =>
-              of(ClientActions.createBookingFailure({ error: error.message }))
-            )
-          )
-        )
-      )
-    );
+
 
     // ---------------- Load nearby companies ----------------
     this.loadNearbyCompanies$ = createEffect(() =>

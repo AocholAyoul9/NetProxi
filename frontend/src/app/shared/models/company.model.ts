@@ -24,7 +24,6 @@ export interface Company {
   rating?: number;
   reviewsCount?: number;
   services?: ServiceResponseDto[];
-
   // Enhanced pricing information
   startingPrice?: number;
   endingPrice?: number; 

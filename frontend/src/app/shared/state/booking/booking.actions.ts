@@ -1,7 +1,7 @@
 import { createAction, props } from "@ngrx/store";
-import { Booking } from "../../models/booking.model";
+import { Booking, CreateBookingRequest} from "../../models/booking.model";
 
-export const  createBooking = createAction('[Booking] Create Booking', props<{companyId: string, booking: Partial<Booking>}>());
+export const  createBooking = createAction('[Booking] Create Booking', props<{companyId: string, booking: CreateBookingRequest}>());
 export const createBookingSuccess = createAction('[Booking] Create Booking success', props<{booking: Booking}>());
 export const createBookingFailure = createAction('[Booking] Create Booking Failure', props<{error: any}>());
 

@@ -10,35 +10,6 @@ export interface Client{
 
 
 
-export interface ClientReservation {
-  id: string;
-  companyId: string;
-  clientId: string;
-  employeeId: string;
-  companyName: string;
-  companyLogoUrl?: string;
-  companyAddress: string;
-  serviceId: string;
-  serviceName: string;
-  serviceDescription: string;
-  servicePrice: number;
-  serviceDuration: number;
-  bookingDate: Date;
-  bookingTime: Date;
-  // Accepter les strings ou les valeurs spécifiques
-  status: string; // ou | 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
-  assignedEmployeeName?: string;
-  assignedEmployeeId?: string;
-  clientNotes?: string;
-  companyNotes?: string;
-  rating?: number;
-  review?: string;
-  estimatedArrivalTime?: Date;
-  actualStartTime?: Date;
-  actualEndTime?: Date;
-
-}
-
 export interface NearbyCompany {
   id: string;
   name: string;
@@ -48,6 +19,7 @@ export interface NearbyCompany {
   rating: number;
   isFavorite: boolean;
   services: CompanyService[];
+  selectedService?: CompanyService | null;
 }
 
 export interface CompanyService {

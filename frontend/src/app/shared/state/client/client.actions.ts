@@ -1,32 +1,11 @@
 import { createAction, props } from '@ngrx/store';
 import { 
-  ClientReservation, 
   NearbyCompany, 
   ClientDashboardStats, 
   ClientProfile 
 } from '../../models/client.model';
 import { Booking } from '../../models/booking.model';
 
-
-
-// Create booking
-export const createBooking = createAction(
-  '[Client] Create Booking',
-  props<{ companyId: string; booking: Partial<ClientReservation> }>()
-);
-
-
-// Booking creation succeeded
-export const createBookingSuccess = createAction(
-  '[Client] Create Booking Success',
-  props<{ reservation: ClientReservation }>() 
-);
-
-// Booking creation failed
-export const createBookingFailure = createAction(
-  '[Client] Create Booking Failure',
-  props<{ error: string }>()
-);
 
 // Load client profile
 export const loadClientProfile = createAction('[Client] Load Profile');
@@ -43,7 +22,7 @@ export const loadClientProfileFailure = createAction(
 export const loadClientReservations = createAction('[Client] Load Reservations');
 export const loadClientReservationsSuccess = createAction(
   '[Client] Load Reservations Success',
-  props<{ reservations: ClientReservation[] }>()
+  props<{ reservations: Booking[] }>()
 );
 
 export const loadClientReservationsFailure = createAction(

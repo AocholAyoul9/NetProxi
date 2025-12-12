@@ -80,8 +80,8 @@ export const selectUpcomingReservations = createSelector(
   (reservations) => {
     const now = new Date();
     return reservations
-      .filter(r => new Date(r.bookingDate) >= now && r.status !== 'CANCELLED' && r.status !== 'COMPLETED')
-      .sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
+      .filter(r => new Date(r.startTime) >= now && r.status !== 'CANCELLED' && r.status !== 'COMPLETED')
+      .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
   }
 );
 
@@ -89,7 +89,7 @@ export const selectRecentReservations = createSelector(
   selectClientReservations,
   (reservations) =>
     reservations
-      .sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime())
+      .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
       .slice(0, 5)
 );
 
@@ -143,7 +143,7 @@ export const selectLatestBooking = createSelector(
   (reservations) => {
     if (!reservations || reservations.length === 0) return null;
     return reservations.reduce((latest, current) =>
-      new Date(current.bookingDate) > new Date(latest.bookingDate) ? current : latest
+      new Date(current.startTime) > new Date(latest.startTime) ? current : latest
     );
   }
 );
