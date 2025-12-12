@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Company } from '../shared/models/company.model';
 import { ServiceModel } from '../shared/models/service.model';
-import { Booking } from '../shared/models/booking.model';
-import { ClientReservation, NearbyCompany, ClientDashboardStats, ClientProfile } from '../shared/models/client.model';
+import { Booking, CreateBookingRequest } from '../shared/models/booking.model';
+import { NearbyCompany, ClientDashboardStats, ClientProfile } from '../shared/models/client.model';
 
 
 @Injectable({
@@ -116,7 +116,7 @@ export class ApiService {
 
   CreateBooking(
     companyId: string,
-    booking: Partial<Booking>
+    booking: CreateBookingRequest
   ): Observable<Booking> {
     return this.http.post<Booking>(
       `${this.baseUrl}/companies/${companyId}/bookings`,

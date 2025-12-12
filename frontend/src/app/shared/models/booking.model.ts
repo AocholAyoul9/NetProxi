@@ -1,54 +1,48 @@
 export interface Booking {
   id: string;
 
-  // --- Client ---
+  // Company
+  companyId: string;
+  companyName: string;
+
+  // Client
   clientId: string;
   clientName: string;
 
-  // --- Company ---
-  companyId: string;
-  companyName: string;
-  companyLogoUrl?: string;
-  companyAddress: string;
-
-  employeeId: string;
-  // --- Service ---
+  // Service
   serviceId: string;
   serviceName: string;
-  serviceDescription: string;
   servicePrice: number;
   serviceDuration: number;
 
-  // --- Booking time ---
-  startTime: Date;
-  endTime: Date;
+  // Booking Times
+  startTime:string; // ISO string from backend
+  endTime: Date;   // ISO string from backend
 
-  bookingDate: Date;   // (if startTime exists, bookingDate = startTime)
-  bookingTime: Date;   // (also = startTime, just separated for UI)
-
-  // --- Address ---
+  // Address
   address: string;
-
-  // --- Financial ---
+assignedEmployeeName?: string;
+  // Price
   price: number;
 
-  // --- Status ---
-  status: string;  
-  // OR strongly typed:
-  // status: 'PENDING' | 'CONFIRMED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
-
-  // --- Employee assigned ---
-  assignedEmployeeId: string;
-  assignedEmployeeName: string;
-
-  // --- Notes / Review ---
-  clientNotes?: string;
-  companyNotes?: string;
-  rating?: number;  
+  // Review / Rating
+  rating?: number;
   review?: string;
 
-  // --- Tracking ---
-  estimatedArrivalTime?: Date;
-  actualStartTime?: Date;
-  actualEndTime?: Date;
+  // Status
+  status: string;
+  durationMinutes?: number;
+
+  /*// Auto-assigned employee (backend adds this)
+  assignedEmployeeId?: string;
+  assignedEmployeeName?: string;*/
+}
+
+
+export interface CreateBookingRequest {
+  clientId: string;     // ID of the client making the booking
+  serviceId: string;    // ID of the selected service
+  companyId: string;    // ID of the company providing the service
+  startTime: string;    // ISO string of the booking start time
+  address: string;      // Address for the booking
 }

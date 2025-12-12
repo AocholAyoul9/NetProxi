@@ -151,13 +151,13 @@
                   <div class="booking-header">
                     <div class="company-info">
                       <div class="company-avatar">
-                        <img
-                          *ngIf="reservation.companyLogoUrl"
-                          [src]="reservation.companyLogoUrl"
+                       <!---- <img
+                          *ngIf="reservation.companyName"
+                          [src]="reservation."
                           [alt]="reservation.companyName"
-                        />
+                        />-->
                         <div
-                          *ngIf="!reservation.companyLogoUrl"
+                          *ngIf="!reservation.companyName"
                           class="avatar-placeholder"
                         >
                           {{ reservation.companyName.charAt(0) }}
@@ -167,7 +167,7 @@
                         <h4>{{ reservation.companyName }}</h4>
                         <p class="company-address">
                           <i class="fas fa-map-marker-alt"></i
-                          >{{ reservation.companyAddress }}
+                          >{{ reservation.address }}
                         </p>
                       </div>
                     </div>
@@ -177,30 +177,30 @@
                         [class]="reservation.status.toLowerCase()"
                         >{{ getStatusLabel(reservation.status) }}</span
                       >
-                      <span class="booking-time-until"
+                     <!---- <span class="booking-time-until"
                         ><i class="fas fa-clock"></i
                         >{{
-                          calculateTimeUntilBooking(reservation.bookingDate)
+                          calculateTimeUntilBooking(reservation.startTime)
                         }}</span
-                      >
+                      >-->
                     </div>
                   </div>
 
                   <div class="booking-details">
                     <div class="service-info">
                       <h5>{{ reservation.serviceName }}</h5>
-                      <p class="service-description">
+                      <!--<p class="service-description">
                         {{ reservation.serviceDescription }}
-                      </p>
+                      </p>-->
                     </div>
                     <div class="booking-meta">
-                      <div class="meta-item">
+                      <!--<div class="meta-item">
                         <i class="fas fa-calendar"></i
                         >{{ formatDate(reservation.bookingDate) }}
-                      </div>
+                      </div>-->
                       <div class="meta-item">
                         <i class="fas fa-clock"></i
-                        >{{ reservation.bookingTime }}
+                        >{{ reservation.startTime }}
                       </div>
                       <div class="meta-item">
                         <i class="fas fa-euro-sign"></i
@@ -290,7 +290,7 @@
               >
                 <div class="reservation-header">
                   <div class="company-info">
-                    <div class="company-avatar">
+                   <!---- <div class="company-avatar">
                       <img
                         *ngIf="reservation.companyLogoUrl"
                         [src]="reservation.companyLogoUrl"
@@ -302,14 +302,14 @@
                       >
                         {{ reservation.companyName.charAt(0) }}
                       </div>
-                    </div>
+                    </div> -->
                     <div>
                       <h4>{{ reservation.companyName }}</h4>
-                      <p class="reservation-date">
+                     <!--- <p class="reservation-date">
                         <i class="fas fa-calendar"></i
                         >{{ formatDate(reservation.bookingDate) }} à
                         {{ reservation.bookingTime }}
-                      </p>
+                      </p>-->
                     </div>
                   </div>
                   <div class="reservation-status">
@@ -324,7 +324,7 @@
                 <div class="reservation-details">
                   <div class="service-info">
                     <h5>{{ reservation.serviceName }}</h5>
-                    <p>{{ reservation.serviceDescription }}</p>
+                   <!--- <p>{{ reservation.serviceDescription }}</p>-->
                     <div class="service-meta">
                       <span class="meta-item"
                         ><i class="fas fa-clock"></i>
@@ -451,34 +451,23 @@
                   </button>
                 </div>
 
-                <div class="services-list">
-                  <h4>Services disponibles:</h4>
-                  <div class="services-grid">
+                <!-- Simple Services Display -->
+                <div class="services-display-section simple">
+                  <div class="services-header">
+                    <h4>Services disponibles</h4>
+                  </div>
+
+                  <div class="services-tags">
                     <div
-                      *ngFor="let service of company.services.slice(0, 3)"
-                      class="service-item"
+                      *ngFor="let service of company.services"
+                      class="service-tag"
                     >
-                      <div class="service-header">
-                        <h5>{{ service.name }}</h5>
-                        <span class="service-price">{{
-                          formatCurrency(service.price)
-                        }}</span>
-                      </div>
-                      <p class="service-description">
-                        {{ service.description }}
-                      </p>
-                      <div class="service-footer">
-                        <span class="service-duration"
-                          ><i class="fas fa-clock"></i>
-                          {{ service.duration }} min</span
-                        >
-                        <button
-                          class="btn-book"
-                          [routerLink]="['/booking', company.id, service.id]"
-                        >
-                          Réserver
-                        </button>
-                      </div>
+                      <span class="tag-name">{{ service.name }}</span>
+                      <span class="tag-price">
+                        {{
+                          service.price | currency : "EUR" : "symbol" : "1.0-0"
+                        }}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -487,15 +476,135 @@
                   <a
                     [routerLink]="['/company', company.id]"
                     class="btn-view-company"
-                    ><i class="fas fa-eye"></i> Voir les détails</a
                   >
-                  <a [routerLink]="['/booking', company.id]" class="btn-primary"
-                    ><i class="fas fa-calendar-plus"></i> Réserver</a
+                    <i class="fas fa-eye"></i> Voir les détails
+                  </a>
+                  <button
+                    class="btn-primary"
+                    (click)="openBookingModal(company)"
                   >
+                    <i class="fas fa-calendar-plus"></i> Réserver
+                  </button>
                 </div>
               </div>
             </div>
           </ng-container>
+        </div>
+
+        <!-- Booking Modal -->
+        <div *ngIf="bookingCompany()" class="modal-overlay">
+          <div class="modal-container">
+            <div class="modal-header">
+              <h3 class="modal-title">
+                <i class="fas fa-calendar-check"></i>
+                Réserver avec {{ bookingCompany()!.name }}
+              </h3>
+              <button class="modal-close" (click)="closeBooking()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <!-- Company Summary -->
+              <div class="company-summary">
+                <div class="summary-avatar">
+                  {{ getInitials(bookingCompany()!.name) }}
+                </div>
+                <div class="summary-info">
+                  <h4>{{ bookingCompany()!.name }}</h4>
+                  <div class="summary-rating">
+                    <span class="stars">
+                      <i class="fas fa-star"></i>
+                      {{ bookingCompany()!.rating || "4.5" }}
+                    </span>
+                    <!--<span class="reviews">
+                      ({{ bookingCompany()!.reviewsCount || 10 }} avis)
+                    </span>-->
+                  </div>
+                </div>
+              </div>
+              <input
+                type="datetime-local"
+                class="form-input"
+                [(ngModel)]="selectedDateTime"
+              />
+              <input
+                type="text"
+                class="form-input"
+                placeholder="Adresse du rendez-vous"
+                [(ngModel)]="bookingAddress"
+              />
+
+              <!-- Service Selection -->
+              <div class="form-section">
+                <label class="form-label"> Sélectionnez un service </label>
+                <select
+                  class="form-select"
+                  [ngModel]="selectedService()?.name"
+                  (ngModelChange)="onServiceSelect($event)"
+                >
+                  <option value="">Choisissez un service</option>
+                  <option
+                    *ngFor="let s of bookingCompany()!.services"
+                    [ngValue]="s.name"
+                  >
+                    {{ s.name }} - {{ s.price || "Sur devis" }} €
+                  </option>
+                </select>
+              </div>
+
+              <!-- Selected Service Details -->
+              <div *ngIf="selectedService()" class="service-details">
+                <div class="service-header">
+                  <h5>{{ selectedService()!.name }}</h5>
+                  <span
+                    class="service-price"
+                    *ngIf="selectedService()!.basePrice"
+                  >
+                    {{ selectedService()!.basePrice }} €
+                  </span>
+                </div>
+                <p
+                  class="service-description"
+                  *ngIf="selectedService()!.description"
+                >
+                  {{ selectedService()!.description }}
+                </p>
+              </div>
+
+              <!-- Additional Info -->
+              <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <p>
+                  Vous recevrez une confirmation par email avec les détails du
+                  rendez-vous et les coordonnées du professionnel.
+                </p>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                class="btn btn-success"
+                (click)="confirmBooking()"
+                [disabled]="!selectedService()"
+              >
+                <i class="fas fa-check"></i>
+                Confirmer la réservation
+              </button>
+              <button class="btn btn-light" (click)="closeBooking()">
+                Annuler
+              </button>
+            </div>
+
+            <!-- Success Message -->
+            <div *ngIf="bookingSuccess()" class="success-message">
+              <i class="fas fa-check-circle"></i>
+              <div class="message-content">
+                <strong>Réservation confirmée !</strong>
+                <p>{{ bookingSuccess() }}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- Historique -->
@@ -509,7 +618,7 @@
                 class="timeline-item"
               >
                 <div class="timeline-date">
-                  {{ formatDate(reservation.bookingDate) }}
+                  {{reservation.startTime | date : "dd MMM yyyy"}}
                 </div>
                 <div class="timeline-content">
                   <div class="timeline-header">
@@ -524,7 +633,7 @@
                   <div class="timeline-meta">
                     <span
                       ><i class="fas fa-clock"></i>
-                      {{ reservation.bookingTime }}</span
+                      {{ reservation.startTime }}</span
                     >
                     <span
                       ><i class="fas fa-euro-sign"></i>
@@ -614,8 +723,8 @@
         <p><strong>Service:</strong> {{ selectedReservation.serviceName }}</p>
         <p>
           <strong>Date:</strong>
-          {{ formatDate(selectedReservation.bookingDate) }} à
-          {{ selectedReservation.bookingTime }}
+          {{ selectedReservation.startTime }} à
+          {{ selectedReservation.endTime }}
         </p>
         <p>
           <strong>Prix:</strong>

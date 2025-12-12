@@ -52,15 +52,7 @@ public BookingResponseDto createBooking(BookingRequestDto request) {
         throw new RuntimeException("Service does not belong to this company");
     }
 
-    // ---------------------------
-    // Validate employee
-    // ---------------------------
-    Employee employee = employeeRepository.findById(request.getEmployeeId())
-            .orElseThrow(() -> new RuntimeException("Employee not found"));
-
-    if (!employee.getCompany().getId().equals(company.getId())) {
-        throw new RuntimeException("Employee does not belong to this company");
-    }
+  
 
     // ---------------------------
     // Validate timestamps
@@ -83,17 +75,7 @@ public BookingResponseDto createBooking(BookingRequestDto request) {
         throw new RuntimeException("You already have another booking at this time");
     }
 
-    // ---------------------------
-    // Conflict check: employee
-    // ---------------------------
-    boolean employeeConflict =
-            bookingRepository.existsByAssignedEmployeeIdAndStartTimeLessThanAndEndTimeGreaterThan(
-                    request.getEmployeeId(), end, start);
-
-    if (employeeConflict) {
-        throw new RuntimeException("This employee is already booked at the selected time");
-    }
-
+   
     // ---------------------------
     // Service & company active check
     // ---------------------------
@@ -112,7 +94,6 @@ public BookingResponseDto createBooking(BookingRequestDto request) {
     booking.setClient(client);
     booking.setService(service);
     booking.setCompany(company);
-    booking.setAssignedEmployee(employee);
     booking.setStartTime(start);
     booking.setEndTime(end);
     booking.setAddress(request.getAddress());
@@ -134,15 +115,8 @@ public BookingResponseDto createBooking(BookingRequestDto request) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+      
 
-        // Optional: check if employee belongs to same company
-        if (!employee.getCompany().getId().equals(booking.getCompany().getId())) {
-            throw new RuntimeException("Employee does not belong to this company");
-        }
-
-        booking.setAssignedEmployee(employee);
         booking.setStatus(BookingStatus.CONFIRMED); // mark as assigned / ready
 
         Booking updatedBooking = bookingRepository.save(booking);
@@ -277,10 +251,6 @@ public BookingResponseDto createBooking(BookingRequestDto request) {
                 .price(booking.getPrice())
                 .status(booking.getStatus().name());
 
-        if (booking.getAssignedEmployee() != null) {
-            builder.assignedEmployeeId(booking.getAssignedEmployee().getId());
-            builder.assignedEmployeeName(booking.getAssignedEmployee().getName());
-        }
 
         return builder.build();
     }
