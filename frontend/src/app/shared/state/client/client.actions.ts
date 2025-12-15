@@ -19,7 +19,7 @@ export const loadClientProfileFailure = createAction(
 );
 
 // Load client reservations
-export const loadClientReservations = createAction('[Client] Load Reservations');
+export const loadClientReservations = createAction('[Client] Load Reservations', props<{clientId: string}>());
 export const loadClientReservationsSuccess = createAction(
   '[Client] Load Reservations Success',
   props<{ reservations: Booking[] }>()
