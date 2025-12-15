@@ -11,9 +11,7 @@ import {
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 
-import {
-  NearbyCompany,
-} from '../../shared/models/client.model';
+import { NearbyCompany } from '../../shared/models/client.model';
 import * as ClientSelectors from '../../shared/state/client/client.selector';
 import * as ClientActions from '../../shared/state/client/client.actions';
 import * as BookingActions from '../../shared/state/booking/booking.actions';
@@ -32,8 +30,6 @@ interface Service {
   name: string;
   description: string;
   price: number;
-  duration?: number;
-  basePrice?: number;
 }
 
 @Component({
@@ -48,8 +44,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   profile$: Observable<any | null>;
   reservations$: Observable<Booking[]>;
   upcomingReservations$: Observable<Booking[]>;
-  recentReservations$: Observable<Booking[]>;
-  filteredReservations$: Observable<Booking[]>;
   paginatedReservations$: Observable<Booking[]>;
   nearbyCompanies$: Observable<NearbyCompany[]>;
   displayedCompanies$: Observable<NearbyCompany[]>;
@@ -57,19 +51,13 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   loading$: Observable<boolean>;
   activeTab$: Observable<TabType>;
   reservationFilter$: Observable<string>;
-  pagination$: Observable<any>;
-  totalPages$: Observable<number>;
   hasSearchResults$: Observable<boolean>;
   searchQuery$: Observable<string>;
 
   // Local state
   tabs: DashboardTab[] = [
     { id: 'overview', label: "Vue d'ensemble", icon: 'fas fa-home' },
-    {
-      id: 'reservations',
-      label: 'Mes Réservations',
-      icon: 'fas fa-calendar-check',
-    },
+    { id: 'reservations', label: 'Mes Réservations', icon: 'fas fa-calendar-check' },
     { id: 'companies', label: 'Entreprises', icon: 'fas fa-store' },
     { id: 'history', label: 'Historique', icon: 'fas fa-history' },
   ];
@@ -86,7 +74,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   isReviewModalOpen = false;
   isCancelModalOpen = false;
   selectedReservation: Booking | null = null;
-  cancelReason = '';
 
   // Subscriptions
   private subscriptions = new Subscription();
@@ -108,12 +95,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     this.upcomingReservations$ = this.store.select(
       ClientSelectors.selectUpcomingReservations
     );
-    this.recentReservations$ = this.store.select(
-      ClientSelectors.selectRecentReservations
-    );
-    this.filteredReservations$ = this.store.select(
-      ClientSelectors.selectFilteredReservations
-    );
     this.paginatedReservations$ = this.store.select(
       ClientSelectors.selectPaginatedReservations
     );
@@ -131,8 +112,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     this.reservationFilter$ = this.store.select(
       ClientSelectors.selectReservationFilter
     );
-    this.pagination$ = this.store.select(ClientSelectors.selectPagination);
-    this.totalPages$ = this.store.select(ClientSelectors.selectTotalPages);
     this.hasSearchResults$ = this.store.select(
       ClientSelectors.selectHasSearchResults
     );
@@ -142,22 +121,27 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Load initial data
     this.store.dispatch(ClientActions.loadClientProfile());
-    this.store.dispatch(ClientActions.loadClientReservations());
     this.store.dispatch(ClientActions.loadDashboardStats());
     this.getUserLocation();
 
-    // Subscribe to search query changes
+    // Load client reservations
+    this.subscriptions.add(
+      this.profile$.subscribe((profile) => {
+        if (profile?.id) {
+          this.currentClient = profile;
+          this.store.dispatch(
+            ClientActions.loadClientReservations({ clientId: profile.id })
+          );
+        }
+      })
+    );
+
+    // Sync search query with form
     this.subscriptions.add(
       this.searchQuery$.subscribe((query) => {
         if (query) {
           this.searchForm.patchValue({ address: query });
         }
-      })
-    );
-
-    this.subscriptions.add(
-      this.profile$.subscribe((profile) => {
-        this.currentClient = profile;
       })
     );
   }
@@ -177,10 +161,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(ClientActions.setReservationFilter({ filter }));
   }
 
-  setPaginationPage(page: number): void {
-    this.store.dispatch(ClientActions.setPaginationPage({ page }));
-  }
-
   // Location and Search
   private getUserLocation(): void {
     if (navigator.geolocation) {
@@ -197,11 +177,8 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.error('Geolocation error:', error);
-          // this.store.dispatch(ClientActions.loadNearbyCompanies());
         }
       );
-    } else {
-      //this.store.dispatch(ClientActions.loadNearbyCompanies());
     }
   }
 
@@ -256,14 +233,12 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
 
   openCancelModal(reservation: Booking): void {
     this.selectedReservation = reservation;
-    this.cancelReason = '';
     this.isCancelModalOpen = true;
   }
 
   closeCancelModal(): void {
     this.isCancelModalOpen = false;
     this.selectedReservation = null;
-    this.cancelReason = '';
   }
 
   cancelReservation(): void {
@@ -272,18 +247,10 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
         ClientActions.updateReservationStatus({
           reservationId: this.selectedReservation.id,
           status: 'CANCELLED',
-          reason: this.cancelReason,
         })
       );
       this.closeCancelModal();
     }
-  }
-
-  // Company Actions
-  toggleFavoriteCompany(companyId: string, isFavorite: boolean): void {
-    this.store.dispatch(
-      ClientActions.toggleFavoriteCompany({ companyId, isFavorite })
-    );
   }
 
   // Utility Methods
@@ -298,43 +265,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     return labels[status] || status;
   }
 
-  getStatusColor(status: string): string {
-    const colors: Record<string, string> = {
-      PENDING: 'warning',
-      CONFIRMED: 'info',
-      IN_PROGRESS: 'primary',
-      COMPLETED: 'success',
-      CANCELLED: 'danger',
-    };
-    return colors[status] || 'secondary';
-  }
-
-  calculateTimeUntilBooking(bookingDate: Date): string {
-    const now = new Date();
-    const booking = new Date(bookingDate);
-    const diffMs = booking.getTime() - now.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffDays > 0) {
-      return `Dans ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
-    } else {
-      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-      if (diffHours > 0) {
-        return `Dans ${diffHours} heure${diffHours > 1 ? 's' : ''}`;
-      } else {
-        return "Aujourd'hui";
-      }
-    }
-  }
-
-  formatDate(date: Date): string {
-    return new Date(date).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-  }
-
   formatCurrency(amount: number): string {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
@@ -342,40 +272,28 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     }).format(amount);
   }
 
-  getStars(rating: number | undefined): number[] {
-    return Array(5)
-      .fill(0)
-      .map((_, i) => (i < (rating || 0) ? 1 : 0));
-  }
-
   // Signals for booking modal
   bookingCompany = signal<NearbyCompany | null>(null);
   selectedService = signal<Service | null>(null);
   bookingSuccess = signal<string | null>(null);
 
-  // Method to handle service selection change
-  onServiceSelectChange(company: NearbyCompany, event: Event): void {
-  const selectElement = event.target as HTMLSelectElement;
-  const serviceId = selectElement.value;
-
-  if (serviceId) {
-    const selectedService = company.services.find(s => s.id === serviceId) || null;
-    company.selectedService = selectedService;
-  } else {
-    company.selectedService = null;
-  }
-}
-
-
   // Method to open booking modal
-openBookingModal(company: NearbyCompany): void {
-  if (company.selectedService) {
-    this.selectedService.set(company.selectedService);
-  } else {
+  openBookingModal(company: NearbyCompany): void {
+    this.bookingCompany.set(company);
     this.selectedService.set(null);
+    this.selectedDateTime = '';
+    this.bookingAddress = '';
+    this.bookingSuccess.set(null);
   }
-  this.bookingCompany.set(company);
-}
+
+  // Method to handle service selection in modal
+  onServiceSelect(serviceId: string): void {
+    const company = this.bookingCompany();
+    if (company) {
+      const service = company.services.find((s) => s.id === serviceId);
+      this.selectedService.set(service || null);
+    }
+  }
 
   // Method to close booking modal
   closeBooking(): void {
@@ -384,18 +302,8 @@ openBookingModal(company: NearbyCompany): void {
     this.bookingSuccess.set(null);
   }
 
-  // Method to handle service selection in modal
-  onServiceSelect(serviceName: string): void {
-    const company = this.bookingCompany();
-    if (company) {
-      const service = company.services.find((s) => s.name === serviceName);
-      this.selectedService.set(service || null);
-    }
-  }
-
   getInitials(companyName: string): string {
     if (!companyName) return 'N';
-
     return companyName
       .split(' ')
       .map((word) => word.charAt(0))
@@ -405,18 +313,13 @@ openBookingModal(company: NearbyCompany): void {
   }
 
   // Method to confirm booking
-
   confirmBooking() {
-    if (
-      !this.currentClient ||
-      !this.selectedService() ||
-      !this.bookingCompany()
-    ) {
+    if (!this.currentClient || !this.selectedService() || !this.bookingCompany()) {
       console.error('Missing booking data');
       return;
     }
 
-    const bookingRequest: CreateBookingRequest= {
+    const bookingRequest: CreateBookingRequest = {
       clientId: this.currentClient.id,
       serviceId: this.selectedService()!.id,
       companyId: this.bookingCompany()!.id,
@@ -430,5 +333,13 @@ openBookingModal(company: NearbyCompany): void {
         booking: bookingRequest,
       })
     );
+
+    // Show success message
+    this.bookingSuccess.set('Votre réservation a été confirmée !');
+    
+    // Close modal after 3 seconds
+    setTimeout(() => {
+      this.closeBooking();
+    }, 3000);
   }
 }

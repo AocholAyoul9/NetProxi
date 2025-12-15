@@ -1,72 +1,76 @@
 <div class="page-container">
-  <div class="page-header">
-    <h1>Nos Entreprises</h1>
-    <p class="subtitle">Trouvez les meilleurs services de nettoyage près de chez vous</p>
-  </div>
-
-  <!-- Search & Filters Section -->
-  <div class="search-filters-container">
-    <div class="search-container">
-      <div class="search-wrapper">
-        <i class="fas fa-search search-icon"></i>
-        <input
-          type="text"
-          placeholder="Rechercher une entreprise, une ville..."
-          [value]="searchQuery()"
-          (input)="onSearchQueryChange($event)"
-          class="search-input"
-        />
-      </div>
+  <!-- Blue Background Upper Section -->
+  <div class="upper-section-wrapper">
+    <div class="page-header">
+      <h1>Nos Entreprises</h1>
+      <p class="subtitle">Trouvez les meilleurs services de nettoyage près de chez vous</p>
     </div>
 
-    <div class="filters-container">
-      <div class="filter-section">
-        <h4 class="filter-title">Filtrer par service :</h4>
-        <div class="filter-chips">
-          <button
-            class="filter-chip"
-            [class.active]="activeServiceFilter() === ''"
-            (click)="setServiceFilter('')"
-          >
-            <i class="fas fa-broom"></i>
-            <span>Tous les services</span>
-          </button>
-          <button
-            class="filter-chip"
-            [class.active]="activeServiceFilter() === 'Bureaux'"
-            (click)="setServiceFilter('Bureaux')"
-          >
-            <i class="fas fa-building"></i>
-            <span>Bureaux</span>
-          </button>
-          <button
-            class="filter-chip"
-            [class.active]="activeServiceFilter() === 'Vitres'"
-            (click)="setServiceFilter('Vitres')"
-          >
-            <i class="fas fa-window-restore"></i>
-            <span>Vitres</span>
-          </button>
-          <button
-            class="filter-chip"
-            [class.active]="activeServiceFilter() === 'Tapis'"
-            (click)="setServiceFilter('Tapis')"
-          >
-            <i class="fas fa-rug"></i>
-            <span>Tapis</span>
-          </button>
-          <button
-            class="filter-chip"
-            [class.active]="activeServiceFilter() === 'Entretien complet'"
-            (click)="setServiceFilter('Entretien complet')"
-          >
-            <i class="fas fa-home"></i>
-            <span>Entretien complet</span>
-          </button>
+    <!-- Search & Filters Section -->
+    <div class="search-filters-container">
+      <div class="search-container">
+        <div class="search-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            placeholder="Rechercher une entreprise, une ville..."
+            [value]="searchQuery()"
+            (input)="onSearchQueryChange($event)"
+            class="search-input"
+          />
+        </div>
+      </div>
+
+      <div class="filters-container">
+        <div class="filter-section">
+          <h4 class="filter-title">Filtrer par service :</h4>
+          <div class="filter-chips">
+            <button
+              class="filter-chip"
+              [class.active]="activeServiceFilter() === ''"
+              (click)="setServiceFilter('')"
+            >
+              <i class="fas fa-broom"></i>
+              <span>Tous les services</span>
+            </button>
+            <button
+              class="filter-chip"
+              [class.active]="activeServiceFilter() === 'Bureaux'"
+              (click)="setServiceFilter('Bureaux')"
+            >
+              <i class="fas fa-building"></i>
+              <span>Bureaux</span>
+            </button>
+            <button
+              class="filter-chip"
+              [class.active]="activeServiceFilter() === 'Vitres'"
+              (click)="setServiceFilter('Vitres')"
+            >
+              <i class="fas fa-window-restore"></i>
+              <span>Vitres</span>
+            </button>
+            <button
+              class="filter-chip"
+              [class.active]="activeServiceFilter() === 'Tapis'"
+              (click)="setServiceFilter('Tapis')"
+            >
+              <i class="fas fa-rug"></i>
+              <span>Tapis</span>
+            </button>
+            <button
+              class="filter-chip"
+              [class.active]="activeServiceFilter() === 'Entretien complet'"
+              (click)="setServiceFilter('Entretien complet')"
+            >
+              <i class="fas fa-home"></i>
+              <span>Entretien complet</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- End of Blue Background Upper Section -->
 
   <!-- Results Header -->
   <div class="results-header" *ngIf="filteredCompanies$ | async as companies">
@@ -139,13 +143,13 @@
           <i class="fas fa-phone"></i>
           <span class="detail-text">{{ company.phone || "Non renseigné" }}</span>
         </div>
-        <div class="detail-item">
+      <!----  <div class="detail-item">
           <i class="fas fa-clock"></i>
           <span class="detail-text">{{ company.responseTime || "24" }}h de réponse</span>
-        </div>
+        </div>-->
       </div>
 
-      <!-- Pricing -->
+      <!-- Pricing --
       <div class="pricing-card">
         <div class="pricing-header">
           <i class="fas fa-tag"></i>
@@ -157,7 +161,7 @@
             Minimum : {{ company.minimumPrice }} €
           </span>
         </div>
-      </div>
+      </div>-->
 
       <!-- Services -->
       <div class="services-section">
@@ -170,9 +174,6 @@
             <i class="fas fa-check-circle"></i>
             <span>{{ service.name || "Service" }}</span>
           </div>
-          <!--<div class="more-services" *ngIf="company.services?.length > 3">
-            +{{ company.services.length - 3 }} autres
-          </div>-->
         </div>
       </div>
 
@@ -205,102 +206,102 @@
       Réinitialiser les filtres
     </button>
   </div>
-</div>
 
-<!-- Booking Modal -->
-<div *ngIf="bookingCompany()" class="modal-overlay">
-  <div class="modal-container">
-    <div class="modal-header">
-      <h3 class="modal-title">
-        <i class="fas fa-calendar-check"></i>
-        Réserver avec {{ bookingCompany()!.name }}
-      </h3>
-      <button class="modal-close" (click)="closeBooking()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
+  <!-- Booking Modal -->
+  <div *ngIf="bookingCompany()" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fas fa-calendar-check"></i>
+          Réserver avec {{ bookingCompany()!.name }}
+        </h3>
+        <button class="modal-close" (click)="closeBooking()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
 
-    <div class="modal-body">
-      <!-- Company Summary -->
-      <div class="company-summary">
-        <div class="summary-avatar">
-          {{ getInitials(bookingCompany()!.name) }}
-        </div>
-        <div class="summary-info">
-          <h4>{{ bookingCompany()!.name }}</h4>
-          <div class="summary-rating">
-            <span class="stars">
-              <i class="fas fa-star"></i>
-              {{ bookingCompany()!.rating || "4.5" }}
-            </span>
-            <span class="reviews">
-              ({{ bookingCompany()!.reviewsCount || 10 }} avis)
-            </span>
+      <div class="modal-body">
+        <!-- Company Summary -->
+        <div class="company-summary">
+          <div class="summary-avatar">
+            {{ getInitials(bookingCompany()!.name) }}
+          </div>
+          <div class="summary-info">
+            <h4>{{ bookingCompany()!.name }}</h4>
+            <div class="summary-rating">
+              <span class="stars">
+                <i class="fas fa-star"></i>
+                {{ bookingCompany()!.rating || "4.5" }}
+              </span>
+              <span class="reviews">
+                ({{ bookingCompany()!.reviewsCount || 10 }} avis)
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Service Selection -->
-      <div class="form-section">
-        <label class="form-label">
-          <i class="fas fa-broom"></i>
-          Sélectionnez un service
-        </label>
-        <select
-          class="form-select"
-          [ngModel]="selectedService()?.name"
-          (ngModelChange)="onServiceSelect($event)"
-        >
-          <option value="">Choisissez un service</option>
-          <option
-            *ngFor="let s of bookingCompany()!.services"
-            [ngValue]="s.name"
+        <!-- Service Selection -->
+        <div class="form-section">
+          <label class="form-label">
+            <i class="fas fa-broom"></i>
+            Sélectionnez un service
+          </label>
+          <select
+            class="form-select"
+            [ngModel]="selectedService()?.name"
+            (ngModelChange)="onServiceSelect($event)"
           >
-            {{ s.name }} - {{ s.basePrice || "Sur devis" }} €
-          </option>
-        </select>
-      </div>
-
-      <!-- Selected Service Details -->
-      <div *ngIf="selectedService()" class="service-details">
-        <div class="service-header">
-          <h5>{{ selectedService()!.name }}</h5>
-          <span class="service-price" *ngIf="selectedService()!.basePrice">
-            {{ selectedService()!.basePrice }} €
-          </span>
+            <option value="">Choisissez un service</option>
+            <option
+              *ngFor="let s of bookingCompany()!.services"
+              [ngValue]="s.name"
+            >
+              {{ s.name }} - {{ s.basePrice || "Sur devis" }} €
+            </option>
+          </select>
         </div>
-        <p class="service-description" *ngIf="selectedService()!.description">
-          {{ selectedService()!.description }}
-        </p>
+
+        <!-- Selected Service Details -->
+        <div *ngIf="selectedService()" class="service-details">
+          <div class="service-header">
+            <h5>{{ selectedService()!.name }}</h5>
+            <span class="service-price" *ngIf="selectedService()!.basePrice">
+              {{ selectedService()!.basePrice }} €
+            </span>
+          </div>
+          <p class="service-description" *ngIf="selectedService()!.description">
+            {{ selectedService()!.description }}
+          </p>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="info-box">
+          <i class="fas fa-info-circle"></i>
+          <p>Vous recevrez une confirmation par email avec les détails du rendez-vous et les coordonnées du professionnel.</p>
+        </div>
       </div>
 
-      <!-- Additional Info -->
-      <div class="info-box">
-        <i class="fas fa-info-circle"></i>
-        <p>Vous recevrez une confirmation par email avec les détails du rendez-vous et les coordonnées du professionnel.</p>
+      <div class="modal-footer">
+        <button
+          class="btn btn-success"
+          (click)="confirmBooking()"
+          [disabled]="!selectedService()"
+        >
+          <i class="fas fa-check"></i>
+          Confirmer la réservation
+        </button>
+        <button class="btn btn-light" (click)="closeBooking()">
+          Annuler
+        </button>
       </div>
-    </div>
 
-    <div class="modal-footer">
-      <button
-        class="btn btn-success"
-        (click)="confirmBooking()"
-        [disabled]="!selectedService()"
-      >
-        <i class="fas fa-check"></i>
-        Confirmer la réservation
-      </button>
-      <button class="btn btn-light" (click)="closeBooking()">
-        Annuler
-      </button>
-    </div>
-
-    <!-- Success Message -->
-    <div *ngIf="bookingSuccess()" class="success-message">
-      <i class="fas fa-check-circle"></i>
-      <div class="message-content">
-        <strong>Réservation confirmée !</strong>
-        <p>{{ bookingSuccess() }}</p>
+      <!-- Success Message -->
+      <div *ngIf="bookingSuccess()" class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <div class="message-content">
+          <strong>Réservation confirmée !</strong>
+          <p>{{ bookingSuccess() }}</p>
+        </div>
       </div>
     </div>
   </div>

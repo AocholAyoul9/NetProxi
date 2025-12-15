@@ -1,152 +1,208 @@
 <div class="page-container">
-  <div class="contact-header">
-    <h1>Contactez-nous</h1>
-    <p class="subtitle">Vous avez une question ou besoin d'aide ? Notre équipe est là pour vous accompagner.</p>
+  <!-- Blue Background Upper Section -->
+  <div class="upper-section-wrapper">
+    <div class="page-header">
+      <h1>Contactez-nous</h1>
+      <p class="subtitle">Vous avez une question ou besoin d'aide ? Notre équipe est là pour vous accompagner.</p>
+    </div>
   </div>
+  <!-- End of Blue Background Upper Section -->
 
   <div class="contact-layout">
     <!-- Colonne gauche : Formulaire de contact -->
     <div class="contact-form-section">
-      <h2>Envoyez-nous un message</h2>
-      <p>Remplissez le formulaire ci-dessous et nous vous répondrons sous 24 heures.</p>
-      
-      <form class="contact-form">
-          <div class="form-group">
-            <label for="name">Nom complet *</label>
-            <input type="text" id="name" placeholder="Votre nom" required />
+      <div class="form-card">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-envelope"></i>
           </div>
-          <div class="form-group">
-            <label for="email">Adresse email *</label>
-            <input type="email" id="email" placeholder="Votre email" required />
+          <h2 class="section-title">Envoyez-nous un message</h2>
+        </div>
+        <p class="section-subtitle">Remplissez le formulaire ci-dessous et nous vous répondrons sous 24 heures.</p>
+        
+        <form class="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Nom complet <span class="required">*</span></label>
+              <input type="text" id="name" placeholder="Votre nom" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Adresse email <span class="required">*</span></label>
+              <input type="email" id="email" placeholder="votre@email.com" required />
+            </div>
           </div>
 
-        <div class="form-group">
-          <label for="company">Entreprise (optionnel)</label>
-          <input type="text" id="company" placeholder="Nom de votre entreprise" />
-        </div>
+          <div class="form-group">
+            <label for="company">Entreprise (optionnel)</label>
+            <input type="text" id="company" placeholder="Nom de votre entreprise" />
+          </div>
 
-        <div class="form-group">
-          <label for="subject">Sujet *</label>
-          <select id="subject" required>
-            <option value="">Sélectionnez un sujet</option>
-            <option value="support">Support technique</option>
-            <option value="partnership">Partenariat</option>
-            <option value="billing">Facturation</option>
-            <option value="feature">Suggestion de fonctionnalité</option>
-            <option value="complaint">Réclamation</option>
-            <option value="other">Autre</option>
-          </select>
-        </div>
+          <div class="form-group">
+            <label for="subject">Sujet <span class="required">*</span></label>
+            <select id="subject" required>
+              <option value="">Sélectionnez un sujet</option>
+              <option value="support">Support technique</option>
+              <option value="partnership">Partenariat</option>
+              <option value="billing">Facturation</option>
+              <option value="feature">Suggestion de fonctionnalité</option>
+              <option value="complaint">Réclamation</option>
+              <option value="other">Autre</option>
+            </select>
+          </div>
 
-        <div class="form-group">
-          <label for="message">Message *</label>
-          <textarea id="message" placeholder="Décrivez votre demande en détail..." rows="6" required></textarea>
-        </div>
+          <div class="form-group">
+            <label for="message">Message <span class="required">*</span></label>
+            <textarea id="message" placeholder="Décrivez votre demande en détail..." rows="6" required></textarea>
+          </div>
 
-        <div class="form-group checkbox-group">
-          <input type="checkbox" id="newsletter" />
-          <label for="newsletter">Recevoir les actualités et offres spéciales de NetProxi</label>
-        </div>
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="newsletter" />
+            <label for="newsletter">Recevoir les actualités et offres spéciales de NetProxi</label>
+          </div>
 
-        <button type="submit" class="submit-btn">
-          <i class="fas fa-paper-plane"></i>
-          Envoyer le message
-        </button>
-      </form>
+          <button type="submit" class="btn btn-primary submit-btn">
+            <i class="fas fa-paper-plane"></i>
+            Envoyer le message
+          </button>
+        </form>
+      </div>
     </div>
 
     <!-- Colonne droite : Informations de contact -->
     <div class="contact-info-section">
       <div class="info-card">
-        <h3>Informations de contact</h3>
+        <div class="card-header">
+          <div class="section-icon">
+            <i class="fas fa-address-card"></i>
+          </div>
+          <h3 class="card-title">Informations de contact</h3>
+        </div>
         
-        <div class="contact-method">
-          <div class="icon">
-            <i class="fas fa-map-marker-alt"></i>
+        <div class="contact-methods">
+          <div class="contact-method">
+            <div class="method-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="method-details">
+              <h4>Adresse</h4>
+              <p>12 Rue de Paris<br>75001 Paris, France</p>
+            </div>
           </div>
-          <div class="details">
-            <h4>Adresse</h4>
-            <p>12 Rue de Paris<br>75001 Paris, France</p>
-          </div>
-        </div>
 
-        <div class="contact-method">
-          <div class="icon">
-            <i class="fas fa-phone"></i>
+          <div class="contact-method">
+            <div class="method-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div class="method-details">
+              <h4>Téléphone</h4>
+              <p>+33 1 23 45 67 89</p>
+              <small>Lun-Ven: 9h-18h</small>
+            </div>
           </div>
-          <div class="details">
-            <h4>Téléphone</h4>
-            <p>+33 1 23 45 67 89</p>
-            <small>Lun-Ven: 9h-18h</small>
-          </div>
-        </div>
 
-        <div class="contact-method">
-          <div class="icon">
-            <i class="fas fa-envelope"></i>
+          <div class="contact-method">
+            <div class="method-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="method-details">
+              <h4>Email</h4>
+              <p>contact&#64;NetProxi.com</p>
+              <small>Réponse sous 24h</small>
+            </div>
           </div>
-          <div class="details">
-            <h4>Email</h4>
-            <p>contact&#64;NetProxi.com</p>
-            <small>Réponse sous 24h</small>
-          </div>
-        </div>
 
-        <div class="contact-method">
-          <div class="icon">
-            <i class="fas fa-headset"></i>
-          </div>
-          <div class="details">
-            <h4>Support technique</h4>
-            <p>support&#64;NetProxi.com</p>
-            <small>Assistance prioritaire</small>
+          <div class="contact-method">
+            <div class="method-icon">
+              <i class="fas fa-headset"></i>
+            </div>
+            <div class="method-details">
+              <h4>Support technique</h4>
+              <p>support&#64;NetProxi.com</p>
+              <small>Assistance prioritaire</small>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Liens rapides FAQ -->
+      <!-- FAQ Section -->
       <div class="faq-section">
-        <h4>Questions fréquentes</h4>
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-question-circle"></i>
+          </div>
+          <h4>Questions fréquentes</h4>
+        </div>
         <div class="faq-links">
-          <a href="/faq#inscription">Comment créer un compte entreprise ?</a>
-          <a href="/faq#paiement">Modes de paiement acceptés</a>
-          <a href="/faq#annulation">Politique d'annulation</a>
-          <a href="/faq#securite">Sécurité des données</a>
+          <a href="/faq#inscription" class="faq-link">
+            <i class="fas fa-chevron-right"></i>
+            <span>Comment créer un compte entreprise ?</span>
+          </a>
+          <a href="/faq#paiement" class="faq-link">
+            <i class="fas fa-chevron-right"></i>
+            <span>Modes de paiement acceptés</span>
+          </a>
+          <a href="/faq#annulation" class="faq-link">
+            <i class="fas fa-chevron-right"></i>
+            <span>Politique d'annulation</span>
+          </a>
+          <a href="/faq#securite" class="faq-link">
+            <i class="fas fa-chevron-right"></i>
+            <span>Sécurité des données</span>
+          </a>
         </div>
       </div>
 
-      <!-- Réseaux sociaux -->
+      <!-- Social Section -->
       <div class="social-section">
-        <h4>Suivez-nous</h4>
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-share-alt"></i>
+          </div>
+          <h4>Suivez-nous</h4>
+        </div>
         <div class="social-links">
-          <a href="#" class="social-link">
+          <a href="#" class="social-link linkedin">
             <i class="fab fa-linkedin"></i>
+            <span>LinkedIn</span>
           </a>
-          <a href="#" class="social-link">
+          <a href="#" class="social-link twitter">
             <i class="fab fa-twitter"></i>
+            <span>Twitter</span>
           </a>
-          <a href="#" class="social-link">
+          <a href="#" class="social-link facebook">
             <i class="fab fa-facebook"></i>
+            <span>Facebook</span>
           </a>
-          <a href="#" class="social-link">
+          <a href="#" class="social-link instagram">
             <i class="fab fa-instagram"></i>
+            <span>Instagram</span>
           </a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Section carte -->
+  <!-- Map Section -->
   <div class="map-section">
-    <h3>Nous trouver</h3>
-    <div class="map-placeholder">
-      <div class="map-frame">
-        <!-- Intégration Google Maps ou similaire ici -->
+    <div class="section-header">
+      <div class="section-icon">
+        <i class="fas fa-map-marker-alt"></i>
+      </div>
+      <h3 class="section-title">Nous trouver</h3>
+    </div>
+    <div class="map-card">
+      <div class="map-placeholder">
         <div class="map-content">
-          <i class="fas fa-map-marker-alt"></i>
-          <p>12 Rue de Paris, 75001 Paris</p>
-          <button class="view-map-btn">
+          <div class="map-icon">
             <i class="fas fa-map"></i>
+          </div>
+          <div class="map-info">
+            <h4>Notre bureau</h4>
+            <p>12 Rue de Paris, 75001 Paris, France</p>
+            <p class="map-note">Accessible en transports en commun : Métro Louvre-Rivoli (ligne 1)</p>
+          </div>
+          <button class="btn btn-outline view-map-btn">
+            <i class="fas fa-external-link-alt"></i>
             Voir sur Google Maps
           </button>
         </div>

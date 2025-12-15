@@ -54,25 +54,35 @@ export class ClientEffects {
     );
 
     // ---------------- Load client reservations ----------------
-    this.loadClientReservations$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(ClientActions.loadClientReservations),
-        mergeMap(() =>
-          this.api.getClientReservations(this.authService.getClientId()).pipe(
-            map((reservations: Booking[]) =>
-              ClientActions.loadClientReservationsSuccess({ reservations })
-            ),
-            catchError((error) =>
-              of(
-                ClientActions.loadClientReservationsFailure({
-                  error: error.message,
-                })
-              )
-            )
+// ---------------- Load client reservations ----------------
+this.loadClientReservations$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(ClientActions.loadClientReservations),
+    mergeMap(({ clientId }) => {
+      if (!clientId) {
+        return of(
+          ClientActions.loadClientReservationsFailure({
+            error: 'Client ID not found',
+          })
+        );
+      }
+
+      return this.api.getClientReservations(clientId).pipe(
+        map((reservations: Booking[]) =>
+          ClientActions.loadClientReservationsSuccess({ reservations })
+        ),
+        catchError((error) =>
+          of(
+            ClientActions.loadClientReservationsFailure({
+              error: error.message,
+            })
           )
         )
-      )
-    );
+      );
+    })
+  )
+);
+
 
 
 

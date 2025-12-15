@@ -227,8 +227,8 @@ export class ApiService {
 
     // ---------------- Client Reservations ----------------
   getClientReservations(clientId: string): Observable<Booking[]> {
-    return this.http.get<Booking[]>(`${this.baseUrl}/clients/${clientId}/reservations`, {
-      //headers: { clientId }, // Or use JWT if available
+    return this.http.get<Booking[]>(`${this.baseUrl}/clients/reservations`, {
+      headers: { clientId }, 
     });
   }
 
