@@ -476,8 +476,8 @@ $transition-heavy: all .4s cubic-bezier(.175,.885,.32,1.275);
               );
               @each $status, $values in $status-colors {
                 &.#{$status} {
-                  &::before { background: nth($values, 1); }
-                  &:hover { box-shadow: nth($values, 2); }
+                  &::before { background: $values }
+                  &:hover { box-shadow: $values }
                 }
               }
               .booking-header {

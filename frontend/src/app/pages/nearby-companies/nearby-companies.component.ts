@@ -25,7 +25,7 @@ export class NearbyCompaniesComponent implements OnInit {
   address = signal('');
   lat = signal<number | null>(null);
   lng = signal<number | null>(null);
-  radiusKm = signal(10); 
+  radiusKm = signal(200); 
 
   loading$: Observable<boolean>;
   error$: Observable<string | null>;

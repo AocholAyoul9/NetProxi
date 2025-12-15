@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.shawilTech.identityservice.service.GeocodingService;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.shawilTech.identityservice.security.JwtTokenProvider;
 
@@ -32,13 +33,25 @@ public class CompanyService {
      */
 
     public List<CompanyResponseDto> findNearbyCompanies(double lat, double lng, double radiusKm) {
-        List<Company> activeCompanies = companyRepository.findByActiveTrue();
+       // List<Company> activeCompanies = companyRepository.findByActiveTrue();
+
+List<Company> companies = companyRepository.findAll();
 
 
 
-        return activeCompanies.stream()
+        return companies.stream()
                 .filter(c -> c.getLatitude() != null && c.getLongitude() != null)
-                .filter(c -> distance(lat, lng, c.getLatitude(), c.getLongitude()) <= radiusKm)
+                .filter(c -> {
+    double d = distance(lat, lng, c.getLatitude(), c.getLongitude());
+    System.out.println(
+        "Company " + c.getName() +
+        " lat=" + c.getLatitude() +
+        " lng=" + c.getLongitude() +
+        " distance=" + d
+    );
+    return d <= radiusKm;
+})
+
                 .map(c -> CompanyResponseDto.builder()
                         .id(c.getId())
                         .name(c.getName())
