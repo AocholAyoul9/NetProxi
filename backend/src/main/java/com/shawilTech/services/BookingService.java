@@ -60,14 +60,14 @@ public BookingResponseDto createBooking(BookingRequestDto request) {
     LocalDateTime start = request.getStartTime();
     LocalDateTime end = start.plusMinutes(service.getDurationInMinutes());
 
-    if (start.isBefore(LocalDateTime.now())) {
+    /*if (start.isBefore(LocalDateTime.now())) {
         throw new RuntimeException("Cannot book a time in the past");
     }
 
     // ---------------------------
     // Conflict check: client
     // ---------------------------
-    boolean clientConflict =
+    /*boolean clientConflict =
             bookingRepository.existsByClientIdAndStartTimeLessThanAndEndTimeGreaterThan(
                     request.getClientId(), end, start);
 
@@ -79,13 +79,13 @@ public BookingResponseDto createBooking(BookingRequestDto request) {
     // ---------------------------
     // Service & company active check
     // ---------------------------
-    if (!service.isActive()) {
+   /*  if (!service.isActive()) {
         throw new RuntimeException("Service is inactive");
     }
 
     if (!company.isActive()) {
         throw new RuntimeException("Company is inactive");
-    }
+    }*/
 
     // ---------------------------
     // Create booking

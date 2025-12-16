@@ -10,6 +10,7 @@ public class EmployeeResponseDto {
     private UUID id;
     private String name;
     private String email;
+    private String password;
     private String phone;
     private String address;
     private  boolean active;

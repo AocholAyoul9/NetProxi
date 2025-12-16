@@ -14,6 +14,7 @@ export interface Employee {
 export interface EmployeeCreateModel {
   name: string;
   email: string;
+  password: string;
   phone: string;
   address: string;
   companyId: string;
