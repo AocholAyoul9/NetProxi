@@ -26,8 +26,7 @@
 }
 
 .page-container {
-  max-width: 1280px;
-  margin: 0 auto;
+ 
   padding: 2rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
@@ -41,8 +40,14 @@
   margin: -2rem -2rem 2rem;
   position: relative;
   z-index: 1;
+
+
 }
 
+.bottom-wrapper{
+   max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;}
 /* Header */
 .page-header {
   text-align: center;

@@ -76,6 +76,7 @@ export class CompanyAdminDashboardComponent {
   newEmployee: EmployeeCreateModel = {
     name: '',
     email: '',
+    password:'',
     phone: '',
     address: '',
     companyId: '',
@@ -192,6 +193,7 @@ export class CompanyAdminDashboardComponent {
     this.newEmployee = {
       name: '',
       email: '',
+      password:'',
       phone: '',
       address: '',
       companyId: this.companyId,

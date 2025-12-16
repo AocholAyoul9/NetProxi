@@ -15,6 +15,7 @@ import { NearbyCompany } from '../../shared/models/client.model';
 import * as ClientSelectors from '../../shared/state/client/client.selector';
 import * as ClientActions from '../../shared/state/client/client.actions';
 import * as BookingActions from '../../shared/state/booking/booking.actions';
+
 import { Booking, CreateBookingRequest } from '../../shared/models/booking.model';
 
 type TabType = 'overview' | 'reservations' | 'companies' | 'history';

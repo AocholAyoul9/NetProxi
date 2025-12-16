@@ -152,7 +152,7 @@
           <h5>Services proposés :</h5>
           <div class="service-tags">
             <span
-              *ngFor="let service of company.services || []"
+              *ngFor="let service of (company.services | slice:0:3) || []"
               class="service-tag"
               [class.popular]="service.isPopular"
             >

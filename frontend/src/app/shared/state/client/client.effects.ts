@@ -53,7 +53,6 @@ export class ClientEffects {
       )
     );
 
-    // ---------------- Load client reservations ----------------
 // ---------------- Load client reservations ----------------
 this.loadClientReservations$ = createEffect(() =>
   this.actions$.pipe(
@@ -92,7 +91,7 @@ this.loadClientReservations$ = createEffect(() =>
         ofType(ClientActions.loadNearbyCompanies),
         mergeMap(({ location }) =>
           this.api
-            .getNearByCompanies(location?.lat || 0, location?.lng || 0, 10)
+            .getNearByCompanies(location?.lat || 0, location?.lng || 0, 200)
             .pipe(
               map((companies: any[]) => {
                 const nearby: NearbyCompany[] = companies.map((c) => ({
