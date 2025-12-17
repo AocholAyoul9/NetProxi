@@ -6,13 +6,13 @@ $text-muted: #718096;
 $text-light: #4a5568;
 $border-color: #e2e8f0;
 $border-hover: #cbd5e0;
-$shadow-light: 0 2px 6px rgba(0,0,0,.1);
-$shadow-medium: 0 4px 12px rgba(0,0,0,.1);
+$shadow-light: 0 2px 6px rgba(0, 0, 0, 0.1);
+$shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
 $radius-sm: 6px;
 $radius-md: 10px;
 $radius-lg: 12px;
 $radius-xl: 16px;
-$transition: all .3s ease;
+$transition: all 0.3s ease;
 
 @mixin card-base {
   background: $white;
@@ -52,21 +52,21 @@ $transition: all .3s ease;
   padding: 3rem 2rem;
   background: $white;
   border-radius: $radius-lg;
-  
+
   .empty-icon {
     font-size: 3rem;
     color: #cbd5e0;
     margin-bottom: 1rem;
   }
-  
+
   p {
     color: $text-muted;
     font-size: 1.125rem;
     margin-bottom: 1.5rem;
   }
-  
+
   .btn-primary {
-    padding: .75rem 1.5rem;
+    padding: 0.75rem 1.5rem;
     background: $primary-gradient;
     color: $white;
     border: none;
@@ -74,10 +74,10 @@ $transition: all .3s ease;
     font-weight: 600;
     cursor: pointer;
     transition: $transition;
-    
+
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(102,126,234,.3);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
     }
   }
 }
@@ -86,142 +86,142 @@ $transition: all .3s ease;
 .client-dashboard {
   min-height: 100vh;
   background: #f8f9fa;
-  
+
   .dashboard-header {
     background: $primary-gradient;
     color: $white;
     padding: 1.5rem 0;
-    
+
     .header-content {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 1rem;
     }
-    
+
     .welcome-section {
       margin-bottom: 1.5rem;
-      
+
       .welcome-title {
         font-size: 1.75rem;
         font-weight: 700;
         margin: 0 0 0.5rem;
-        
+
         .client-name {
           color: rgba($white, 0.9);
         }
       }
-      
+
       .welcome-subtitle {
         margin: 0;
         opacity: 0.8;
         font-size: 1rem;
       }
     }
-    
+
     .search-container {
       @include card-base;
       padding: 1rem;
       box-shadow: $shadow-medium;
-      
+
       .search-input-group {
         @include flex-center;
-        gap: .5rem;
-        
+        gap: 0.5rem;
+
         .search-icon {
           color: #667eea;
           font-size: 1.1rem;
         }
-        
+
         .address-search-input {
           flex: 1;
-          padding: .625rem;
+          padding: 0.625rem;
           border: 1px solid $border-color;
           border-radius: $radius-sm;
-          font-size: .9rem;
-          
+          font-size: 0.9rem;
+
           &:focus {
             outline: none;
             border-color: #667eea;
           }
         }
-        
+
         .btn-location {
-          padding: .625rem;
+          padding: 0.625rem;
           background: #edf2f7;
           border: none;
           border-radius: $radius-sm;
           color: $text-light;
           cursor: pointer;
-          
+
           &:hover {
             background: $border-color;
           }
         }
-        
+
         .btn-search {
-          padding: .625rem 1.25rem;
+          padding: 0.625rem 1.25rem;
           background: #667eea;
           color: $white;
           border: none;
           border-radius: $radius-sm;
           font-weight: 500;
           cursor: pointer;
-          
+
           &:hover:not(:disabled) {
             background: #5a67d8;
           }
-          
+
           &:disabled {
-            opacity: .5;
+            opacity: 0.5;
             cursor: not-allowed;
           }
         }
       }
     }
   }
-  
+
   .dashboard-main {
     max-width: 1200px;
     margin: 1.5rem auto;
     padding: 0 1rem;
-    
+
     .dashboard-tabs {
       display: flex;
-      gap: .5rem;
+      gap: 0.5rem;
       margin-bottom: 1.5rem;
       background: $white;
       border-radius: $radius-md;
-      padding: .5rem;
+      padding: 0.5rem;
       box-shadow: $shadow-light;
-      
+
       .tab-button {
         flex: 1;
         @include flex-center;
-        gap: .5rem;
-        padding: .75rem;
+        gap: 0.5rem;
+        padding: 0.75rem;
         background: none;
         border: none;
         border-radius: $radius-sm;
         color: $text-muted;
-        font-size: .875rem;
+        font-size: 0.875rem;
         cursor: pointer;
-        
+
         &:hover {
           background: #f7fafc;
         }
-        
+
         &.active {
           background: #667eea;
           color: $white;
         }
       }
     }
-    
+
     .loading-container {
       @include flex-center;
       flex-direction: column;
       padding: 2rem;
-      
+
       .loading-spinner {
         width: 40px;
         height: 40px;
@@ -230,13 +230,13 @@ $transition: all .3s ease;
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
-      
+
       p {
-        margin-top: .75rem;
+        margin-top: 0.75rem;
         color: $text-muted;
       }
     }
-    
+
     .tab-content {
       .overview-tab,
       .reservations-tab,
@@ -247,7 +247,7 @@ $transition: all .3s ease;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 1.5rem;
-          
+
           h2 {
             margin: 0;
             color: $text-dark;
@@ -256,7 +256,7 @@ $transition: all .3s ease;
           }
         }
       }
-      
+
       // Overview Tab
       .overview-tab {
         .stats-grid {
@@ -264,16 +264,16 @@ $transition: all .3s ease;
           grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
           gap: 1.5rem;
           margin-bottom: 2.5rem;
-          
+
           .stat-card {
             @include card-base;
             padding: 1.5rem;
             @include hover-lift;
-            
+
             .stat-content {
               @include flex-center;
               gap: 1rem;
-              
+
               .stat-icon {
                 width: 50px;
                 height: 50px;
@@ -281,98 +281,76 @@ $transition: all .3s ease;
                 @include flex-center;
                 font-size: 1.25rem;
                 color: $white;
-                  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-                &.upcoming {
-                  background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
-                }
-                
-                &.completed {
-                  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-                }
-                
-                &.total {
-                  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-                }
-                
-                &.revenue {
-                  background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
-                }
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
               }
 
-              .stat-icon {
-  // Remove or adjust these:
-  // width: 50px;
-  // height: 50px;
-  
-  // Keep these:
-  border-radius: 50%;
-  @include flex-center;
-  font-size: 1.25rem;
-  color: $white;
-  padding: 0.75rem; // Add padding instead of fixed width/height
-  min-width: 50px; // Use min-width instead of width
-  min-height: 50px; // Use min-height instead of height
-  
-  &.upcoming {
-    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
-  }
-  
-  &.completed {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-  }
-  
-  &.total {
-    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-  }
-  
-  &.revenue {
-    background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
-  }
-}
-              
               .stat-details {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
                 h3 {
                   margin: 0 0 0.25rem;
                   font-size: 1.75rem;
                   font-weight: 700;
-                  color: $text-dark;
+                  color: $white;
                 }
-                
+
                 p {
                   margin: 0;
-                  color: $text-muted;
+                  color: $white;
                   font-size: 0.875rem;
                 }
               }
             }
+            &.upcoming {
+              display: inline-flex;
+              background: linear-gradient(
+                135deg,
+                #f6ad55 0%,
+                #ed8936 100%
+              ) !important;
+            }
+
+            &.completed {
+              background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            }
+
+            &.total {
+              background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            }
+
+            &.revenue {
+              background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+            }
           }
         }
-        
+
         .upcoming-bookings {
           @include card-base;
           padding: 1.5rem;
-          
+
           .bookings-list {
             display: grid;
             gap: 1rem;
-            
+
             .booking-item {
               @include card-base;
               padding: 1.25rem;
               @include hover-lift;
-              
+
               .booking-summary {
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-start;
                 margin-bottom: 1rem;
-                
+
                 .company-info {
                   @include flex-center;
                   gap: 0.75rem;
-                  
+
                   .company-avatar {
                     .avatar-placeholder {
                       width: 40px;
@@ -384,7 +362,7 @@ $transition: all .3s ease;
                       font-weight: 600;
                     }
                   }
-                  
+
                   .booking-meta {
                     display: flex;
                     gap: 1rem;
@@ -392,44 +370,44 @@ $transition: all .3s ease;
                     font-size: 0.875rem;
                   }
                 }
-                
+
                 .booking-status {
                   .status-badge {
                     @include status-badge(#f7fafc, $text-muted, $border-color);
-                    
+
                     &.pending {
                       @include status-badge(#fef3c7, #d97706, #fbbf24);
                     }
-                    
+
                     &.confirmed {
                       @include status-badge(#dbeafe, #1d4ed8, #93c5fd);
                     }
-                    
+
                     &.in_progress {
                       @include status-badge(#e0e7ff, #4f46e5, #a5b4fc);
                     }
-                    
+
                     &.completed {
                       @include status-badge(#d1fae5, #065f46, #6ee7b7);
                     }
-                    
+
                     &.cancelled {
                       @include status-badge(#fee2e2, #dc2626, #fca5a5);
                     }
                   }
                 }
               }
-              
+
               .service-name {
                 margin: 0 0 1rem;
                 color: $text-dark;
                 font-weight: 600;
               }
-              
+
               .booking-actions {
                 display: flex;
                 gap: 0.75rem;
-                
+
                 .btn-secondary,
                 .btn-primary {
                   padding: 0.5rem 1rem;
@@ -439,22 +417,24 @@ $transition: all .3s ease;
                   cursor: pointer;
                   transition: $transition;
                 }
-                
+
                 .btn-secondary {
                   background: $white;
                   border: 1px solid $border-color;
                   color: $text-muted;
-                  
+
                   &:hover {
                     background: #f7fafc;
                   }
                 }
-                
+                a {
+                  text-decoration: none;
+                }
                 .btn-primary {
                   background: #667eea;
                   color: $white;
                   border: none;
-                  
+
                   &:hover {
                     background: #5a67d8;
                   }
@@ -462,20 +442,20 @@ $transition: all .3s ease;
               }
             }
           }
-          
+
           .empty-state {
             @include empty-state;
           }
         }
       }
-      
+
       // Reservations Tab
       .reservations-tab {
         .section-header {
           .filter-buttons {
             display: flex;
             gap: 0.5rem;
-            
+
             .filter-btn {
               padding: 0.5rem 1rem;
               background: $white;
@@ -485,11 +465,11 @@ $transition: all .3s ease;
               font-size: 0.875rem;
               cursor: pointer;
               transition: $transition;
-              
+
               &:hover {
                 background: #f7fafc;
               }
-              
+
               &.active {
                 background: #667eea;
                 color: $white;
@@ -498,16 +478,16 @@ $transition: all .3s ease;
             }
           }
         }
-        
+
         .reservations-list {
           display: grid;
           gap: 1rem;
-          
+
           .reservation-item {
             @include card-base;
             padding: 1.25rem;
             @include hover-lift;
-            
+
             .reservation-header {
               display: flex;
               justify-content: space-between;
@@ -515,11 +495,11 @@ $transition: all .3s ease;
               margin-bottom: 1rem;
               padding-bottom: 1rem;
               border-bottom: 1px solid $border-color;
-              
+
               .company-info {
                 @include flex-center;
                 gap: 0.75rem;
-                
+
                 .company-avatar {
                   .avatar-placeholder {
                     width: 40px;
@@ -531,7 +511,7 @@ $transition: all .3s ease;
                     font-weight: 600;
                   }
                 }
-                
+
                 .reservation-meta {
                   display: flex;
                   gap: 1rem;
@@ -539,50 +519,50 @@ $transition: all .3s ease;
                   font-size: 0.875rem;
                 }
               }
-              
+
               .reservation-status {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-end;
                 gap: 0.5rem;
-                
+
                 .status-badge {
                   @include status-badge(#f7fafc, $text-muted, $border-color);
-                  
+
                   &.pending {
                     @include status-badge(#fef3c7, #d97706, #fbbf24);
                   }
-                  
+
                   &.confirmed {
                     @include status-badge(#dbeafe, #1d4ed8, #93c5fd);
                   }
-                  
+
                   &.completed {
                     @include status-badge(#d1fae5, #065f46, #6ee7b7);
                   }
-                  
+
                   &.cancelled {
                     @include status-badge(#fee2e2, #dc2626, #fca5a5);
                   }
                 }
-                
+
                 .reservation-price {
                   font-weight: 600;
                   color: $text-dark;
                 }
               }
             }
-            
+
             .service-name {
               margin: 0 0 1rem;
               color: $text-dark;
               font-weight: 600;
             }
-            
+
             .reservation-actions {
               display: flex;
               gap: 0.75rem;
-              
+
               .btn-review,
               .btn-cancel,
               .btn-view-company {
@@ -593,36 +573,36 @@ $transition: all .3s ease;
                 cursor: pointer;
                 transition: $transition;
               }
-              
+
               .btn-review {
                 @include flex-center;
                 gap: 0.5rem;
                 background: #fbbf24;
                 color: $white;
                 border: none;
-                
+
                 &:hover {
                   background: #f59e0b;
                 }
               }
-              
+
               .btn-cancel {
                 background: $white;
                 color: #dc2626;
                 border: 1px solid #fee2e2;
-                
+
                 &:hover {
                   background: #fee2e2;
                 }
               }
-              
+
               .btn-view-company {
                 @include flex-center;
                 background: #f7fafc;
                 color: $text-muted;
                 border: 1px solid $border-color;
                 text-decoration: none;
-                
+
                 &:hover {
                   background: $border-color;
                 }
@@ -631,7 +611,7 @@ $transition: all .3s ease;
           }
         }
       }
-      
+
       // Companies Tab
       .companies-tab {
         .section-header {
@@ -644,29 +624,29 @@ $transition: all .3s ease;
             font-size: 0.875rem;
             cursor: pointer;
             transition: $transition;
-            
+
             &:hover {
               background: #f7fafc;
             }
           }
         }
-        
+
         .companies-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 1.5rem;
-          
+
           .company-card {
             @include card-base;
             padding: 1.5rem;
             @include hover-lift;
-            
+
             .company-card-header {
               display: flex;
               align-items: center;
               gap: 1rem;
               margin-bottom: 1rem;
-              
+
               .company-logo {
                 .logo-placeholder {
                   width: 50px;
@@ -679,28 +659,28 @@ $transition: all .3s ease;
                   font-size: 1.25rem;
                 }
               }
-              
+
               .company-info {
                 flex: 1;
-                
+
                 h3 {
                   margin: 0 0 0.5rem;
                   color: $text-dark;
                   font-size: 1.125rem;
                   font-weight: 600;
                 }
-                
+
                 .company-meta {
                   display: flex;
                   gap: 1rem;
-                  
+
                   .rating {
                     @include flex-center;
                     gap: 0.25rem;
                     color: #f59e0b;
                     font-weight: 600;
                   }
-                  
+
                   .distance {
                     @include flex-center;
                     gap: 0.25rem;
@@ -709,15 +689,15 @@ $transition: all .3s ease;
                 }
               }
             }
-            
+
             .services-preview {
               margin-bottom: 1rem;
-              
+
               .services-tags {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 0.5rem;
-                
+
                 .service-tag {
                   padding: 0.25rem 0.75rem;
                   background: #f7fafc;
@@ -726,7 +706,7 @@ $transition: all .3s ease;
                   font-size: 0.75rem;
                   color: $text-muted;
                 }
-                
+
                 .more-tag {
                   padding: 0.25rem 0.75rem;
                   background: #edf2f7;
@@ -737,11 +717,11 @@ $transition: all .3s ease;
                 }
               }
             }
-            
+
             .company-actions {
               display: flex;
               gap: 0.75rem;
-              
+
               .btn-view-company,
               .btn-primary {
                 flex: 1;
@@ -753,22 +733,22 @@ $transition: all .3s ease;
                 text-decoration: none;
                 transition: $transition;
               }
-              
+
               .btn-view-company {
                 background: $white;
                 color: $text-muted;
                 border: 1px solid $border-color;
-                
+
                 &:hover {
                   background: #f7fafc;
                 }
               }
-              
+
               .btn-primary {
                 background: #667eea;
                 color: $white;
                 border: none;
-                
+
                 &:hover {
                   background: #5a67d8;
                 }
@@ -777,66 +757,66 @@ $transition: all .3s ease;
           }
         }
       }
-      
+
       // History Tab
       .history-tab {
         .history-list {
           display: grid;
           gap: 1rem;
-          
+
           .history-item {
             @include card-base;
             padding: 1.25rem;
             @include hover-lift;
-            
+
             .history-date {
               font-size: 0.875rem;
               color: #667eea;
               font-weight: 600;
               margin-bottom: 0.5rem;
             }
-            
+
             .history-content {
               .history-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 0.5rem;
-                
+
                 h4 {
                   margin: 0;
                   color: $text-dark;
                   font-size: 1rem;
                   font-weight: 600;
                 }
-                
+
                 .history-status {
                   @include status-badge(#f7fafc, $text-muted, $border-color);
-                  
+
                   &.pending {
                     @include status-badge(#fef3c7, #d97706, #fbbf24);
                   }
-                  
+
                   &.confirmed {
                     @include status-badge(#dbeafe, #1d4ed8, #93c5fd);
                   }
-                  
+
                   &.completed {
                     @include status-badge(#d1fae5, #065f46, #6ee7b7);
                   }
-                  
+
                   &.cancelled {
                     @include status-badge(#fee2e2, #dc2626, #fca5a5);
                   }
                 }
               }
-              
+
               .history-service {
                 margin: 0 0 0.75rem;
                 color: $text-light;
                 font-size: 0.9rem;
               }
-              
+
               .history-meta {
                 display: flex;
                 gap: 1.5rem;
@@ -849,7 +829,7 @@ $transition: all .3s ease;
       }
     }
   }
-  
+
   // Modals
   .modal {
     position: fixed;
@@ -859,13 +839,13 @@ $transition: all .3s ease;
     bottom: 0;
     @include flex-center;
     z-index: 1000;
-    
+
     .modal-overlay {
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0.5);
     }
-    
+
     .modal-content {
       position: relative;
       background: $white;
@@ -874,23 +854,23 @@ $transition: all .3s ease;
       max-width: 400px;
       width: 90%;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-      
+
       h2 {
         margin: 0 0 0.5rem;
         font-size: 1.25rem;
         color: $text-dark;
       }
-      
+
       p {
         margin: 0 0 1.5rem;
         color: $text-muted;
       }
-      
+
       .rating-input {
         display: flex;
         gap: 0.25rem;
         margin-bottom: 1rem;
-        
+
         .star-btn {
           background: none;
           border: none;
@@ -899,7 +879,7 @@ $transition: all .3s ease;
           cursor: pointer;
         }
       }
-      
+
       textarea {
         width: 100%;
         padding: 0.75rem;
@@ -908,30 +888,30 @@ $transition: all .3s ease;
         font-size: 0.875rem;
         resize: vertical;
         margin-bottom: 1rem;
-        
+
         &:focus {
           outline: none;
           border-color: #667eea;
         }
       }
-      
+
       .cancel-details {
         margin: 1rem 0;
         padding: 0.75rem;
         background: #f7fafc;
         border-radius: $radius-sm;
-        
+
         p {
           margin: 0.25rem 0;
           color: $text-light;
         }
       }
-      
+
       .modal-actions {
         display: flex;
         justify-content: flex-end;
         gap: 0.75rem;
-        
+
         .btn-secondary,
         .btn-primary,
         .btn-danger {
@@ -942,29 +922,29 @@ $transition: all .3s ease;
           border: none;
           transition: $transition;
         }
-        
+
         .btn-secondary {
           background: $border-color;
           color: $text-light;
-          
+
           &:hover {
             background: $border-hover;
           }
         }
-        
+
         .btn-primary {
           background: #667eea;
           color: $white;
-          
+
           &:hover {
             background: #5a67d8;
           }
         }
-        
+
         .btn-danger {
           background: #f56565;
           color: $white;
-          
+
           &:hover {
             background: #e53e3e;
           }
@@ -989,30 +969,30 @@ $transition: all .3s ease;
         .welcome-title {
           font-size: 1.5rem;
         }
-        
+
         .welcome-subtitle {
           font-size: 0.9rem;
         }
       }
     }
-    
+
     .dashboard-main {
       .dashboard-tabs {
         flex-wrap: wrap;
-        
+
         .tab-button {
           flex: 0 0 calc(50% - 0.5rem);
           font-size: 0.8rem;
         }
       }
-      
+
       .tab-content {
         .overview-tab {
           .stats-grid {
             grid-template-columns: 1fr;
           }
         }
-        
+
         .companies-tab {
           .companies-grid {
             grid-template-columns: 1fr;
@@ -1031,7 +1011,7 @@ $transition: all .3s ease;
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid $border-color;
-  
+
   .company-avatar {
     .avatar-placeholder {
       width: 50px;
@@ -1044,7 +1024,7 @@ $transition: all .3s ease;
       font-size: 1.25rem;
     }
   }
-  
+
   .company-info {
     h4 {
       margin: 0 0 0.25rem;
@@ -1052,7 +1032,7 @@ $transition: all .3s ease;
       font-size: 1.125rem;
       font-weight: 600;
     }
-    
+
     .rating {
       @include flex-center;
       gap: 0.25rem;
@@ -1064,14 +1044,14 @@ $transition: all .3s ease;
 
 .form-section {
   margin-bottom: 1.25rem;
-  
+
   .form-label {
     display: block;
     margin-bottom: 0.5rem;
     color: $text-dark;
     font-weight: 500;
   }
-  
+
   .form-select,
   .form-input {
     width: 100%;
@@ -1079,7 +1059,7 @@ $transition: all .3s ease;
     border: 1px solid $border-color;
     border-radius: 6px;
     font-size: 0.875rem;
-    
+
     &:focus {
       outline: none;
       border-color: #667eea;
@@ -1092,19 +1072,19 @@ $transition: all .3s ease;
   border-radius: 8px;
   padding: 1rem;
   margin: 1.5rem 0;
-  
+
   h5 {
     margin: 0 0 0.5rem;
     color: $text-dark;
     font-weight: 600;
   }
-  
+
   p {
     margin: 0 0 1rem;
     color: $text-muted;
     font-size: 0.875rem;
   }
-  
+
   .service-price {
     font-weight: 700;
     color: #48bb78;
@@ -1120,12 +1100,12 @@ $transition: all .3s ease;
   align-items: flex-start;
   gap: 0.75rem;
   margin: 1.5rem 0;
-  
+
   i {
     color: #0ea5e9;
     margin-top: 0.25rem;
   }
-  
+
   p {
     margin: 0;
     color: #0369a1;
@@ -1143,19 +1123,19 @@ $transition: all .3s ease;
   gap: 0.75rem;
   margin-top: 1.5rem;
   animation: fadeIn 0.3s ease;
-  
+
   i {
     color: #38a169;
     font-size: 1.5rem;
   }
-  
+
   .message-content {
     strong {
       display: block;
       color: #065f46;
       margin-bottom: 0.25rem;
     }
-    
+
     p {
       margin: 0;
       color: #047857;
@@ -1165,6 +1145,10 @@ $transition: all .3s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

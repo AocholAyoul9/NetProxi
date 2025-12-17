@@ -34,10 +34,7 @@ export const selectFavoriteCompanies = createSelector(
   (state) => state.favoriteCompanies
 );
 
-export const selectDashboardStats = createSelector(
-  selectClientState,
-  (state) => state.dashboardStats
-);
+
 
 export const selectClientLoading = createSelector(
   selectClientState,

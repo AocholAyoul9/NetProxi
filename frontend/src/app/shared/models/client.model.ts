@@ -31,14 +31,7 @@ export interface CompanyService {
   category: string;
 }
 
-export interface ClientDashboardStats {
-  totalReservations: number;
-  upcomingReservations: number;
-  completedReservations: number;
-  cancelledReservations: number;
-  totalSpent: number;
-  favoriteCompanies: string[];
-}
+
 
 export interface ClientProfile {
   id: string;

@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { map } from 'rxjs/operators';
+
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -44,16 +46,29 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   // Observables from store
   profile$: Observable<any | null>;
   reservations$: Observable<Booking[]>;
-  upcomingReservations$: Observable<Booking[]>;
   paginatedReservations$: Observable<Booking[]>;
   nearbyCompanies$: Observable<NearbyCompany[]>;
   displayedCompanies$: Observable<NearbyCompany[]>;
-  dashboardStats$: Observable<any | null>;
   loading$: Observable<boolean>;
   activeTab$: Observable<TabType>;
   reservationFilter$: Observable<string>;
   hasSearchResults$: Observable<boolean>;
   searchQuery$: Observable<string>;
+
+
+
+  // Derived data (NO store selectors)
+upcomingReservationsLocal$!: Observable<Booking[]>;
+completedReservationsLocal$!: Observable<Booking[]>;
+cancelledReservationsLocal$!: Observable<Booking[]>;
+
+dashboardStatsLocal$!: Observable<{
+  upcoming: number;
+  completed: number;
+  cancelled: number;
+  total: number;
+  totalSpent: number;
+}>;
 
   // Local state
   tabs: DashboardTab[] = [
@@ -93,9 +108,7 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     // Select data from store
     this.profile$ = this.store.select(ClientSelectors.selectClientProfile);
     this.reservations$ = this.store.select(ClientSelectors.selectReservations);
-    this.upcomingReservations$ = this.store.select(
-      ClientSelectors.selectUpcomingReservations
-    );
+ 
     this.paginatedReservations$ = this.store.select(
       ClientSelectors.selectPaginatedReservations
     );
@@ -105,9 +118,7 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     this.displayedCompanies$ = this.store.select(
       ClientSelectors.selectDisplayedCompanies
     );
-    this.dashboardStats$ = this.store.select(
-      ClientSelectors.selectDashboardStats
-    );
+
     this.loading$ = this.store.select(ClientSelectors.selectClientLoading);
     this.activeTab$ = this.store.select(ClientSelectors.selectActiveTab);
     this.reservationFilter$ = this.store.select(
@@ -122,7 +133,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Load initial data
     this.store.dispatch(ClientActions.loadClientProfile());
-    this.store.dispatch(ClientActions.loadDashboardStats());
     this.getUserLocation();
 
     // Load client reservations
@@ -145,6 +155,59 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
         }
       })
     );
+
+
+     //  UPCOMING
+  this.upcomingReservationsLocal$ = this.reservations$.pipe(
+    map(reservations =>
+      reservations.filter(r =>
+        r.status === 'PENDING' || r.status === 'CONFIRMED'
+      )
+    )
+  );
+
+  // COMPLETED
+  this.completedReservationsLocal$ = this.reservations$.pipe(
+    map(reservations =>
+      reservations.filter(r => r.status === 'COMPLETED')
+    )
+  );
+
+  // CANCELLED (optional)
+  this.cancelledReservationsLocal$ = this.reservations$.pipe(
+    map(reservations =>
+      reservations.filter(r => r.status === 'CANCELLED')
+    )
+  );
+
+  // DASHBOARD STATS
+  this.dashboardStatsLocal$ = this.reservations$.pipe(
+    map(reservations => {
+      const upcoming = reservations.filter(r =>
+        r.status === 'PENDING' || r.status === 'CONFIRMED'
+      ).length;
+
+      const completed = reservations.filter(r =>
+        r.status === 'COMPLETED'
+      ).length;
+
+      const cancelled = reservations.filter(r =>
+        r.status === 'CANCELLED'
+      ).length;
+
+      const totalSpent = reservations
+        .filter(r => r.status === 'COMPLETED')
+        .reduce((sum, r) => sum + (r.price || 0), 0);
+
+      return {
+        upcoming,
+        completed,
+        cancelled,
+        total: reservations.length,
+        totalSpent,
+      };
+    })
+  );
   }
 
   ngOnDestroy(): void {
@@ -266,7 +329,7 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     return labels[status] || status;
   }
 
-  formatCurrency(amount: number): string {
+  formatCurrency(amount: number = 0): string {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR',

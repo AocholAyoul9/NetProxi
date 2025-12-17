@@ -3,7 +3,6 @@ import { createReducer, on } from '@ngrx/store';
 import * as ClientActions from './client.actions';
 import {
   NearbyCompany,
-  ClientDashboardStats,
   ClientProfile,
 } from '../../models/client.model';
 import { Booking } from '../../models/booking.model';
@@ -13,7 +12,6 @@ export interface ClientState {
   reservations: Booking[];
   nearbyCompanies: NearbyCompany[];
   favoriteCompanies: NearbyCompany[];
-  dashboardStats: ClientDashboardStats | null;
   loading: boolean;
   error: string | null;
   searchResults: NearbyCompany[];
@@ -32,7 +30,6 @@ export const initialState: ClientState = {
   reservations: [],
   nearbyCompanies: [],
   favoriteCompanies: [],
-  dashboardStats: null,
   loading: false,
   error: null,
   searchResults: [],
@@ -119,21 +116,7 @@ export const clientReducer = createReducer(
     error,
   })),
 
-  // ---------------- Dashboard Stats ----------------
-  on(ClientActions.loadDashboardStats, (state) => ({
-    ...state,
-    loading: true,
-  })),
-  on(ClientActions.loadDashboardStatsSuccess, (state, { stats }) => ({
-    ...state,
-    dashboardStats: stats,
-    loading: false,
-  })),
-  on(ClientActions.loadDashboardStatsFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error,
-  })),
+  
 
   // ---------------- Update Reservation Status ----------------
   on(ClientActions.updateReservationStatus, (state) => ({
