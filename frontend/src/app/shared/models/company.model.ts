@@ -19,7 +19,6 @@ export interface Company {
   description?: string;
   latitude?: number;
   longitude?: number;
-  pricing?: string;
   distance?: number; 
   rating?: number;
   reviewsCount?: number;

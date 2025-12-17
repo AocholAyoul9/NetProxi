@@ -5,6 +5,7 @@ import com.shawilTech.identityservice.dto.ServiceResponseDto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Data
@@ -19,8 +20,11 @@ public class CompanyResponseDto {
     private String phone;
     private String address;
     private boolean active;
+  
+      // Subscription info
     private String activePlan;
-
+    private BigDecimal monthlyPrice;
+    private boolean subscriptionActive;
     // Branding
     private String logoUrl;
     private String website;
