@@ -2,7 +2,6 @@ package com.shawilTech.identityservice.dto;
 
 import lombok.Data;
 
-import lombok.Data;
 import lombok.Builder;
 import java.util.UUID;
 

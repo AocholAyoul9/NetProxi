@@ -129,7 +129,6 @@ List<Company> companies = companyRepository.findAll();
                 .website(dto.getWebsite())
                 .description(dto.getDescription())
                 .token(token)
-                .pricing(dto.getPricing())
                 .openingHours(dto.getOpeningHours())
                 .active(true)
                 .build();
@@ -238,6 +237,7 @@ List<Company> companies = companyRepository.findAll();
     /**
      * Fetch all company
      */
+    
     public List<CompanyResponseDto> getAllCompanies() {
         return companyRepository.findAll().stream()
                 .map(company -> CompanyResponseDto.builder()
