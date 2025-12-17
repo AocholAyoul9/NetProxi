@@ -1,7 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { 
   NearbyCompany, 
-  ClientDashboardStats, 
   ClientProfile 
 } from '../../models/client.model';
 import { Booking } from '../../models/booking.model';
@@ -60,17 +59,6 @@ export const searchCompaniesFailure = createAction(
 );
 export const clearSearchResults = createAction('[Client] Clear Search Results');
 
-// Load dashboard statistics
-export const loadDashboardStats = createAction('[Client] Load Dashboard Stats');
-export const loadDashboardStatsSuccess = createAction(
-  '[Client] Load Dashboard Stats Success',
-  props<{ stats: ClientDashboardStats }>()
-);
-
-export const loadDashboardStatsFailure = createAction(
-  '[Client] Load Dashboard Stats Failure',
-  props<{ error: string }>()
-);
 // Update reservation status
 export const updateReservationStatus = createAction(
   '[Client] Update Reservation Status',

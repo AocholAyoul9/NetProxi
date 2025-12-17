@@ -74,12 +74,12 @@
       <div *ngIf="(activeTab$ | async) === 'overview'" class="tab-content">
         <div class="overview-tab">
           <!-- Stats Cards - Clean Layout -->
-          <div class="stats-grid" *ngIf="dashboardStats$ | async as stats">
-            <div class="stat-card upcoming">
+          <div class="stats-grid" *ngIf="dashboardStatsLocal$  | async as stats">
+            <div class="stat-card upcoming" >
               <div class="stat-content">
                 <i class="fas fa-clock stat-icon"></i>
                 <div class="stat-details">
-                  <h3>{{ stats.upcomingReservations }}</h3>
+                  <h3>{{ stats.upcoming }}</h3>
                   <p>À venir</p>
                 </div>
               </div>
@@ -89,7 +89,7 @@
               <div class="stat-content">
                 <i class="fas fa-check-circle stat-icon"></i>
                 <div class="stat-details">
-                  <h3>{{ stats.completedReservations }}</h3>
+                  <h3>{{ stats.completed }}</h3>
                   <p>Terminées</p>
                 </div>
               </div>
@@ -99,7 +99,7 @@
               <div class="stat-content">
                 <i class="fas fa-calendar-alt stat-icon"></i>
                 <div class="stat-details">
-                  <h3>{{ stats.totalReservations }}</h3>
+                  <h3>{{ stats.total }}</h3>
                   <p>Total</p>
                 </div>
               </div>
@@ -107,7 +107,7 @@
 
             <div class="stat-card revenue">
               <div class="stat-content">
-                <i class="fas fa-euro-sign stat-icon"></i>
+               <!----<i class="fas fa-euro-sign stat-icon"></i>-->
                 <div class="stat-details">
                   <h3>{{ formatCurrency(stats.totalSpent) }}</h3>
                   <p>Dépensé</p>
@@ -125,7 +125,7 @@
             </div>
 
             <ng-container
-              *ngIf="upcomingReservations$ | async as upcomingReservations"
+              *ngIf="upcomingReservationsLocal$ | async as upcomingReservations"
             >
               <div
                 *ngIf="upcomingReservations.length === 0"
@@ -180,7 +180,7 @@
                   </div>
 
                   <div class="booking-details">
-                    <p class="service-name">{{ reservation.serviceName }}</p>
+                    <p class="service-name">Service {{ reservation.serviceName }}</p>
                     <div class="booking-actions">
                       <button
                         class="btn-secondary btn-sm"
@@ -289,7 +289,7 @@
                       {{ getStatusLabel(reservation.status) }}
                     </span>
                     <span class="reservation-price">
-                      {{ formatCurrency(reservation.servicePrice) }}
+                      {{ formatCurrency(reservation.price) }}
                     </span>
                   </div>
                 </div>
@@ -381,7 +381,7 @@
                       </span>
                       <span class="distance" *ngIf="company.distance">
                         <i class="fas fa-map-marker-alt"></i>
-                        {{ company.distance }} km
+                        {{ company.distance | number : "1.1-1"}} km
                       </span>
                     </div>
                   </div>

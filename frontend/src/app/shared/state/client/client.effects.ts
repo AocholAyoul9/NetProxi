@@ -8,7 +8,6 @@ import { ApiService } from '../../../core/api.service';
 import { AuthService } from '../../../core/auth.service';
 import {
   NearbyCompany,
-  ClientDashboardStats,
 } from '../../models/client.model';
 import { Booking } from '../../models/booking.model';
 
@@ -17,7 +16,6 @@ export class ClientEffects {
   loadClientReservations$;
   loadNearbyCompanies$;
   searchCompanies$;
-  loadDashboardStats$;
   updateReservationStatus$;
   addReservationReview$;
   toggleFavoriteCompany$;
@@ -131,26 +129,7 @@ this.loadClientReservations$ = createEffect(() =>
       )
     );
 
-    // ---------------- Load dashboard stats ----------------
-    this.loadDashboardStats$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(ClientActions.loadDashboardStats),
-        mergeMap(() =>
-          this.api.getDashboardStats().pipe(
-            map((stats: ClientDashboardStats) =>
-              ClientActions.loadDashboardStatsSuccess({ stats })
-            ),
-            catchError(() =>
-              of(
-                ClientActions.loadDashboardStatsSuccess({
-                  stats: {} as ClientDashboardStats,
-                })
-              )
-            )
-          )
-        )
-      )
-    );
+    
 
     // ---------------- Update reservation status ----------------
     this.updateReservationStatus$ = createEffect(() =>

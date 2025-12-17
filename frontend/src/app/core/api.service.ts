@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { Company } from '../shared/models/company.model';
 import { ServiceModel } from '../shared/models/service.model';
 import { Booking, CreateBookingRequest } from '../shared/models/booking.model';
-import { NearbyCompany, ClientDashboardStats, ClientProfile } from '../shared/models/client.model';
+import { NearbyCompany, ClientProfile } from '../shared/models/client.model';
 
 
 @Injectable({
@@ -261,10 +261,6 @@ getClientProfile(): Observable<ClientProfile> {
     return this.http.post<NearbyCompany[]>(`${this.baseUrl}/companies/search`, { address: query });
   }
 
-  // ---------------- Get Dashboard Stats ----------------
-  getDashboardStats(): Observable<ClientDashboardStats> {
-    return this.http.get<ClientDashboardStats>(`${this.baseUrl}/clients/stats`);
-  }
 
   // ---------------- Update Favorite Company ----------------
   updateFavoriteCompany(companyId: string, isFavorite: boolean): Observable<void> {
