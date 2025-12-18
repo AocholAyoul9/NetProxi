@@ -109,6 +109,8 @@ dashboardStatsLocal$!: Observable<{
     this.profile$ = this.store.select(ClientSelectors.selectClientProfile);
     this.reservations$ = this.store.select(ClientSelectors.selectReservations);
  
+
+
     this.paginatedReservations$ = this.store.select(
       ClientSelectors.selectPaginatedReservations
     );
@@ -400,7 +402,7 @@ dashboardStatsLocal$!: Observable<{
 
     // Show success message
     this.bookingSuccess.set('Votre réservation a été confirmée !');
-    
+
     // Close modal after 3 seconds
     setTimeout(() => {
       this.closeBooking();

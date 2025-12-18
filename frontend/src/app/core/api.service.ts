@@ -31,7 +31,6 @@ export class ApiService {
     lng: number,
     radiusKm: number
   ): Observable<Company[]> {
-    console.log('API called with:', { lat, lng, radiusKm });
     return this.http.get<Company[]>(`${this.baseUrl}/companies/nearby`, {
       //headers: this.getHeaders(),
       //params: { lat, lng, radiusKm },
@@ -235,7 +234,6 @@ export class ApiService {
 // ---------------- Client Profile ----------------
 getClientProfile(): Observable<ClientProfile> {
   const clientId = this.authService.getClientId();
-  console.log("Sending clientId header:", clientId);
 
   return this.http.get<ClientProfile>(`${this.baseUrl}/clients/profile`, {
     headers: new HttpHeaders({

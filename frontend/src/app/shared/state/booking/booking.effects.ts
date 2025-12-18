@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ApiService } from '../../../core/api.service';
 import * as BookingActions from './booking.actions';
-import { catchError, map, mergeMap, of } from 'rxjs';
+import { catchError, from, map, mergeMap, of } from 'rxjs';
 import { Booking } from '../../models/booking.model';
+import * as ClientActions from '../client/client.actions';
 
 @Injectable()
 export class BookingEffects {
@@ -11,21 +12,28 @@ export class BookingEffects {
   loadBookings$;
   constructor(private actions$: Actions, private api: ApiService) {
 
+
 this.createBooking$ = createEffect(() =>
   this.actions$.pipe(
     ofType(BookingActions.createBooking),
     mergeMap(({ companyId, booking }) =>
       this.api.CreateBooking(companyId, booking).pipe(
-        map((response: any) => {
-          // backend returns a full Booking
+        mergeMap((response: any) => {
           const fullBooking: Booking = {
             ...response,
             startTime: new Date(response.startTime),
-            endTime: new Date(response.endTime)
+            endTime: new Date(response.endTime),
           };
-          return BookingActions.createBookingSuccess({ booking: fullBooking });
+
+          // Emit multiple actions using `of()`
+          return from([
+            BookingActions.createBookingSuccess({ booking: fullBooking }),
+            ClientActions.loadClientReservations({ clientId: fullBooking.clientId })
+          ]);
         }),
-        catchError((error) => of(BookingActions.createBookingFailure({ error })))
+        catchError((error) =>
+          of(BookingActions.createBookingFailure({ error }))
+        )
       )
     )
   )
