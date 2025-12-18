@@ -35,7 +35,7 @@ export const bookingReducer = createReducer(
   on(BookingActions.createBooking, (state) => ({ ...state, loading: true })),
   on(BookingActions.createBookingSuccess, (state, { booking }) => ({
     ...state,
-    booking,
+    bookings: [...state.bookings, booking],
     loading: false,
   })),
   on(BookingActions.createBookingFailure, (state, { error }) => ({

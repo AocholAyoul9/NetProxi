@@ -138,7 +138,6 @@ export class CompanyEffects {
         mergeMap(({ lat, lng, radiusKm }) =>
           this.api.getNearByCompanies(lat, lng, radiusKm).pipe(
             map((companies) => {
-              console.log('Nearby companies from API:', companies);
               return CompanyActions.loadNearbyCompaniesSuccess({ companies });
             }),
             catchError((error) =>
