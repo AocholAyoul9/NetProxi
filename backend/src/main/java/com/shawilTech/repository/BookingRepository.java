@@ -9,20 +9,25 @@ import java.util.UUID;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, UUID> {
+
     List<Booking> findByClientId(UUID clientId);
+
     List<Booking> findByCompanyId(UUID companyId);
+
     List<Booking> findByServiceId(UUID serviceId);
-    boolean existsByClientIdAndStartTimeBetween(UUID clientId, LocalDateTime start, LocalDateTime end);
-    boolean existsByClientIdAndStartTimeLessThanAndEndTimeGreaterThan(
+
+    boolean existsByClientIdAndStartTimeBetween(
             UUID clientId,
-            LocalDateTime endTime,
-            LocalDateTime startTime
+            LocalDateTime start,
+            LocalDateTime end
     );
-    boolean existsByAssignedEmployeeIdAndStartTimeLessThanAndEndTimeGreaterThan(
-        UUID employeeId,
-        LocalDateTime newEnd,
-        LocalDateTime newStart
+
+  boolean existsByEmployeeIdAndStartTimeLessThanAndEndTimeGreaterThan(
+    UUID employeeId,
+    LocalDateTime endTime,
+    LocalDateTime startTime
 );
+
 
     List<Booking> findByClientIdAndCompanyId(UUID clientId, UUID companyId);
 }
