@@ -28,6 +28,24 @@ export const initialState: CompanyState = {
 export const companyReducer = createReducer(
   initialState,
 
+  on(CompanyAction.assignEmployeeToBooking, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(CompanyAction.assignEmployeeToBookingSuccess, (state, { booking }) => ({
+    ...state,
+    companyBookings: state.companyBookings.map(b =>
+      b.id === booking.id ? booking : b
+    ),
+    loading: false,
+  })),
+
+  on(CompanyAction.assignEmployeeToBookingFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+
   on(CompanyAction.loadCompanyEmployees, (state) => ({
     ...state,
     loading: true,

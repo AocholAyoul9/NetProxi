@@ -193,6 +193,24 @@ export class ApiService {
     );
   }
 
+
+
+
+  assignBookingToEmployee(
+  companyId: string,
+  bookingId: string,
+  employeeId: string
+): Observable<any> {
+
+  return this.http.patch<any>(
+    `${this.baseUrl}/companies/${companyId}/bookings/${bookingId}/assign`,
+    null,
+    {
+      params: { employeeId }
+    }
+  );
+}
+
   //---------------------- subscriptions ---------------------------
 
   subscripCompany(companyId: string, plan: string): Observable<any> {

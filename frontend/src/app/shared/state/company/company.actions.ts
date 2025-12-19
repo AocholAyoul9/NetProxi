@@ -4,6 +4,21 @@ import { ServiceModel } from '../../models/service.model';
 
 
 
+//assign employee to booking
+export const assignEmployeeToBooking = createAction(
+  '[Company] Assign Employee To Booking',
+  props<{ companyId: string; bookingId: string; employeeId: string }>()
+);
+export const assignEmployeeToBookingSuccess = createAction(
+  '[Company] Assign Employee To Booking Success',
+  props<{ booking: any }>()
+);
+
+export const assignEmployeeToBookingFailure = createAction(
+  '[Company] Assign Employee To Booking Failure',
+  props<{ error: any }>()
+);
+
 //getCompanyEmployees
 export const loadCompanyEmployees = createAction(
   '[Company] Load Company Employees',

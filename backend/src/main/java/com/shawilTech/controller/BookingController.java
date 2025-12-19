@@ -67,15 +67,14 @@ public class BookingController {
     }
 
     // ------------------- ASSIGN EMPLOYEE -------------------
-    @Operation(summary = "Assign an employee to a booking")
     @PatchMapping("/{bookingId}/assign")
     public ResponseEntity<BookingResponseDto> assignBooking(
             @PathVariable UUID companyId,
             @PathVariable UUID bookingId,
             @RequestParam UUID employeeId) {
 
-        BookingResponseDto updatedBooking = bookingService.assignBookingToEmployee(bookingId, employeeId);
-        return ResponseEntity.ok(updatedBooking);
+        return ResponseEntity.ok(
+                bookingService.assignBookingToEmployee(companyId, bookingId, employeeId));
     }
 
     // ------------------- GET BOOKING BY ID -------------------

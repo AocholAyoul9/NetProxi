@@ -110,19 +110,48 @@ public BookingResponseDto createBooking(BookingRequestDto request) {
 
 
 
-    @Transactional
-    public BookingResponseDto assignBookingToEmployee(UUID bookingId, UUID employeeId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+  @Transactional
+public BookingResponseDto assignBookingToEmployee(
+        UUID companyId,
+        UUID bookingId,
+        UUID employeeId) {
 
-      
+    Booking booking = bookingRepository.findById(bookingId)
+            .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        booking.setStatus(BookingStatus.CONFIRMED); // mark as assigned / ready
-
-        Booking updatedBooking = bookingRepository.save(booking);
-
-        return mapToBookingResponseDto(updatedBooking);
+    if (!booking.getCompany().getId().equals(companyId)) {
+        throw new RuntimeException("Booking does not belong to this company");
     }
+
+    if (booking.getStatus() == BookingStatus.CANCELLED ||
+        booking.getStatus() == BookingStatus.COMPLETED) {
+        throw new RuntimeException("Cannot assign employee to this booking");
+    }
+
+    Employee employee = employeeRepository.findById(employeeId)
+            .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+    if (!employee.getCompany().getId().equals(companyId)) {
+        throw new RuntimeException("Employee does not belong to this company");
+    }
+
+    boolean conflict =
+        bookingRepository.existsByEmployeeIdAndStartTimeLessThanAndEndTimeGreaterThan(
+            employeeId,
+            booking.getEndTime(),
+            booking.getStartTime()
+        );
+
+    if (conflict) {
+        throw new RuntimeException("Employee is already booked at this time");
+    }
+
+    booking.setEmployee(employee);
+    booking.setStatus(BookingStatus.CONFIRMED);
+
+    return mapToBookingResponseDto(bookingRepository.save(booking));
+}
+
 
     /**
      * Get all bookings for a client

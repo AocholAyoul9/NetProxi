@@ -274,9 +274,17 @@ export class CompanyAdminDashboardComponent {
   }
 
   // Booking methods
-  assignEmployeeToBooking(bookingId: string, employeeId: string): void {
-    console.log('Assigning employee:', { bookingId, employeeId });
-  }
+assignEmployeeToBooking(bookingId: string, employeeId: string) {
+  if (!employeeId) return;
+  this.store.dispatch(
+    CompanyActions.assignEmployeeToBooking({
+      companyId: this.companyId,
+      bookingId,
+      employeeId,
+    })
+  );
+}
+
 
   updateBookingStatus(bookingId: string, status: string): void {
     console.log('Updating booking status:', { bookingId, status });
