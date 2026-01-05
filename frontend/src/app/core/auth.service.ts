@@ -48,6 +48,13 @@ export class AuthService {
   );
 }
 
+loutClient(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('client');
+    this.router.navigate(['/']);
+  }
+
+
 
   /** Login company with email/password */
   loginCompany(email: string, password: string): Observable<{ token: string; company: Company }> {

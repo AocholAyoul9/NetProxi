@@ -1,6 +1,7 @@
 <header class="header">
   <div class="container">
-    <!-- Logo -->
+
+    <!-- Logo (always visible) -->
     <div class="logo">
       <a routerLink="/" class="logo-link">
         <span class="logo-icon"></span>
@@ -8,42 +9,97 @@
       </a>
     </div>
 
-    <!-- Navigation links -->
-    <nav class="nav" [class.active]="menuOpen()">
-      <a routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-link">
-        Accueil
-      </a>
-      <a routerLink="/companies" routerLinkActive="active" class="nav-link">
-        Entreprises
-      </a>
-      <a routerLink="/about" routerLinkActive="active" class="nav-link">
-        À propos
-      </a>
-      <a routerLink="/contact" routerLinkActive="active" class="nav-link">
-        Contact
-      </a>
-    </nav>
+    <!-- ================= COMPANY HEADER ================= -->
+    <ng-container *ngIf="isCompanyLoggedIn$ | async">
 
-    <!-- Actions -->
-    <div class="actions">
-      <button class="btn-login" (click)="openLogin()">
-        <i class="fas fa-sign-in-alt"></i>
-        Connexion
-      </button>
-      <button class="btn-signup" (click)="openSignup()">
-        <i class="fas fa-user-plus"></i>
-        Inscription
-      </button>
-    </div>
+      <nav class="nav company-nav">
+        <div class="company-info" *ngIf="company$ | async as company">
+          <span class="company-name">
+            {{ company.name }}
+          </span>
 
+          <button class="btn-logout" (click)="logoutCompany()">
+            <i class="fas fa-sign-out-alt"></i>
+            Déconnexion
+          </button>
+        </div>
+      </nav>
 
-    <app-login-modal *ngIf="showLogin" (closeModal)="closeLogin()"></app-login-modal>
-    <app-signup-modal *ngIf="showSignup" (closeModal)="closeSignup()"></app-signup-modal>
-    <!-- Hamburger menu for mobile -->
-    <button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu" [class.active]="menuOpen()">
+    </ng-container>
+
+    <!-- ================= CLIENT HEADER ================= -->
+    <ng-container *ngIf="!(isCompanyLoggedIn$ | async) && (isClientLoggedIn$ | async)">
+
+      <nav class="nav client-nav">
+        <div class="client-info" *ngIf="client$ | async as client">
+          <span class="client-name">
+            <i class="fas fa-user"></i>
+            {{ client.firstName }} {{ client.lastName }}
+          </span>
+
+          <a routerLink="/client/dashboard" class="btn-dashboard">
+            Mon espace
+          </a>
+
+          <button class="btn-logout" (click)="logoutClient()">
+            <i class="fas fa-sign-out-alt"></i>
+            Déconnexion
+          </button>
+        </div>
+      </nav>
+
+    </ng-container>
+
+    <!-- ================= PUBLIC HEADER ================= -->
+    <ng-container *ngIf="!(isCompanyLoggedIn$ | async) && !(isClientLoggedIn$ | async)">
+
+      <nav class="nav" [class.active]="menuOpen()">
+        <a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a>
+        <a routerLink="/companies" routerLinkActive="active" class="nav-link">Entreprises</a>
+        <a routerLink="/about" routerLinkActive="active" class="nav-link">À propos</a>
+        <a routerLink="/contact" routerLinkActive="active" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="actions">
+        <button class="btn-login" (click)="openLogin()">
+          <i class="fas fa-sign-in-alt"></i>
+          Connexion
+        </button>
+        <button class="btn-signup" (click)="openSignup()">
+          <i class="fas fa-user-plus"></i>
+          Inscription
+        </button>
+      </div>
+
+    </ng-container>
+
+   
+    <!-- Modals -->
+    <app-login-modal
+      *ngIf="showLogin"
+      (closeModal)="closeLogin()">
+    </app-login-modal>
+
+    <app-signup-modal
+      *ngIf="showSignup"
+      (closeModal)="closeSignup()">
+    </app-signup-modal>
+
+    <!-- Hamburger (only for public users) -->
+    <button
+      *ngIf="!(isCompanyLoggedIn$ | async)"
+      class="menu-toggle"
+      (click)="toggleMenu()"
+      aria-label="Toggle menu"
+      [class.active]="menuOpen()">
       <span></span>
       <span></span>
       <span></span>
     </button>
+
   </div>
 </header>
+
+
+
+

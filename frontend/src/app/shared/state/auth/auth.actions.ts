@@ -21,7 +21,7 @@ export const loginCompanyFailure = createAction(
 )
 
 //logout company
-export const logOutCompany = createAction('[Auth] logOut company')
+export const logOut = createAction('[Auth] logOut company')
 
 //register company
 
@@ -64,3 +64,7 @@ export const loginClientFailure = createAction(
     '[Auth] Login client Failure',
     props<{error: any}>()
 )
+
+
+// logout client
+export const logOutClient = createAction('[Auth] logOut client')

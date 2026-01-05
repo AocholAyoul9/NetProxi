@@ -236,7 +236,7 @@
           </select>
         </div>
 
-        <div class="selected-service-info" *ngIf="selectedService()">
+        <div class="form-group" *ngIf="selectedService()">
           <div class="service-summary">
             <strong>Service sélectionné :</strong>
             {{ selectedService()!.name }}
@@ -245,6 +245,33 @@
             </span>
           </div>
         </div>
+        <div class="form-group" *ngIf="selectedService()">
+        <label class="form-label">Date et heure</label>
+        <input
+          type="datetime-local"
+          class="service-select"
+          [(ngModel)]="selectedDateTime"
+        />
+      </div>
+
+      <div class="form-group" *ngIf="selectedService()">
+        <label class="form-label">Adresse du rendez-vous</label>
+        <input
+          type="text"
+          class="service-select"
+          placeholder="Entrez l'adresse..."
+          [(ngModel)]="bookingAddress"
+        />
+      </div>
+       <div class="form-group" *ngIf="selectedService()">
+        <label class="form-label">Adresse mail</label>
+        <input
+          type="text"
+          class="service-select"
+          placeholder="Entrez l'adresse mail..."
+          [(ngModel)]="bookingAddress"
+        />
+      </div>
 
         <div class="booking-note">
           <i class="fas fa-info-circle"></i>
