@@ -18,6 +18,21 @@ export const selectAuthLoading = createSelector(
     state => state.loading
 );
 
+export const selectIsCompanyLoggedIn = createSelector(
+  selectAuthState,
+  (auth) => auth.userType === 'company' && !!auth.company
+);
+
+export const selectIsClientLoggedIn = createSelector(
+  selectAuthState,
+  auth => auth.userType === 'client' && !!auth.client
+);
+
+export const selectClient = createSelector(
+  selectAuthState,
+  auth => auth.client
+);
+
 export const selectAuthError = createSelector(
     selectAuthState,
     state => state.error

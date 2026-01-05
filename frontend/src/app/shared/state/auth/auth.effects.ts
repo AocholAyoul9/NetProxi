@@ -18,6 +18,7 @@ export class AuthEffects {
   loginClientSuccess$;
   logoutCompany$;
   loadCompanyDataAfterLogin$;
+  logoutClient$;
 
   constructor(
     private action$: Actions,
@@ -136,12 +137,24 @@ export class AuthEffects {
     this.logoutCompany$ = createEffect(
       () =>
         this.action$.pipe(
-          ofType(AuthActions.logOutCompany),
+          ofType(AuthActions.logOut),
           tap(() => {
             this.authService.logoutCompany();
           })
         ),
       { dispatch: false }
     );
+
+    this.logoutClient$ = createEffect(
+      () =>
+        this.action$.pipe(
+          ofType(AuthActions.logOutClient),
+          tap(() => {
+            this.authService.loutClient();
+          })
+        ),
+      { dispatch: false }
+    );
+
   }
 }

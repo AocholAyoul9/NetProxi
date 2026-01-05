@@ -66,14 +66,12 @@ export class CompanyDetailComponent implements OnInit {
     }
   }
 
-  // Navigate to general booking page
-  goToBooking(): void {
-    const companyId = this.route.snapshot.paramMap.get('id');
-    if (companyId) {
-      this.router.navigate(['/booking', companyId]);
-    }
+ 
+bookCompany(company: Company): void {
+   // this.bookingCompany.set(company);
+    //this.selectedService.set(null);
+    //this.bookingSuccess.set('');
   }
-
   // Retry loading company details
   retry(): void {
     const companyId = this.route.snapshot.paramMap.get('id');

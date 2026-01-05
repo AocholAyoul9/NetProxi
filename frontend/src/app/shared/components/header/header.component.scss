@@ -42,6 +42,129 @@
   }
 }
 
+/* ===========================
+   COMPANY HEADER (LOGGED IN)
+   =========================== */
+
+.company-nav {
+  display: flex;
+  align-items: center;
+
+}
+
+.company-info {
+  display: flex;
+  align-items: center;
+  gap: 25rem;
+  .company-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1f2937;
+    padding-right: 1rem;
+    border-right: 1px solid #e5e7eb;
+
+    i {
+      color: #2563eb;
+      font-size: 2rem;
+    }
+  }
+
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    i {
+      font-size: 0.85rem;
+    }
+
+    &:hover {
+      background: #fee2e2;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+
+/* ===========================
+   CLIENT HEADER
+   =========================== */
+
+.client-nav {
+  display: flex;
+  align-items: center;
+}
+
+.client-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .client-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #1f2937;
+
+    i {
+      color: blue;
+    }
+  }
+
+  .btn-dashboard {
+    padding: 0.55rem 1.1rem;
+    background: blue;
+    color: white;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+
+    &:hover {
+      background: #059669;
+      transform: translateY(-1px);
+    }
+  }
+
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    i {
+      font-size: 0.85rem;
+    }
+
+    &:hover {
+      background: #fee2e2;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+
 /* Navigation */
 .nav {
   display: flex;
@@ -276,6 +399,22 @@
     top: 60px;
   }
 }
+
+@media (max-width: 768px) {
+  .company-nav {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .company-info {
+    gap: 0.8rem;
+
+    .company-name {
+      display: none; // keeps header clean on mobile
+    }
+  }
+}
+
 
 /* Animation pour le header sticky */
 .header {
