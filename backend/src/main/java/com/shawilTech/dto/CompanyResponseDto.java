@@ -45,3 +45,6 @@ public class CompanyResponseDto {
     private String pricing;
     private String openingHours;
 }
+
+
+

@@ -1,9 +1,8 @@
 package com.shawilTech.identityservice.entity;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import java.time.*;
 import java.util.UUID;
 import java.math.BigDecimal;
@@ -44,4 +43,28 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+
+    @Column(name = "priority")
+    private String priority = "MEDIUM"; // LOW, MEDIUM, HIGH, URGENT
+    
+    @Column(name = "employee_notes", length = 1000)
+    private String employeeNotes;
+    
+    @Column(name = "actual_start_time")
+    private LocalDateTime actualStartTime;
+    
+    @Column(name = "actual_end_time")
+    private LocalDateTime actualEndTime;
+    
+    @Column(name = "payment_status")
+    private String paymentStatus = "PENDING"; // PENDING, PAID, REFUNDED
+    
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

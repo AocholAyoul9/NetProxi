@@ -1,0 +1,429 @@
+<div class="employee-dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="employee-info" *ngIf="employeeProfile$ | async as profile">
+        <div class="employee-avatar">
+          <div class="avatar-placeholder">
+            {{ profile.name?.charAt(0) || 'E' }}
+          </div>
+        </div>
+        <div class="employee-details">
+          <h1>Bonjour, {{ profile.name || 'Employé' }}</h1>
+          <p class="role">{{ profile.role || 'Employé' }}</p>
+          <div class="employee-stats" *ngIf="stats$ | async as stats">
+            <span class="stat-item">
+              <i class="fas fa-tasks"></i>
+              {{ stats.todayTasks }} tâches aujourd'hui
+            </span>
+            <span class="stat-item">
+              <i class="fas fa-check-circle"></i>
+              {{ stats.completionRate }}% de complétion
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <div class="time-display">
+          <i class="fas fa-clock"></i>
+          {{ currentTime() | date:'HH:mm' }}
+        </div>
+        <button class="notification-btn" (click)="setActiveTab('notifications')">
+          <i class="fas fa-bell"></i>
+          <span *ngIf="(unreadNotificationsCount$ | async) as count" class="badge">
+            {{ count }}
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <!-- Navigation Tabs -->
+    <nav class="dashboard-tabs">
+      <button 
+        [class.active]="activeTab === 'today'" 
+        (click)="setActiveTab('today')" 
+        class="tab-button">
+        <i class="fas fa-calendar-day"></i>
+        <span>Aujourd'hui</span>
+      </button>
+      <button 
+        [class.active]="activeTab === 'upcoming'" 
+        (click)="setActiveTab('upcoming')" 
+        class="tab-button">
+        <i class="fas fa-calendar-week"></i>
+        <span>À venir</span>
+      </button>
+      <button 
+        [class.active]="activeTab === 'completed'" 
+        (click)="setActiveTab('completed')" 
+        class="tab-button">
+        <i class="fas fa-check-circle"></i>
+        <span>Terminés</span>
+      </button>
+      <button 
+        [class.active]="activeTab === 'notifications'" 
+        (click)="setActiveTab('notifications')" 
+        class="tab-button">
+        <i class="fas fa-bell"></i>
+        <span>Notifications</span>
+        <span *ngIf="(unreadNotificationsCount$ | async) as count" class="tab-badge">
+          {{ count }}
+        </span>
+      </button>
+    </nav>
+
+    <!-- Loading State -->
+    <div *ngIf="loading$ | async" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Chargement...</p>
+    </div>
+
+    <!-- Today's Tasks -->
+    <div *ngIf="!(loading$ | async)">
+      <div *ngIf="activeTab === 'today'" class="tab-content">
+        <div class="today-tasks">
+          <div class="section-header">
+            <h2><i class="fas fa-calendar-day"></i> Tâches d'aujourd'hui</h2>
+            <div class="current-date">
+              {{ currentTime() | date:'EEEE d MMMM yyyy' | titlecase }}
+            </div>
+          </div>
+
+          <div class="tasks-timeline">
+            <ng-container *ngIf="todayTasks$ | async as tasks">
+              <div *ngIf="tasks.length === 0" class="empty-state">
+                <i class="fas fa-calendar-check empty-icon"></i>
+                <p>Aucune tâche prévue aujourd'hui</p>
+                <p class="hint">Profitez-en pour vous préparer aux prochains rendez-vous</p>
+              </div>
+
+              <div *ngFor="let task of tasks" class="timeline-item">
+                <div class="timeline-time">
+                  <div class="time-slot">
+                    {{ formatTime(task.startTime) }}
+                    <span class="time-duration">{{ task.duration }} min</span>
+                  </div>
+                  <div class="time-until" [class.late]="getTimeUntil(task.startTime) === 'En retard'">
+                    {{ getTimeUntil(task.startTime) }}
+                  </div>
+                </div>
+
+                <div class="timeline-content">
+                  <div class="task-card" [class]="task.status.toLowerCase()">
+                    <div class="task-header">
+                      <div class="task-info">
+                        <h3 class="task-title">{{ task.serviceName }}</h3>
+                        <div class="task-meta">
+                          <span class="client-info">
+                            <i class="fas fa-user"></i>
+                            {{ task.clientName }}
+                          </span>
+                          <span class="task-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ task.address }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="task-status">
+                        <span class="status-badge" [class]="getTaskStatusColor(task.status)">
+                          {{ getTaskStatusLabel(task.status) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="task-details">
+                      <p class="task-description" *ngIf="task.description">
+                        {{ task.description }}
+                      </p>
+                      <div class="task-notes" *ngIf="task.notes">
+                        <strong>Notes :</strong> {{ task.notes }}
+                      </div>
+                    </div>
+
+                    <div class="task-actions">
+                      <button 
+                        class="btn-secondary" 
+                        (click)="viewTaskDetails(task)">
+                        <i class="fas fa-info-circle"></i> Détails
+                      </button>
+                      <button 
+                        *ngIf="task.status === 'CONFIRMED' || task.status === 'PENDING'" 
+                        class="btn-primary"
+                        (click)="startTask(task)">
+                        <i class="fas fa-play"></i> Commencer
+                      </button>
+                      <button 
+                        *ngIf="task.status === 'IN_PROGRESS'" 
+                        class="btn-success"
+                        (click)="completeTask(task)">
+                        <i class="fas fa-check"></i> Terminer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Tasks -->
+      <div *ngIf="activeTab === 'upcoming'" class="tab-content">
+        <div class="upcoming-tasks">
+          <div class="section-header">
+            <h2><i class="fas fa-calendar-week"></i> Tâches à venir</h2>
+            <div class="date-range">
+              Prochaines 7 jours
+            </div>
+          </div>
+
+          <ng-container *ngIf="upcomingTasks$ | async as tasks">
+            <div *ngIf="tasks.length === 0" class="empty-state">
+              <i class="fas fa-calendar-plus empty-icon"></i>
+              <p>Aucune tâche à venir</p>
+              <p class="hint">Votre planning est libre pour le moment</p>
+            </div>
+
+            <div class="tasks-grid">
+              <div *ngFor="let task of tasks" class="task-card">
+                <div class="task-date">
+                  <div class="date-day">{{ formatDateTime(task.startTime) | date:'dd' }}</div>
+                  <div class="date-month">{{ formatDateTime(task.startTime) | date:'MMM' }}</div>
+                </div>
+                <div class="task-content">
+                  <h3 class="task-title">{{ task.serviceName }}</h3>
+                  <div class="task-meta">
+                    <span><i class="fas fa-clock"></i> {{ formatTime(task.startTime) }}</span>
+                    <span><i class="fas fa-user"></i> {{ task.clientName }}</span>
+                    <span><i class="fas fa-map-marker-alt"></i> {{ task.address }}</span>
+                  </div>
+                  <div class="task-actions">
+                    <button class="btn-secondary" (click)="viewTaskDetails(task)">
+                      Voir détails
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Completed Tasks -->
+      <div *ngIf="activeTab === 'completed'" class="tab-content">
+        <div class="completed-tasks">
+          <div class="section-header">
+            <h2><i class="fas fa-check-circle"></i> Tâches terminées</h2>
+            <div class="filter-options">
+              <select class="filter-select">
+                <option value="today">Aujourd'hui</option>
+                <option value="week">Cette semaine</option>
+                <option value="month">Ce mois</option>
+                <option value="all">Tout</option>
+              </select>
+            </div>
+          </div>
+
+          <ng-container *ngIf="completedTasks$ | async as tasks">
+            <div *ngIf="tasks.length === 0" class="empty-state">
+              <i class="fas fa-history empty-icon"></i>
+              <p>Aucune tâche terminée</p>
+              <p class="hint">Vos tâches terminées apparaîtront ici</p>
+            </div>
+
+            <div class="completed-list">
+              <div *ngFor="let task of tasks" class="completed-item">
+                <div class="completed-date">
+                  {{ formatDateTime(task.endTime || task.startTime) | date:'dd/MM' }}
+                </div>
+                <div class="completed-content">
+                  <h4>{{ task.serviceName }}</h4>
+                  <p class="client-name">{{ task.clientName }}</p>
+                  <div class="completed-meta">
+                    <span><i class="fas fa-clock"></i> {{ formatTime(task.startTime) }}</span>
+                    <span><i class="fas fa-map-marker-alt"></i> {{ task.address }}</span>
+                    <span class="completed-duration">{{ task.duration }} min</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div *ngIf="activeTab === 'notifications'" class="tab-content">
+        <div class="notifications-tab">
+          <div class="section-header">
+            <h2><i class="fas fa-bell"></i> Notifications</h2>
+            <div class="notification-actions">
+              <button class="btn-secondary" (click)="markAllAsRead()">
+                <i class="fas fa-check-double"></i> Tout marquer comme lu
+              </button>
+              <button class="btn-danger" (click)="clearAllNotifications()">
+                <i class="fas fa-trash"></i> Tout effacer
+              </button>
+            </div>
+          </div>
+
+          <ng-container *ngIf="notifications$ | async as notifications">
+            <div *ngIf="notifications.length === 0" class="empty-state">
+              <i class="fas fa-bell-slash empty-icon"></i>
+              <p>Aucune notification</p>
+              <p class="hint">Vous serez notifié des nouvelles tâches et mises à jour</p>
+            </div>
+
+            <div class="notifications-list">
+              <div *ngFor="let notification of notifications" 
+                   class="notification-item"
+                   [class.unread]="!notification.read"
+                   (click)="viewNotification(notification)">
+                <div class="notification-icon">
+                  <i [class]="getNotificationIcon(notification.type)"></i>
+                </div>
+                <div class="notification-content">
+                  <h4>{{ notification.title }}</h4>
+                  <p>{{ notification.message }}</p>
+                  <div class="notification-meta">
+                    <span class="notification-time">
+                      {{ formatDateTime(notification.createdAt) }}
+                    </span>
+                    <span class="notification-type">
+                      {{ getNotificationTypeLabel(notification.type) }}
+                    </span>
+                  </div>
+                </div>
+                <div class="notification-status" *ngIf="!notification.read">
+                  <span class="unread-dot"></span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Task Details Modal -->
+  <div class="modal" *ngIf="showTaskModal && selectedTask">
+    <div class="modal-overlay" (click)="closeTaskModal()"></div>
+    <div class="modal-content task-modal">
+      <div class="modal-header">
+        <h2>{{ selectedTask.serviceName }}</h2>
+        <button class="modal-close" (click)="closeTaskModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="task-detail-section">
+          <h3><i class="fas fa-info-circle"></i> Informations</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <strong>Client:</strong> {{ selectedTask.clientName }}
+            </div>
+            <div class="detail-item">
+              <strong>Téléphone:</strong> {{ selectedTask.clientPhone || 'Non disponible' }}
+            </div>
+            <div class="detail-item">
+              <strong>Adresse:</strong> {{ selectedTask.address }}
+            </div>
+            <div class="detail-item">
+              <strong>Date et heure:</strong> {{ formatDateTime(selectedTask.startTime) }}
+            </div>
+            <div class="detail-item">
+              <strong>Durée:</strong> {{ selectedTask.duration }} minutes
+            </div>
+            <div class="detail-item">
+              <strong>Statut:</strong>
+              <span class="status-badge" [class]="getTaskStatusColor(selectedTask.status)">
+                {{ getTaskStatusLabel(selectedTask.status) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-detail-section" *ngIf="selectedTask.description">
+          <h3><i class="fas fa-file-alt"></i> Description du service</h3>
+          <p>{{ selectedTask.description }}</p>
+        </div>
+
+        <div class="task-detail-section" *ngIf="selectedTask.notes">
+          <h3><i class="fas fa-sticky-note"></i> Notes</h3>
+          <p>{{ selectedTask.notes }}</p>
+        </div>
+
+        <div class="task-detail-section">
+          <h3><i class="fas fa-tools"></i> Équipement nécessaire</h3>
+          <div class="equipment-list">
+            <span *ngFor="let item of selectedTask.equipment || []" class="equipment-tag">
+              {{ item }}
+            </span>
+            <span *ngIf="!(selectedTask.equipment?.length)" class="no-equipment">
+              Aucun équipement spécifique requis
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeTaskModal()">
+          Fermer
+        </button>
+        <button 
+          *ngIf="selectedTask.status === 'CONFIRMED' || selectedTask.status === 'PENDING'" 
+          class="btn-primary"
+          (click)="startTask(selectedTask)">
+          <i class="fas fa-play"></i> Commencer la tâche
+        </button>
+        <button 
+          *ngIf="selectedTask.status === 'IN_PROGRESS'" 
+          class="btn-success"
+          (click)="completeTask(selectedTask)">
+          <i class="fas fa-check"></i> Marquer comme terminé
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Modal -->
+  <div class="modal" *ngIf="showNotificationModal && selectedNotification">
+    <div class="modal-overlay" (click)="closeNotificationModal()"></div>
+    <div class="modal-content notification-modal">
+      <div class="modal-header">
+        <h2>{{ selectedNotification.title }}</h2>
+        <button class="modal-close" (click)="closeNotificationModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="notification-detail">
+          <div class="notification-icon-large">
+            <i [class]="getNotificationIcon(selectedNotification.type)"></i>
+          </div>
+          <p class="notification-message">{{ selectedNotification.message }}</p>
+          <div class="notification-meta">
+            <span><i class="fas fa-clock"></i> {{ formatDateTime(selectedNotification.createdAt) }}</span>
+            <span><i class="fas fa-tag"></i> {{ getNotificationTypeLabel(selectedNotification.type) }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="selectedNotification.data" class="notification-data">
+          <h3>Détails supplémentaires</h3>
+          <pre>{{ selectedNotification.data | json }}</pre>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary" (click)="closeNotificationModal()">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

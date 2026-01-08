@@ -5,14 +5,13 @@ import  lombok.Builder;
 import java.util.List;
 import  java.util.UUID;
 
+// UpdateEmployeeProfileDto.java
 @Data
 @Builder
-public class EmployeeResponseDto {
-    private UUID id;
+public class UpdateEmployeeProfileDto {
     private String name;
-    private String email;
-    private String password;
     private String phone;
-    private String address;
-    private  boolean active;
+    private String avatarUrl;
+    private List<String> skills;
+    private Boolean isAvailable;
 }
