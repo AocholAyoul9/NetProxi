@@ -28,6 +28,8 @@ import { AuthEffects } from './shared/state/auth/auth.effects';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { ClientEffects } from './shared/state/client/client.effects';
 import { clientReducer } from './shared/state/client/client.reducer';
+import { employeeReducer } from './shared/state/employee/employee.reducer';
+import { EmployeeEffects } from './shared/state/employee/employee.effects';
 
 
 export const appConfig: ApplicationConfig = {
@@ -44,9 +46,9 @@ export const appConfig: ApplicationConfig = {
       booking: bookingReducer,
       auth: authReducer,
       client: clientReducer,
-
+      //employee: employeeReducer
      
     }),
-    provideEffects([CompanyEffects, BookingEffects, AuthEffects, ClientEffects]),
+    provideEffects([CompanyEffects, BookingEffects, AuthEffects, ClientEffects /*, EmployeeEffects*/]),
   ],
 };
