@@ -1,8 +1,7 @@
 package com.shawilTech.identityservice.controller;
 
-import com.shawilTech.identityservice.dto.BookingRequestDto;
-import com.shawilTech.identityservice.dto.BookingResponseDto;
-import com.shawilTech.identityservice.entity.BookingStatus;
+import com.shawilTech.identityservice.dto.*;
+import com.shawilTech.identityservice.entity.*;
 import com.shawilTech.identityservice.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

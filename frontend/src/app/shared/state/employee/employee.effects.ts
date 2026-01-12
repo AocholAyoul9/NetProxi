@@ -1,37 +1,55 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { map, mergeMap, catchError, tap, withLatestFrom, switchMap, exhaustMap } from 'rxjs/operators';
+import { map, mergeMap, catchError, tap, exhaustMap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 
 import * as EmployeeActions from './employee.actions';
-import { EmployeeTask, EmployeeNotification, EmployeeProfile } from '../../models/employee.model';
-import { selectEmployeeProfile, selectEmployeeState } from './employee.selector';
-//import { environment } from '../../../environments/environment';
-//import { AppState} from '../../app.state';
+import { ApiService } from '../../../core/api.service';
+import { AuthService } from '../../../core/auth.service';
 
 @Injectable()
 export class EmployeeEffects {
-  private apiUrl = 'http://localhost:8082/api'; // Remplacez par votre URL d'API
-
+loadEmployeeProfile$;
+updateEmployeeProfile$;
+loadEmployeeTasks$;
+loadTodayTasks$;
+loadUpcomingTasks$;
+loadCompletedTasks$;
+updateTaskStatus$;
+loadTaskDetails$;
+loadNotifications$;
+markNotificationAsRead$;
+markAllNotificationsAsRead$;
+clearAllNotifications$;
+loadEmployeeStats$;
+loadEmployeeSchedule$;
+updateAvailability$;
+loadEmployeeDataAfterProfileSuccess$;
+refreshAfterTaskUpdate$;
+handleErrors$;
+handleLogout$;
+startTask$;
+completeTask$;
+filterTasks$;
+refreshData$;
+initializeEmployeeDashboard$;
   constructor(
     private actions$: Actions,
-    private http: HttpClient,
-    private store: Store,
-    private router: Router
-  ) {}
+    private apiService: ApiService,
+    private authService: AuthService,
+    private store: Store
+  ) {
 
   // Charger le profil de l'employé
-  loadEmployeeProfile$ = createEffect(() =>
+  this.loadEmployeeProfile$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.loadEmployeeProfile),
       exhaustMap(() =>
-        this.http.get<EmployeeProfile>(`${this.apiUrl}/employee/profile`).pipe(
+        this.apiService.getEmployeeProfile().pipe(
           map(profile => EmployeeActions.loadEmployeeProfileSuccess({ profile })),
           catchError(error => of(EmployeeActions.loadEmployeeProfileFailure({ 
-            error: error.error?.message || 'Échec du chargement du profil' 
+            error: error.message || 'Échec du chargement du profil' 
           })))
         )
       )
@@ -39,14 +57,14 @@ export class EmployeeEffects {
   );
 
   // Mettre à jour le profil de l'employé
-  updateEmployeeProfile$ = createEffect(() =>
+  this.updateEmployeeProfile$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.updateEmployeeProfile),
       mergeMap(({ profile }) =>
-        this.http.patch<EmployeeProfile>(`${this.apiUrl}/employee/profile`, profile).pipe(
+        this.apiService.updateEmployeeProfile(profile).pipe(
           map(updatedProfile => EmployeeActions.updateEmployeeProfileSuccess({ profile: updatedProfile })),
           catchError(error => of(EmployeeActions.updateEmployeeProfileFailure({ 
-            error: error.error?.message || 'Échec de la mise à jour du profil' 
+            error: error.message || 'Échec de la mise à jour du profil' 
           })))
         )
       )
@@ -54,43 +72,89 @@ export class EmployeeEffects {
   );
 
   // Charger les tâches de l'employé
-  loadEmployeeTasks$ = createEffect(() =>
+  this.loadEmployeeTasks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.loadEmployeeTasks),
-      withLatestFrom(this.store.select(selectEmployeeProfile)),
-      switchMap(([_, profile]) => {
-        if (!profile?.id) {
-          return of(EmployeeActions.loadEmployeeTasksFailure({ 
-            error: 'Profil employé non trouvé' 
-          }));
-        }
-        
-        return this.http.get<EmployeeTask[]>(`${this.apiUrl}/employee/tasks`, {
-          params: { employeeId: profile.id }
-        }).pipe(
+      mergeMap(() =>
+        this.apiService.getEmployeeTasks().pipe(
           map(tasks => EmployeeActions.loadEmployeeTasksSuccess({ tasks })),
           catchError(error => of(EmployeeActions.loadEmployeeTasksFailure({ 
-            error: error.error?.message || 'Échec du chargement des tâches' 
+            error: error.message || 'Échec du chargement des tâches' 
           })))
-        );
-      })
+        )
+      )
+    )
+  );
+
+  // Charger les tâches d'aujourd'hui
+  this.loadTodayTasks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.loadTodayTasks),
+      mergeMap(() =>
+        this.apiService.getEmployeeTodayTasks().pipe(
+          map(tasks => EmployeeActions.loadTodayTasksSuccess({ tasks })),
+          catchError(error => of(EmployeeActions.loadTodayTasksFailure({ 
+            error: error.message || 'Échec du chargement des tâches d\'aujourd\'hui' 
+          })))
+        )
+      )
+    )
+  );
+
+  // Charger les tâches à venir
+  this.loadUpcomingTasks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.loadUpcomingTasks),
+      mergeMap(() =>
+        this.apiService.getEmployeeUpcomingTasks().pipe(
+          map(tasks => EmployeeActions.loadUpcomingTasksSuccess({ tasks })),
+          catchError(error => of(EmployeeActions.loadUpcomingTasksFailure({ 
+            error: error.message || 'Échec du chargement des tâches à venir' 
+          })))
+        )
+      )
+    )
+  );
+
+  // Charger les tâches terminées
+  this.loadCompletedTasks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.loadCompletedTasks),
+      mergeMap(({ days }) =>
+        this.apiService.getEmployeeCompletedTasks(days).pipe(
+          map(tasks => EmployeeActions.loadCompletedTasksSuccess({ tasks })),
+          catchError(error => of(EmployeeActions.loadCompletedTasksFailure({ 
+            error: error.message || 'Échec du chargement des tâches terminées' 
+          })))
+        )
+      )
     )
   );
 
   // Mettre à jour le statut d'une tâche
-  updateTaskStatus$ = createEffect(() =>
+  this.updateTaskStatus$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.updateTaskStatus),
       mergeMap(({ taskId, status, startTime, endTime, notes }) =>
-        this.http.patch<EmployeeTask>(`${this.apiUrl}/employee/tasks/${taskId}/status`, {
-          status,
-          startTime,
-          endTime,
-          notes
-        }).pipe(
+        this.apiService.updateEmployeeTaskStatus(taskId, status, { startTime, endTime, notes }).pipe(
           map(task => EmployeeActions.updateTaskStatusSuccess({ task })),
           catchError(error => of(EmployeeActions.updateTaskStatusFailure({ 
-            error: error.error?.message || 'Échec de la mise à jour du statut' 
+            error: error.message || 'Échec de la mise à jour du statut' 
+          })))
+        )
+      )
+    )
+  );
+
+  // Charger les détails d'une tâche
+  this.loadTaskDetails$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.loadTaskDetails),
+      mergeMap(({ taskId }) =>
+        this.apiService.getEmployeeTaskDetails(taskId).pipe(
+          map(task => EmployeeActions.loadTaskDetailsSuccess({ task })),
+          catchError(error => of(EmployeeActions.loadTaskDetailsFailure({ 
+            error: error.message || 'Échec du chargement des détails de la tâche' 
           })))
         )
       )
@@ -98,38 +162,29 @@ export class EmployeeEffects {
   );
 
   // Charger les notifications
-  loadNotifications$ = createEffect(() =>
+  this.loadNotifications$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.loadNotifications),
-      withLatestFrom(this.store.select(selectEmployeeProfile)),
-      switchMap(([_, profile]) => {
-        if (!profile?.id) {
-          return of(EmployeeActions.loadNotificationsFailure({ 
-            error: 'Profil employé non trouvé' 
-          }));
-        }
-        
-        return this.http.get<EmployeeNotification[]>(`${this.apiUrl}/employee/notifications`, {
-          params: { employeeId: profile.id }
-        }).pipe(
+      mergeMap(() =>
+        this.apiService.getEmployeeNotifications().pipe(
           map(notifications => EmployeeActions.loadNotificationsSuccess({ notifications })),
           catchError(error => of(EmployeeActions.loadNotificationsFailure({ 
-            error: error.error?.message || 'Échec du chargement des notifications' 
+            error: error.message || 'Échec du chargement des notifications' 
           })))
-        );
-      })
+        )
+      )
     )
   );
 
   // Marquer une notification comme lue
-  markNotificationAsRead$ = createEffect(() =>
+  this.markNotificationAsRead$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.markNotificationAsRead),
       mergeMap(({ notificationId }) =>
-        this.http.patch(`${this.apiUrl}/employee/notifications/${notificationId}/read`, {}).pipe(
+        this.apiService.markEmployeeNotificationAsRead(notificationId).pipe(
           map(() => EmployeeActions.markNotificationAsReadSuccess({ notificationId })),
           catchError(error => of(EmployeeActions.markNotificationAsReadFailure({ 
-            error: error.error?.message || 'Échec du marquage de la notification' 
+            error: error.message || 'Échec du marquage de la notification' 
           })))
         )
       )
@@ -137,74 +192,105 @@ export class EmployeeEffects {
   );
 
   // Marquer toutes les notifications comme lues
-  markAllNotificationsAsRead$ = createEffect(() =>
+  this.markAllNotificationsAsRead$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.markAllNotificationsAsRead),
-      withLatestFrom(this.store.select(selectEmployeeProfile)),
-      switchMap(([_, profile]) => {
-        if (!profile?.id) {
-          return of(EmployeeActions.markAllNotificationsAsReadFailure({ 
-            error: 'Profil employé non trouvé' 
-          }));
-        }
-        
-        return this.http.post(`${this.apiUrl}/employee/notifications/mark-all-read`, {
-          employeeId: profile.id
-        }).pipe(
+      mergeMap(() =>
+        this.apiService.markAllEmployeeNotificationsAsRead().pipe(
           map(() => EmployeeActions.markAllNotificationsAsReadSuccess()),
           catchError(error => of(EmployeeActions.markAllNotificationsAsReadFailure({ 
-            error: error.error?.message || 'Échec du marquage des notifications' 
+            error: error.message || 'Échec du marquage des notifications' 
           })))
-        );
-      })
+        )
+      )
     )
   );
 
   // Effacer toutes les notifications
-  clearAllNotifications$ = createEffect(() =>
+  this.clearAllNotifications$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.clearAllNotifications),
-      withLatestFrom(this.store.select(selectEmployeeProfile)),
-      switchMap(([_, profile]) => {
-        if (!profile?.id) {
-          return of(EmployeeActions.clearAllNotificationsFailure({ 
-            error: 'Profil employé non trouvé' 
-          }));
-        }
-        
-        return this.http.delete(`${this.apiUrl}/employee/notifications`, {
-          params: { employeeId: profile.id }
-        }).pipe(
+      mergeMap(() =>
+        this.apiService.clearAllEmployeeNotifications().pipe(
           map(() => EmployeeActions.clearAllNotificationsSuccess()),
           catchError(error => of(EmployeeActions.clearAllNotificationsFailure({ 
-            error: error.error?.message || 'Échec de la suppression des notifications' 
+            error: error.message || 'Échec de la suppression des notifications' 
           })))
-        );
-      })
+        )
+      )
+    )
+  );
+
+  // Charger les statistiques
+  this.loadEmployeeStats$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.loadEmployeeStats),
+      mergeMap(({ period }) =>
+        this.apiService.getEmployeeStats(period).pipe(
+          map(stats => EmployeeActions.loadEmployeeStatsSuccess({ stats })),
+          catchError(error => of(EmployeeActions.loadEmployeeStatsFailure({ 
+            error: error.message || 'Échec du chargement des statistiques' 
+          })))
+        )
+      )
+    )
+  );
+
+  // Charger le planning
+  this.loadEmployeeSchedule$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.loadEmployeeSchedule),
+      mergeMap(({ startDate, endDate }) =>
+        this.apiService.getEmployeeSchedule(startDate, endDate).pipe(
+          map(schedule => EmployeeActions.loadEmployeeScheduleSuccess({ schedule })),
+          catchError(error => of(EmployeeActions.loadEmployeeScheduleFailure({ 
+            error: error.message || 'Échec du chargement du planning' 
+          })))
+        )
+      )
+    )
+  );
+
+  // Mettre à jour la disponibilité
+  this.updateAvailability$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.updateAvailability),
+      mergeMap(({ isAvailable }) =>
+        this.apiService.updateEmployeeAvailability(isAvailable).pipe(
+          map(() => EmployeeActions.updateAvailabilitySuccess()),
+          catchError(error => of(EmployeeActions.updateAvailabilityFailure({ 
+            error: error.message || 'Échec de la mise à jour de la disponibilité' 
+          })))
+        )
+      )
     )
   );
 
   // Effet pour charger automatiquement les données après connexion
-  loadEmployeeDataAfterProfileSuccess$ = createEffect(() =>
+  this.loadEmployeeDataAfterProfileSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.loadEmployeeProfileSuccess),
       mergeMap(() => [
         EmployeeActions.loadEmployeeTasks(),
-        EmployeeActions.loadNotifications()
+        EmployeeActions.loadNotifications(),
+        EmployeeActions.loadEmployeeStats({ period: 'monthly' })
       ])
     )
   );
 
   // Effet pour recharger après mise à jour de statut
-  refreshAfterTaskUpdate$ = createEffect(() =>
+  this.refreshAfterTaskUpdate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(EmployeeActions.updateTaskStatusSuccess),
-      map(() => EmployeeActions.loadEmployeeTasks())
+      mergeMap(() => [
+        EmployeeActions.loadEmployeeTasks(),
+        EmployeeActions.loadEmployeeStats({ period: 'monthly' })
+      ])
     )
   );
 
   // Gestion des erreurs - afficher des notifications
-  handleErrors$ = createEffect(() =>
+  this.handleErrors$ = createEffect(() =>
     this.actions$.pipe(
       ofType(
         EmployeeActions.loadEmployeeProfileFailure,
@@ -214,7 +300,9 @@ export class EmployeeEffects {
         EmployeeActions.loadNotificationsFailure,
         EmployeeActions.markNotificationAsReadFailure,
         EmployeeActions.markAllNotificationsAsReadFailure,
-        EmployeeActions.clearAllNotificationsFailure
+        EmployeeActions.clearAllNotificationsFailure,
+        EmployeeActions.loadEmployeeStatsFailure,
+        EmployeeActions.updateAvailabilityFailure
       ),
       tap(({ error }) => {
         console.error('Erreur employé:', error);
@@ -225,174 +313,94 @@ export class EmployeeEffects {
     { dispatch: false }
   );
 
-  // Effet pour la navigation après certaines actions
-  navigateOnActions$ = createEffect(() =>
+  // Effet pour gérer la déconnexion
+  this.handleLogout$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(
-        EmployeeActions.updateTaskStatusSuccess,
-        EmployeeActions.markNotificationAsReadSuccess
-      ),
-      tap((action) => {
-        // Navigation ou autres effets secondaires
-        if (action.type === EmployeeActions.updateTaskStatusSuccess.type) {
-          const task = (action as any).task;
-          if (task.status === 'COMPLETED') {
-            // Vous pourriez naviguer vers une page de confirmation
-            // this.router.navigate(['/employee/task-completed', task.id]);
-          }
-        }
+      ofType(EmployeeActions.logoutEmployee),
+      tap(() => {
+        // Appeler la méthode de déconnexion du service d'authentification
+        this.authService.logOutEmployee();
       })
     ),
     { dispatch: false }
   );
 
-  // Effet pour les mises à jour en temps réel (WebSocket)
-  // Note: Cet effet nécessite un service WebSocket
-  // setupRealtimeUpdates$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(EmployeeActions.loadEmployeeProfileSuccess),
-  //     tap(({ profile }) => {
-  //       // Connexion WebSocket pour les mises à jour en temps réel
-  //       const ws = new WebSocket(`${environment.wsUrl}/employee/${profile.id}`);
-  //       
-  //       ws.onmessage = (event) => {
-  //         const data = JSON.parse(event.data);
-  //         
-  //         switch (data.type) {
-  //           case 'TASK_ASSIGNED':
-  //             this.store.dispatch(EmployeeActions.taskAssigned({ task: data.task }));
-  //             this.store.dispatch(EmployeeActions.addNotification({
-  //               notification: {
-  //                 id: `notification-${Date.now()}`,
-  //                 employeeId: profile.id,
-  //                 title: 'Nouvelle tâche assignée',
-  //                 message: `Vous avez une nouvelle tâche: ${data.task.serviceName}`,
-  //                 type: 'TASK_ASSIGNED',
-  //                 read: false,
-  //                 data: { taskId: data.task.id },
-  //                 createdAt: new Date().toISOString()
-  //               }
-  //             }));
-  //             break;
-  //             
-  //           case 'TASK_UPDATED':
-  //             this.store.dispatch(EmployeeActions.taskUpdated({ task: data.task }));
-  //             break;
-  //             
-  //           case 'TASK_CANCELLED':
-  //             this.store.dispatch(EmployeeActions.taskCancelled({ taskId: data.taskId }));
-  //             break;
-  //         }
-  //       };
-  //       
-  //       // Nettoyage à la destruction
-  //       return () => {
-  //         ws.close();
-  //       };
-  //     })
-  //   ),
-  //   { dispatch: false }
-  // );
-
-  // Effet pour les rappels automatiques
-  setupTaskReminders$ = createEffect(() =>
+  // Effet pour les actions de tâches
+  this.startTask$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(EmployeeActions.loadEmployeeTasksSuccess),
-      tap(({ tasks }) => {
-        // Configurer des rappels pour les tâches à venir
-        const now = new Date();
-        
-        tasks.forEach(task => {
-          if (task.status === 'CONFIRMED' || task.status === 'PENDING') {
-            const taskTime = new Date(task.startTime);
-            const timeDiff = taskTime.getTime() - now.getTime();
-            
-            // Rappel 30 minutes avant
-           /* if (timeDiff > 0 && timeDiff <= 30 * 60 * 1000) {
-              setTimeout(() => {
-                this.store.dispatch(EmployeeActions.addNotification({
-                  notification: {
-                    id: `reminder-${task.id}-${Date.now()}`,
-                    employeeId: task.employeeId,
-                    title: 'Rappel de tâche',
-                    message: `Votre tâche "${task.serviceName}" commence dans 30 minutes`,
-                    type: 'TASK_REMINDER',
-                    read: false,
-                    data: { taskId: task.id },
-                    createdAt: new Date().toISOString()
-                  }
-                }));
-              }, timeDiff - 30 * 60 * 1000);
-            }*/
-          }
-        });
-      })
-    ),
-    { dispatch: false }
+      ofType(EmployeeActions.startTask),
+      mergeMap(({ taskId }) =>
+        this.apiService.updateEmployeeTaskStatus(taskId, 'IN_PROGRESS', {
+          startTime: new Date().toISOString()
+        }).pipe(
+          map(task => EmployeeActions.updateTaskStatusSuccess({ task })),
+          catchError(error => of(EmployeeActions.updateTaskStatusFailure({ 
+            error: error.message || 'Échec du démarrage de la tâche' 
+          })))
+        )
+      )
+    )
   );
 
-  // Effet pour synchroniser l'état de disponibilité
-  updateAvailability$ = createEffect(() =>
+  this.completeTask$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(
-        EmployeeActions.updateTaskStatus,
-        EmployeeActions.loadEmployeeTasksSuccess
-      ),
-      withLatestFrom(this.store.select(selectEmployeeState)),
-      tap(([action, state]) => {
-        // Mettre à jour l'état de disponibilité basé sur les tâches
-        const hasActiveTask = state.tasks.some(task => 
-          task.status === 'IN_PROGRESS'
-        );
-        
-        const hasUpcomingTaskSoon = state.tasks.some(task => {
-          if (task.status === 'CONFIRMED' || task.status === 'PENDING') {
-            const taskTime = new Date(task.startTime);
-            const now = new Date();
-            const timeDiff = taskTime.getTime() - now.getTime();
-            return timeDiff > 0 && timeDiff <= 60 * 60 * 1000; // Dans l'heure qui vient
-          }
-          return false;
-        });
-        
-        // Mettre à jour le profil avec la disponibilité
-        if (state.profile) {
-          const isAvailable = !hasActiveTask && !hasUpcomingTaskSoon;
-          
-          /*if (state.profile.isAvailable !== isAvailable) {
-            this.store.dispatch(EmployeeActions.updateEmployeeProfile({
-              profile: { isAvailable, ...state.profile }
-            }));
-          }*/
-        }
-      })
-    ),
-    { dispatch: false }
+      ofType(EmployeeActions.completeTask),
+      mergeMap(({ taskId, notes }) =>
+        this.apiService.updateEmployeeTaskStatus(taskId, 'COMPLETED', {
+          endTime: new Date().toISOString(),
+          notes
+        }).pipe(
+          map(task => EmployeeActions.updateTaskStatusSuccess({ task })),
+          catchError(error => of(EmployeeActions.updateTaskStatusFailure({ 
+            error: error.message || 'Échec de la complétion de la tâche' 
+          })))
+        )
+      )
+    )
   );
 
-  // Effet pour les statistiques automatiques
-  updateStats$ = createEffect(() =>
+  // Effet pour les filtres de tâches
+  this.filterTasks$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(
-        EmployeeActions.updateTaskStatusSuccess,
-        EmployeeActions.loadEmployeeTasksSuccess
-      ),
-      withLatestFrom(this.store.select(selectEmployeeState)),
-      tap(([_, state]) => {
-        // Calculer et mettre à jour les statistiques
-        // Vous pourriez envoyer des statistiques au serveur ici
-        const completedTasks = state.tasks.filter(t => t.status === 'COMPLETED').length;
-        const totalTasks = state.tasks.length;
-        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-        
-        console.log(`Statistiques mises à jour: ${completionRate}% de complétion`);
-      })
-    ),
-    { dispatch: false }
+      ofType(EmployeeActions.filterTasks),
+      mergeMap(({ status, date, priority }) =>
+        this.apiService.getEmployeeTasks(status, date, priority).pipe(
+          map(tasks => EmployeeActions.filterTasksSuccess({ tasks })),
+          catchError(error => of(EmployeeActions.filterTasksFailure({ 
+            error: error.message || 'Échec du filtrage des tâches' 
+          })))
+        )
+      )
+    )
   );
-}
 
-// Si vous avez besoin d'un service de notification séparé
+  // Effet pour recharger les données périodiquement
+  this.refreshData$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.refreshData),
+      mergeMap(() => [
+        EmployeeActions.loadEmployeeTasks(),
+        EmployeeActions.loadNotifications(),
+        EmployeeActions.loadEmployeeStats({ period: 'monthly' })
+      ])
+    )
+  );
+
+  // Effet pour le chargement initial
+  this.initializeEmployeeDashboard$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(EmployeeActions.initializeEmployeeDashboard),
+      mergeMap(() => [
+        EmployeeActions.loadEmployeeProfile(),
+        EmployeeActions.loadEmployeeTasks(),
+        EmployeeActions.loadNotifications(),
+        EmployeeActions.loadEmployeeStats({ period: 'monthly' })
+      ])
+    )
+  );
+}}
+
+// Service de notification (optionnel)
 @Injectable({
   providedIn: 'root'
 })

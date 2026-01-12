@@ -7,7 +7,7 @@ export interface AuthState {
   client: any | null;
   token: string | null;
   loading: boolean;
-  userType: 'company' | 'client' | null;
+  userType: 'company' | 'client' | 'employee' | null;
   error: any;
 }
 
@@ -97,5 +97,23 @@ export const authReducer = createReducer(
     ...state,
     error,
     loading: false,
-  }))
+  })),
+  on(AuthActions.loginEmployee, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(AuthActions.loginEmployeeSuccess, (state, { employee, token }) => ({
+    ...state,
+    client: employee,
+    token,
+    userType: 'employee' as const,
+
+    loading: false,
+  })),
+  on(AuthActions.loginEmployeeFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
 );

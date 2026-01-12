@@ -53,10 +53,10 @@ export class LoginModalComponent {
     else if (this.selectedUserType === 'client') {
       this.store.dispatch(AuthActions.loginClient({ email, password }));
     }
-    /*
+    
     else if (this.selectedUserType === 'employee') {
       this.store.dispatch(AuthActions.loginEmployee({ email, password }));
-    }*/
+    }
 
     this.close();
   }

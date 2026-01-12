@@ -13,7 +13,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
-
 @Entity
 @Table(name = "employees")
 @Data
@@ -40,31 +39,32 @@ public class Employee {
     @Builder.Default
     private boolean active = true;
 
-
     @Column(name = "avatar_url")
     private String avatarUrl;
-    
+
     @Column(name = "role")
     private String role = "EMPLOYEE"; // Default role
-    
+
     @ElementCollection
     @CollectionTable(name = "employee_skills", joinColumns = @JoinColumn(name = "employee_id"))
     @Column(name = "skill")
     private List<String> skills = new ArrayList<>();
-    
+
     @Column(name = "is_available")
     private boolean isAvailable = true;
-    
+
     @Column(name = "rating")
     private Double rating;
-    
+
     @Column(name = "total_tasks_completed")
     private Integer totalTasksCompleted = 0;
-    
+
+    private String token;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-    
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;

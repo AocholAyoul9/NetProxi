@@ -41,30 +41,30 @@ export class EmployeeDashboardComponent implements /*OnInit*/ OnDestroy {
 
   constructor(private store: Store) {
     // Initialize observables
-   /* this.employeeProfile$ = this.store.select(EmployeeSelectors.selectEmployeeProfile);
+   this.employeeProfile$ = this.store.select(EmployeeSelectors.selectEmployeeProfile);
     this.todayTasks$ = this.store.select(EmployeeSelectors.selectTodayTasks);
     this.upcomingTasks$ = this.store.select(EmployeeSelectors.selectUpcomingTasks);
     this.completedTasks$ = this.store.select(EmployeeSelectors.selectCompletedTasks);
     this.notifications$ = this.store.select(EmployeeSelectors.selectUnreadNotifications);
     this.unreadNotificationsCount$ = this.store.select(EmployeeSelectors.selectUnreadNotificationsCount);
     this.loading$ = this.store.select(EmployeeSelectors.selectEmployeeLoading);
-    this.stats$ = this.store.select(EmployeeSelectors.selectEmployeeStats);*/
-
-     this.employeeProfile$ = of(null);
+    this.stats$ = this.store.select(EmployeeSelectors.selectEmployeeStats);
+/*
+  this.employeeProfile$ = of(null);
   this.todayTasks$ = of([]);
   this.upcomingTasks$ = of([]);
   this.completedTasks$ = of([]);
   this.notifications$ = of([]);
   this.unreadNotificationsCount$ = of(0);
   this.loading$ = of(false);
-  this.stats$ = of({});
+  this.stats$ = of({});*/
   }
-/*
+
   ngOnInit(): void {
     // Load employee data
     this.store.dispatch(EmployeeActions.loadEmployeeProfile());
     this.store.dispatch(EmployeeActions.loadEmployeeTasks());
-    this.store.dispatch(EmployeeActions.loadNotifications());*
+    this.store.dispatch(EmployeeActions.loadNotifications());
 
     // Update current time every minute
     this.timeInterval = setInterval(() => {
@@ -77,7 +77,7 @@ export class EmployeeDashboardComponent implements /*OnInit*/ OnDestroy {
         this.store.dispatch(EmployeeActions.loadEmployeeTasks());
       })
     );
-  }*/
+  }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();

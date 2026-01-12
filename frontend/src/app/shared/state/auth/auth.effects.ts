@@ -20,6 +20,8 @@ export class AuthEffects {
   loadCompanyDataAfterLogin$;
   logoutClient$;
 
+  loginEmployee$;
+  loginEmployeeSuccess$;
   constructor(
     private action$: Actions,
     private authService: AuthService,
@@ -156,5 +158,36 @@ export class AuthEffects {
       { dispatch: false }
     );
 
+    this.loginEmployee$ = createEffect(() =>
+      this.action$.pipe(
+        ofType(AuthActions.loginEmployee),
+        mergeMap(({ email, password }) =>
+          this.authService.loginEmployee(email, password).pipe(
+            map((res) =>
+              AuthActions.loginEmployeeSuccess({
+                employee: res,
+                token: res.token,
+              })
+            ),
+            catchError((error) =>
+              of(AuthActions.loginEmployeeFailure({ error }))
+            )
+          )
+        )
+      )
+    );
+
+    this.loginEmployeeSuccess$ = createEffect(
+      () =>
+        this.action$.pipe(
+          ofType(AuthActions.loginEmployeeSuccess),
+          tap(() => {
+            this.router.navigate(['/employee-dashboard']);
+          })
+        ),
+      {
+        dispatch: false,
+      }
+    );
   }
 }

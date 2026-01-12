@@ -15,4 +15,7 @@ public class EmployeeResponseDto {
     private String phone;
     private String address;
     private  boolean active;
+    private String avatarUrl;
+    private String token;
+    private String role;
 }
