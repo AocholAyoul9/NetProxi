@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/subscriptions/**").permitAll()
                         .requestMatchers("/api/services/**").permitAll()
                         .requestMatchers("/api/clients/**").permitAll()
+                        .requestMatchers("/api/employees/**").permitAll()
 
                         // Everything else requires authentication
                         .anyRequest().authenticated())

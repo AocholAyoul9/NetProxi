@@ -14,7 +14,6 @@ import {
 import {
   provideHttpClient,
   withFetch,
-  withInterceptors,
 } from '@angular/common/http';
 
 import { provideStore } from '@ngrx/store';
@@ -46,9 +45,9 @@ export const appConfig: ApplicationConfig = {
       booking: bookingReducer,
       auth: authReducer,
       client: clientReducer,
-      //employee: employeeReducer
+      employee: employeeReducer
      
     }),
-    provideEffects([CompanyEffects, BookingEffects, AuthEffects, ClientEffects /*, EmployeeEffects*/]),
+    provideEffects([CompanyEffects, BookingEffects, AuthEffects, ClientEffects , EmployeeEffects]),
   ],
 };

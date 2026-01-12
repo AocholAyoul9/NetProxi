@@ -65,6 +65,24 @@ export const loginClientFailure = createAction(
     props<{error: any}>()
 )
 
-
 // logout client
 export const logOutClient = createAction('[Auth] logOut client')
+
+
+// employee login
+export const loginEmployee = createAction(
+    '[Auth] login employee',
+    props<{email: string; password: string}>()
+);
+export const loginEmployeeSuccess = createAction(
+    '[Auth] Login employee Success',
+    props<{employee: any; token: string}>()
+);
+
+export const loginEmployeeFailure = createAction(
+    '[Auth] Login employee Failure',
+    props<{error: any}>()
+)
+
+// logout employee
+export const logOutEmployee = createAction('[Auth] logOut employee')

@@ -1,5 +1,5 @@
 package com.shawilTech.identityservice.service;
-
+import com.shawilTech.identityservice.security.JwtTokenProvider;
 import com.shawilTech.identityservice.dto.*;
 import com.shawilTech.identityservice.entity.*;
 import com.shawilTech.identityservice.repository.*;
@@ -23,6 +23,7 @@ public class EmployeeService {
     private final SubscriptionRepository subscriptionRepository;
     private final BookingRepository bookingRepository;
     private final NotificationRepository notificationRepository;
+    private final JwtTokenProvider jwtProvider;
 
     // ---------------- BASIC CRUD ----------------
 
@@ -47,6 +48,25 @@ public class EmployeeService {
         return toResponseDto(employeeRepository.save(employee));
     }
 
+    
+    public EmployeeResponseDto employeeLogin(EmployeeLoginRequestDto dto) {
+        Employee employee = employeeRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (!employee.getPassword().equals(dto.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+
+         String token = jwtProvider.generateToken(dto.getEmail());
+        employee.setToken(token);
+
+        employeeRepository.save(employee);
+
+        return toResponseDto(employee);
+    }
+
+    
     @Transactional(readOnly = true)
     public List<EmployeeResponseDto> getEmployeesByCompany(UUID companyId) {
         Company company = companyRepository.findById(companyId)
@@ -153,6 +173,13 @@ public class EmployeeService {
     // ---------------- TASKS ----------------
 
     @Transactional(readOnly = true)
+    public EmployeeTaskResponseDto getTaskDetails(UUID employeeId, UUID taskId) {
+        Booking booking = bookingRepository.findByIdAndEmployeeId(taskId, employeeId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        return convertToTaskDto(booking);
+    }
+
+    @Transactional(readOnly = true)
     public List<EmployeeTaskResponseDto> getEmployeeTasks(UUID employeeId, String status, String date, String priority) {
         return bookingRepository.findByEmployeeId(employeeId).stream()
                 .filter(b -> status == null || b.getStatus().name().equals(status))
@@ -217,6 +244,63 @@ public class EmployeeService {
         return convertToTaskDto(updated);
     }
 
+
+    // 13. Get employee statistics
+    @Transactional(readOnly = true)
+    public EmployeeStatsResponseDto getEmployeeStats(UUID employeeId, String period) {
+        LocalDate startDate = getStartDateForPeriod(period);
+
+        List<Booking> periodTasks = bookingRepository.findByEmployeeIdAndDateAfter(employeeId, startDate);
+
+        long completed = periodTasks.stream().filter(b -> "COMPLETED".equals(b.getStatus())).count();
+        long inProgress = periodTasks.stream().filter(b -> "IN_PROGRESS".equals(b.getStatus())).count();
+        long pending = periodTasks.stream().filter(b -> "PENDING".equals(b.getStatus())).count();
+
+        double avgRating = periodTasks.stream()
+                .filter(b -> b.getRating() != null)
+                .mapToInt(Booking::getRating)
+                .average()
+                .orElse(0.0);
+
+        double totalEarnings = periodTasks.stream()
+                .filter(b -> "COMPLETED".equals(b.getStatus()) && b.getService() != null)
+                .mapToDouble(b -> b.getService().getBasePrice())
+                .sum();
+
+        return EmployeeStatsResponseDto.builder()
+                .totalTasks(periodTasks.size())
+                .completedTasks((int) completed)
+                .inProgressTasks((int) inProgress)
+                .pendingTasks((int) pending)
+                .completionRate(periodTasks.isEmpty() ? 0 : (int) ((completed * 100) / periodTasks.size()))
+                .averageRating(avgRating)
+                .totalEarnings(totalEarnings)
+                .period(period)
+                .build();
+    }
+
+
+    // 14. Get employee schedule
+    @Transactional(readOnly = true)
+    public List<EmployeeScheduleResponseDto> getEmployeeSchedule(UUID employeeId, String startDateStr, String endDateStr) {
+        LocalDate startDate = startDateStr != null ? LocalDate.parse(startDateStr) : LocalDate.now();
+        LocalDate endDate = endDateStr != null ? LocalDate.parse(endDateStr) : startDate.plusDays(30);
+
+        List<Booking> bookings = bookingRepository.findByEmployeeIdAndDateRange(employeeId, startDate, endDate);
+
+        return bookings.stream()
+                .map(this::convertToScheduleDto)
+                .collect(Collectors.toList());
+    }
+
+    // 15. Update availability
+    @Transactional
+    public void updateAvailability(UUID employeeId, UpdateAvailabilityDto dto) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        employee.setAvailable(dto.getIsAvailable());
+        employeeRepository.save(employee);
+    }
     // ---------------- NOTIFICATIONS ----------------
 
     @Transactional(readOnly = true)
@@ -251,7 +335,14 @@ public class EmployeeService {
     }
 
     // ---------------- HELPERS ----------------
-
+    private LocalDate getStartDateForPeriod(String period) {
+        return switch (period.toLowerCase()) {
+            case "weekly" -> LocalDate.now().minusWeeks(1);
+            case "monthly" -> LocalDate.now().minusMonths(1);
+            case "yearly" -> LocalDate.now().minusYears(1);
+            default -> LocalDate.now().minusMonths(1); // default monthly
+        };
+    }
     private EmployeeResponseDto toResponseDto(Employee emp) {
         return EmployeeResponseDto.builder()
                 .id(emp.getId())
@@ -262,7 +353,17 @@ public class EmployeeService {
                 .active(emp.isActive())
                 .build();
     }
-
+    private EmployeeScheduleResponseDto convertToScheduleDto(Booking booking) {
+        return EmployeeScheduleResponseDto.builder()
+                .id(booking.getId())
+                .date(booking.getStartTime().toLocalDate().toString())
+                .startTime(booking.getStartTime().toLocalTime().toString())
+                .endTime(booking.getEndTime().toLocalTime().toString())
+                .serviceName(booking.getService() != null ? booking.getService().getName() : "Unknown")
+                .clientName(booking.getClient() != null ? booking.getClient().getName() : "Unknown")
+                .address(booking.getAddress())
+                .build();
+    }
     private EmployeeTaskResponseDto convertToTaskDto(Booking booking) {
         return EmployeeTaskResponseDto.builder()
                 .id(booking.getId())

@@ -167,7 +167,7 @@ export const employeeReducer = createReducer(
     notifications: [notification, ...state.notifications]
   })),
 
-  // Set Loading
+  /*
   on(EmployeeActions.setEmployeeLoading, (state, { loading }) => ({
     ...state,
     loading
@@ -177,7 +177,7 @@ export const employeeReducer = createReducer(
   on(EmployeeActions.clearEmployeeErrors, (state) => ({
     ...state,
     error: null
-  }))
+  }))*/
 );
 
 export function reducer(state: EmployeeState | undefined, action: any) {
