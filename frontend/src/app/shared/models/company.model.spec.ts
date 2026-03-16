@@ -2,6 +2,7 @@ import { Company } from './company.model';
 
 describe('Company', () => {
   it('should create an instance', () => {
-    expect(new Company()).toBeTruthy();
+    const company: Company = { id: '', name: '' };
+    expect(company).toBeTruthy();
   });
 });
