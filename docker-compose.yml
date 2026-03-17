@@ -10,26 +10,5 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "543:5432"
-
-  backend:
-    build: backend
-    container_name: backend_service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cleaningdb
-      SPRING_DATASOURCE_USERNAME: cleaninguser
-      SPRING_DATASOURCE_PASSWORD: cleaningpass
-      SPRING_PROFILES_ACTIVE: docker
-      SERVER_PORT: 8082
-
-  frontend:
-    build: ./frontend
-    container_name: cleaning_frontend
-    ports:
-      - "4200:80"
-
 volumes:
   pgdata:
