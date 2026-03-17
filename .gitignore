@@ -8,3 +8,16 @@
 
 *.mdmp
 .idea/
+package-lock.json
+yarn.lock
+node_modules/
+dist/
+build/
+coverage/
+*.log
+*.tsbuildinfo
+.DS_Store
+.env
+.env.local
+.env.*.local
+*.suo
