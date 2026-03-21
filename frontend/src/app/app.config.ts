@@ -31,7 +31,7 @@ import { ClientEffects } from './shared/state/client/client.effects';
 import { clientReducer } from './shared/state/client/client.reducer';
 import { employeeReducer } from './shared/state/employee/employee.reducer';
 import { EmployeeEffects } from './shared/state/employee/employee.effects';
-import { AuthInterceptor } from './core/auth.interceptor';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 
 export const appConfig: ApplicationConfig = {
