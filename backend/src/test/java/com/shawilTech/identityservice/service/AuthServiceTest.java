@@ -1,15 +1,17 @@
 package com.shawilTech.identityservice.service;
 
-import com.shawilTech.identityservice.dto.*;
-import com.shawilTech.identityservice.entity.*;
-import com.shawilTech.identityservice.repository.*;
-import com.shawilTech.identityservice.security.JwtTokenProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.shawilTech.netproxi.dto.*;
+import com.shawilTech.netproxi.entity.*;
+import com.shawilTech.netproxi.repository.*;
+import com.shawilTech.netproxi.security.JwtTokenProvider;
+import com.shawilTech.netproxi.service.AuthService;
 
 import java.util.Collections;
 import java.util.Optional;

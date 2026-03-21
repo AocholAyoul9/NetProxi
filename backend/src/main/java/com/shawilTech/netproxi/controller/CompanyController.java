@@ -1,0 +1,72 @@
+package com.shawilTech.netproxi.controller;
+
+import com.shawilTech.netproxi.dto.*;
+import com.shawilTech.netproxi.service.CompanyService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.*;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/api/companies")
+@RequiredArgsConstructor
+@Tag(name = "Companies", description = "APIs for managing companies")
+public class CompanyController {
+
+    private final CompanyService companyService;
+
+
+    /**
+     * GET /api/companies/nearby?lat=48.85&lng=2.35&radiusKm=5
+     */
+
+    @GetMapping("/nearby")
+    public List<CompanyResponseDto> getNearbyCompanies(
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam double radiusKm
+    ) {
+        return companyService.findNearbyCompanies(lat, lng, radiusKm);
+    }
+
+    //  Register a new company
+    @Operation(summary = "Register a new  company")
+    @PostMapping("/register")
+    public CompanyResponseDto registerCompany(@RequestBody CompanyRequestDto dto) {
+        return companyService.registerCompany(dto);
+    }
+
+    @Operation(summary = "Login company")
+    @PostMapping("/login")
+    public CompanyResponseDto loginCompany(@RequestBody CompanyLoginRequestDto dto) {
+        return companyService.loginCompany(dto);
+    }
+
+    // Get company details by ID
+    @Operation(summary = "Get company by id")
+    @GetMapping("/{companyId}")
+    public CompanyResponseDto getCompany(@PathVariable UUID companyId) {
+        return companyService.getCompany(companyId);
+    }
+
+
+    // get all company
+    @Operation(summary = "Get all companies")
+    @GetMapping
+    public List<CompanyResponseDto> getAllCompanies() {
+        return companyService.getAllCompanies();
+    }
+
+    // Update company details
+    @Operation(summary = "update a company")
+    @PutMapping("/{companyId}")
+    public CompanyResponseDto updateCompany(
+            @PathVariable UUID companyId,
+            @RequestBody CompanyRequestDto updatedCompany
+    ) {
+        return companyService.updateCompany(companyId, updatedCompany);
+    }
+}
