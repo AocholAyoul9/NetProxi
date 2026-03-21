@@ -1,4 +1,4 @@
-package  com.shawilTech.identityservice.dto;
+package  com.shawilTech.netproxi.dto;
 
 import  lombok.Data;
 

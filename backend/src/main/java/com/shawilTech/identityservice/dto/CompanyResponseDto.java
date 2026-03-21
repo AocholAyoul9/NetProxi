@@ -1,7 +1,7 @@
-package com.shawilTech.identityservice.dto;
-import com.shawilTech.identityservice.entity.ServiceEntity;
-import com.shawilTech.identityservice.entity.SubscriptionPlan;
-import com.shawilTech.identityservice.dto.ServiceResponseDto;
+package com.shawilTech.netproxi.dto;
+import com.shawilTech.netproxi.entity.ServiceEntity;
+import com.shawilTech.netproxi.entity.SubscriptionPlan;
+import com.shawilTech.netproxi.dto.ServiceResponseDto;
 
 import lombok.*;
 

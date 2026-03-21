@@ -1,4 +1,4 @@
-package com.shawilTech.identityservice.service;
+package com.shawilTech.netproxi.service;
 import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

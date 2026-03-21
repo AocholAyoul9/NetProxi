@@ -1,8 +1,8 @@
-package com.shawilTech.identityservice.controller;
+package com.shawilTech.netproxi.controller;
 
-import com.shawilTech.identityservice.dto.*;
-import com.shawilTech.identityservice.entity.*;
-import com.shawilTech.identityservice.service.BookingService;
+import com.shawilTech.netproxi.dto.*;
+import com.shawilTech.netproxi.entity.*;
+import com.shawilTech.netproxi.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
