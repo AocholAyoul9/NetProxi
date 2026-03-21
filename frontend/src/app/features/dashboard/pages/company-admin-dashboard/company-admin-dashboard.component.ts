@@ -4,22 +4,22 @@ import { RouterModule } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { Company } from '../../features/companies/models/company.model';
+import { Company } from '../../../companies/models/company.model';
 import {
   ServiceModel,
   ServiceModel as ServiceResponseDto,
   ServiceUpdateModel,
-} from '../../shared/models/service.model';
+} from '../../../../shared/models/service.model';
 import {
   Employee,
   EmployeeCreateModel,
   EmployeeUpdateModel,
-} from '../../shared/models/employee.model';
+} from '../../../../shared/models/employee.model';
 
-import * as CompanySelectors from '../../features/companies/state/company.selectors';
-import * as CompanyActions from '../../features/companies/state/company.actions';
+import * as CompanySelectors from '../../../companies/state/company.selectors';
+import * as CompanyActions from '../../../companies/state/company.actions';
 import { FormsModule } from '@angular/forms';
-import { Booking } from '../../../features/booking/models/booking.model';
+import { Booking } from '../../../booking/models/booking.model';
 
 type TabType = 'overview' | 'services' | 'bookings' | 'employees';
 

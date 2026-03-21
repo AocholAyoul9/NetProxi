@@ -13,12 +13,12 @@ import {
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 
-import { NearbyCompany } from '../../shared/models/client.model';
-import * as ClientSelectors from '../../shared/state/client/client.selector';
-import * as ClientActions from '../../shared/state/client/client.actions';
-import * as BookingActions from '../../../features/booking/state/booking.actions';
+import { NearbyCompany } from '../../../../shared/models/client.model';
+import * as ClientSelectors from '../../../../shared/state/client/client.selector';
+import * as ClientActions from '../../../../shared/state/client/client.actions';
+import * as BookingActions from '../../../booking/state/booking.actions';
 
-import { Booking, CreateBookingRequest } from '../../../features/booking/models/booking.model';
+import { Booking, CreateBookingRequest } from '../../../booking/models/booking.model';
 
 type TabType = 'overview' | 'reservations' | 'companies' | 'history';
 

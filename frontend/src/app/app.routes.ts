@@ -1,13 +1,8 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './core/guards/auth.guard';
 import { NearbyCompaniesComponent } from './pages/nearby-companies/nearby-companies.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ContactComponent } from './pages/contact/contact.component';
-import { CompanyAdminDashboardComponent } from './pages/company-admin-dashboard/company-admin-dashboard.component';
-import { SuperAdminDashboardComponent } from './pages/super-admin-dashboard/super-admin-dashboard.component';
 import { SignupModalComponent } from './components/signup-modal/signup-modal.component';
-import { ClientDashboardComponent } from './pages/client-dashboard/client-dashboard.component';
-import { EmployeeDashboardComponent } from './pages/employee-dashboard/employee-dashboard.component';
 
 
 export const routes: Routes = [
@@ -28,24 +23,8 @@ export const routes: Routes = [
         (m) => m.CompanyDetailComponent
       ),
   },
-  {
-    path: 'company-admin',
-    component: CompanyAdminDashboardComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['ROLE_COMPANY', 'ROLE_COMPANY_ADMIN'] },
-  },
-  {
-    path: 'super-admin',
-    component: SuperAdminDashboardComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['ROLE_SUPER_ADMIN'] },
-  },
   { path: 'client-signup', component: SignupModalComponent },
-  { path: 'client-dashboard', component: ClientDashboardComponent },
   { path: '', loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes) },
-  {
-    path: 'employee-dashboard',
-    component: EmployeeDashboardComponent,
-  },
+  { path: '', loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes) },
   { path: '**', redirectTo: '' },
 ];

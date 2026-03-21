@@ -4,10 +4,10 @@ import { CommonModule } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { Company as CompanyResponseDto } from '../../features/companies/models/company.model';
+import { Company as CompanyResponseDto } from '../../../companies/models/company.model';
 
-import * as AdminActions from '../../features/companies/state/company.actions';
-import * as AdminSelectors from '../../features/companies/state/company.selectors';
+import * as AdminActions from '../../../companies/state/company.actions';
+import * as AdminSelectors from '../../../companies/state/company.selectors';
 
 @Component({
   selector: 'app-super-admin-dashboard',
