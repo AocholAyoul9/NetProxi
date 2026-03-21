@@ -42,7 +42,7 @@ export const routes: Routes = [
   },
   { path: 'client-signup', component: SignupModalComponent },
   { path: 'client-dashboard', component: ClientDashboardComponent },
-  { path: '', loadChildren: () => import('./auth/auth.routes').then((m) => m.authRoutes) },
+  { path: '', loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes) },
   {
     path: 'employee-dashboard',
     component: EmployeeDashboardComponent,

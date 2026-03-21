@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { getClientId } from '../auth/utils/token-storage';
+import { getClientId } from '../features/auth/utils/token-storage';
 import { Booking } from '../shared/models/booking.model';
 import { ClientProfile } from '../shared/models/client.model';
 import { EmployeeProfile, EmployeeTask ,EmployeeSchedule , EmployeeStats, EmployeeNotification} from '../shared/models/employee.model';

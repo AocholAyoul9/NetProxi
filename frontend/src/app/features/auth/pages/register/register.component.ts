@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { register } from '../../store/auth.actions';
-import { selectLoading, selectError } from '../../store/auth.selectors';
+import { register } from '../../state/auth.actions';
+import { selectLoading, selectError } from '../../state/auth.selectors';
 
 @Component({
   selector: 'app-register-page',

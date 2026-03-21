@@ -24,9 +24,9 @@ import { companyFeature } from './features/companies/state/company.reducer';
 import { bookingReducer } from './shared/state/booking/booking.reducer';
 import { CompanyEffects } from './features/companies/state/company.effects';
 import { BookingEffects } from './shared/state/booking/booking.effects';
-import { authReducer } from './auth/store/auth.reducer';
-import { AuthEffects } from './auth/store/auth.effects';
-import { authInterceptor } from './auth/interceptors/auth.interceptor';
+import { authFeature } from './features/auth/state/auth.reducer';
+import { AuthEffects } from './features/auth/state/auth.effects';
+import { authInterceptor } from './features/auth/interceptors/auth.interceptor';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { ClientEffects } from './shared/state/client/client.effects';
 import { clientReducer } from './shared/state/client/client.reducer';
@@ -48,11 +48,11 @@ export const appConfig: ApplicationConfig = {
 
     provideStore({
       booking: bookingReducer,
-      auth: authReducer,
       client: clientReducer,
       employee: employeeReducer,
     }),
     provideState(companyFeature),
+    provideState(authFeature),
     provideEffects([CompanyEffects, BookingEffects, AuthEffects, ClientEffects , EmployeeEffects]),
   ],
 };

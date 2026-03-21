@@ -5,7 +5,7 @@ import { catchError, map, mergeMap, of, tap } from 'rxjs';
 
 import { AuthApiService } from '../services/auth.api.service';
 import * as AuthActions from './auth.actions';
-import * as CompanyActions from '../../features/companies/state/company.actions';
+import * as CompanyActions from '../../companies/state/company.actions';
 import { AuthUser } from '../models/user.model';
 import { setToken, setRefreshToken, clearTokens } from '../utils/token-storage';
 

@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 
 import * as EmployeeActions from './employee.actions';
 import { ApiService } from '../../../core/api.service';
-import { clearTokens } from '../../../auth/utils/token-storage';
+import { clearTokens } from '../../../features/auth/utils/token-storage';
 
 @Injectable()
 export class EmployeeEffects {
