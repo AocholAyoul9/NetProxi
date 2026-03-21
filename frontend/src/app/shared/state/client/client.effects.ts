@@ -3,9 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import * as ClientActions from './client.actions';
-import * as AuthActions from '../auth/auth.actions';
 import { ApiService } from '../../../core/api.service';
-import { AuthService } from '../../../core/auth.service';
 import {
   NearbyCompany,
 } from '../../models/client.model';
@@ -19,19 +17,11 @@ export class ClientEffects {
   updateReservationStatus$;
   addReservationReview$;
   toggleFavoriteCompany$;
-  loadClientProfileAfterLogin$;
   loadClientProfile$;
   constructor(
     private actions$: Actions,
-    private api: ApiService,
-    private authService: AuthService
+    private api: ApiService
   ) {
-    this.loadClientProfileAfterLogin$ = createEffect(() =>
-      this.actions$.pipe(
-        ofType(AuthActions.loginClientSuccess),
-        map(() => ClientActions.loadClientProfile())
-      )
-    );
 
     this.loadClientProfile$ = createEffect(() =>
       this.actions$.pipe(

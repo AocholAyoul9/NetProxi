@@ -6,7 +6,6 @@ import { Store } from '@ngrx/store';
 
 import * as EmployeeActions from './employee.actions';
 import { ApiService } from '../../../core/api.service';
-import { AuthService } from '../../../core/auth.service';
 
 @Injectable()
 export class EmployeeEffects {
@@ -37,7 +36,6 @@ initializeEmployeeDashboard$;
   constructor(
     private actions$: Actions,
     private apiService: ApiService,
-    private authService: AuthService,
     private store: Store
   ) {
 
@@ -318,8 +316,9 @@ initializeEmployeeDashboard$;
     this.actions$.pipe(
       ofType(EmployeeActions.logoutEmployee),
       tap(() => {
-        // Appeler la méthode de déconnexion du service d'authentification
-        this.authService.logOutEmployee();
+        localStorage.removeItem('token');
+        localStorage.removeItem('employee');
+        localStorage.removeItem('employeeId');
       })
     ),
     { dispatch: false }

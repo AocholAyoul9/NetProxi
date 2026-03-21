@@ -4,12 +4,9 @@ import com.shawilTech.identityservice.dto.*;
 import com.shawilTech.identityservice.entity.*;
 import com.shawilTech.identityservice.repository.*;
 import com.shawilTech.identityservice.repository.ClientRepository;
-import com.shawilTech.identityservice.security.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
-//import org.springframework.boot.autoconfigure.security.oauth2.server.servlet.OAuth2AuthorizationServerProperties.Client;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -19,19 +16,18 @@ import java.util.UUID;
 public class ClientService {
 
     private final ClientRepository clientRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtProvider;
 
     public ClientResponseDto registerClient(ClientRequestDto clientDto) {
 
         Client client = new Client();
         client.setName(clientDto.getName());
         client.setEmail(clientDto.getEmail());
-        client.setPassword(passwordEncoder.encode(clientDto.getPassword()));
+        client.setPassword(clientDto.getPassword()); // TODO: Hash password before storing
         client.setPhone(clientDto.getPhone());
         client.setAddress(clientDto.getAddress());
 
-        String token = jwtProvider.generateToken(clientDto.getName());
+        // TODO: Replace with proper signed JWT token as part of auth reimplementation
+        String token = UUID.randomUUID().toString();
 
         client.setToken(token);
 
@@ -52,11 +48,13 @@ public class ClientService {
         Client client = clientRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-        if (!passwordEncoder.matches(dto.getPassword(), client.getPassword())) {
+        // TODO: Use proper password verification (e.g., BCrypt.matches) as part of auth reimplementation
+        if (!dto.getPassword().equals(client.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
 
-        String token = jwtProvider.generateToken(dto.getEmail());
+        // TODO: Replace with proper signed JWT token as part of auth reimplementation
+        String token = UUID.randomUUID().toString();
         client.setToken(token);
 
         clientRepository.save(client);

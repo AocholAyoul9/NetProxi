@@ -8,9 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.shawilTech.identityservice.service.GeocodingService;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
-import com.shawilTech.identityservice.security.JwtTokenProvider;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -24,9 +21,6 @@ public class CompanyService {
     private final SubscriptionRepository subscriptionRepository;
     private final ServiceRepository serviceRepository;
     private final GeocodingService geocodingService; // <-- Add this
-
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtProvider;
 
     /**
      * Find companies near a point (lat, lng) within radius in km
@@ -114,14 +108,15 @@ List<Company> companies = companyRepository.findAll();
     @Transactional
     public CompanyResponseDto registerCompany(CompanyRequestDto dto) {
 
-        String token = jwtProvider.generateToken(dto.getName());
+        // TODO: Implement proper password hashing (e.g., BCrypt) as part of auth reimplementation
+        String token = UUID.randomUUID().toString(); // TODO: Replace with proper signed JWT token
 
         // Build company from DTO
         Company company = Company.builder()
                 .name(dto.getName())
                 .address(dto.getAddress())
                 .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword()))
+                .password(dto.getPassword()) // TODO: Hash password before storing
                 .phone(dto.getPhone())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
@@ -177,11 +172,12 @@ List<Company> companies = companyRepository.findAll();
         Company company = companyRepository.findByEmail(dto.getEmail())
                 .orElseThrow(()-> new RuntimeException("Invalid email or password"));
 
-        if(!passwordEncoder.matches(dto.getPassword(), company.getPassword())){
+        // TODO: Use proper password verification (e.g., BCrypt.matches) as part of auth reimplementation
+        if (!dto.getPassword().equals(company.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
 
-        String token = jwtProvider.generateToken(dto.getEmail());
+        String token = UUID.randomUUID().toString(); // TODO: Replace with proper signed JWT token
         
         company.setToken(token);
 

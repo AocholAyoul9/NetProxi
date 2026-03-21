@@ -1,20 +1,21 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
 import { Company } from '../shared/models/company.model';
 import { ServiceModel } from '../shared/models/service.model';
 import { Booking, CreateBookingRequest } from '../shared/models/booking.model';
 import { NearbyCompany, ClientProfile } from '../shared/models/client.model';
 import { EmployeeProfile, EmployeeTask ,EmployeeSchedule , EmployeeStats, EmployeeNotification} from '../shared/models/employee.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
   private baseUrl = 'http://localhost:8082/api';
+  private platformId = inject(PLATFORM_ID);
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   /* private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();
@@ -251,7 +252,7 @@ export class ApiService {
 
 // ---------------- Client Profile ----------------
 getClientProfile(): Observable<ClientProfile> {
-  const clientId = this.authService.getClientId();
+  const clientId = isPlatformBrowser(this.platformId) ? (localStorage.getItem('clientId') || '') : '';
 
   return this.http.get<ClientProfile>(`${this.baseUrl}/clients/profile`, {
     headers: new HttpHeaders({

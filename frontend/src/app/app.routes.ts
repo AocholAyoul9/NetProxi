@@ -6,7 +6,6 @@ import { ContactComponent } from './pages/contact/contact.component';
 import { CompanyDetailComponent } from './pages/company-detail/company-detail.component';
 import { CompanyAdminDashboardComponent } from './pages/company-admin-dashboard/company-admin-dashboard.component';
 import { SuperAdminDashboardComponent } from './pages/super-admin-dashboard/super-admin-dashboard.component';
-import { SignupModalComponent } from './components/signup-modal/signup-modal.component';
 import { ClientDashboardComponent } from './pages/client-dashboard/client-dashboard.component';
 import { EmployeeDashboardComponent } from './pages/employee-dashboard/employee-dashboard.component';
 
@@ -18,12 +17,7 @@ export const routes: Routes = [
   { path: 'company/:id', component: CompanyDetailComponent },
   { path: 'company-admin', component: CompanyAdminDashboardComponent },
   { path: 'super-admin', component: SuperAdminDashboardComponent },
-  { path: 'client-signup', component: SignupModalComponent },
   { path: 'client-dashboard', component: ClientDashboardComponent },
-  {
-    path: 'employee-dashboard',
-    component: EmployeeDashboardComponent,
-    //canActivate: [AuthGuard]
-  },
+  { path: 'employee-dashboard', component: EmployeeDashboardComponent },
   { path: '**', redirectTo: '' },
 ];

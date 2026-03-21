@@ -1,5 +1,4 @@
 package com.shawilTech.identityservice.service;
-import com.shawilTech.identityservice.security.JwtTokenProvider;
 import com.shawilTech.identityservice.dto.*;
 import com.shawilTech.identityservice.entity.*;
 import com.shawilTech.identityservice.repository.*;
@@ -23,7 +22,6 @@ public class EmployeeService {
     private final SubscriptionRepository subscriptionRepository;
     private final BookingRepository bookingRepository;
     private final NotificationRepository notificationRepository;
-    private final JwtTokenProvider jwtProvider;
 
     // ---------------- BASIC CRUD ----------------
 
@@ -58,7 +56,8 @@ public class EmployeeService {
         }
 
 
-         String token = jwtProvider.generateToken(dto.getEmail());
+         // TODO: Replace with proper signed JWT token as part of auth reimplementation
+         String token = UUID.randomUUID().toString();
         employee.setToken(token);
 
         employeeRepository.save(employee);
