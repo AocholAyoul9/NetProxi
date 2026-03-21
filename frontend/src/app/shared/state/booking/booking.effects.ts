@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { ApiService } from '../../../core/api.service';
+import { CompaniesApiService } from '../../../features/companies/services/companies.api';
 import * as BookingActions from './booking.actions';
 import { catchError, from, map, mergeMap, of } from 'rxjs';
 import { Booking } from '../../models/booking.model';
@@ -10,7 +10,7 @@ import * as ClientActions from '../client/client.actions';
 export class BookingEffects {
   createBooking$;
   loadBookings$;
-  constructor(private actions$: Actions, private api: ApiService) {
+  constructor(private actions$: Actions, private api: CompaniesApiService) {
 
 
 this.createBooking$ = createEffect(() =>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, of } from 'rxjs';
-import { ApiService } from '../../../core/api.service';
+import { CompaniesApiService } from '../services/companies.api';
 import * as CompanyActions from './company.actions';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class CompanyEffects {
   updateCompanyEmployee$;
   deleteCompanyEmployee$;
 
-  constructor(private actions$: Actions, private api: ApiService) {
+  constructor(private actions$: Actions, private api: CompaniesApiService) {
     this.loadCompanyEmployees$ = createEffect(() =>
       this.actions$.pipe(
         ofType(CompanyActions.loadCompanyEmployees),
