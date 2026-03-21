@@ -8,11 +8,10 @@ import { SuperAdminDashboardComponent } from './pages/super-admin-dashboard/supe
 import { SignupModalComponent } from './components/signup-modal/signup-modal.component';
 import { ClientDashboardComponent } from './pages/client-dashboard/client-dashboard.component';
 import { EmployeeDashboardComponent } from './pages/employee-dashboard/employee-dashboard.component';
-import { LoginPageComponent } from './auth/pages/login/login.component';
-import { RegisterPageComponent } from './auth/pages/register/register.component';
+
 
 export const routes: Routes = [
-  { path: '', component: NearbyCompaniesComponent },
+  { path: '', component: NearbyCompaniesComponent, pathMatch: 'full' },
   {
     path: 'companies',
     loadChildren: () =>
@@ -43,8 +42,7 @@ export const routes: Routes = [
   },
   { path: 'client-signup', component: SignupModalComponent },
   { path: 'client-dashboard', component: ClientDashboardComponent },
-  { path: 'login', component: LoginPageComponent },
-  { path: 'register', component: RegisterPageComponent },
+  { path: '', loadChildren: () => import('./auth/auth.routes').then((m) => m.authRoutes) },
   {
     path: 'employee-dashboard',
     component: EmployeeDashboardComponent,
