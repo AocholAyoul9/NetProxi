@@ -1,10 +1,10 @@
-package com.shawilTech.identityservice.service;
+package com.shawilTech.netproxi.service;
 
-import com.shawilTech.identityservice.entity.Company;
-import com.shawilTech.identityservice.entity.Subscription;
-import com.shawilTech.identityservice.entity.SubscriptionPlan;
-import com.shawilTech.identityservice.repository.CompanyRepository;
-import com.shawilTech.identityservice.repository.SubscriptionRepository;
+import com.shawilTech.netproxi.entity.Company;
+import com.shawilTech.netproxi.entity.Subscription;
+import com.shawilTech.netproxi.entity.SubscriptionPlan;
+import com.shawilTech.netproxi.repository.CompanyRepository;
+import com.shawilTech.netproxi.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

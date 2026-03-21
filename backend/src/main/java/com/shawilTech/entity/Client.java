@@ -1,5 +1,5 @@
 
-package com.shawilTech.identityservice.entity;
+package com.shawilTech.netproxi.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Builder;

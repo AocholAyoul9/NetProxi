@@ -1,13 +1,13 @@
-package com.shawilTech.identityservice;
+package com.shawilTech.netproxi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class IdentityServiceApplication {
+public class NetproxiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(IdentityServiceApplication.class, args);
+		SpringApplication.run(NetproxiApplication.class, args);
 	}
 
 }

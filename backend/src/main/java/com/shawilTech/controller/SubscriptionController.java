@@ -1,8 +1,8 @@
-package com.shawilTech.identityservice.controller;
+package com.shawilTech.netproxi.controller;
 
-import com.shawilTech.identityservice.entity.Subscription;
-import com.shawilTech.identityservice.entity.SubscriptionPlan;
-import com.shawilTech.identityservice.service.SubscriptionService;
+import com.shawilTech.netproxi.entity.Subscription;
+import com.shawilTech.netproxi.entity.SubscriptionPlan;
+import com.shawilTech.netproxi.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,8 +1,7 @@
-package com.shawilTech.identityservice.service;
-import com.shawilTech.identityservice.security.JwtTokenProvider;
-import com.shawilTech.identityservice.dto.*;
-import com.shawilTech.identityservice.entity.*;
-import com.shawilTech.identityservice.repository.*;
+package com.shawilTech.netproxi.service;
+import com.shawilTech.netproxi.dto.*;
+import com.shawilTech.netproxi.entity.*;
+import com.shawilTech.netproxi.repository.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

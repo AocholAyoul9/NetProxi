@@ -1,6 +1,6 @@
-package com.shawilTech.identityservice.repository;
+package com.shawilTech.netproxi.repository;
 
-import  com.shawilTech.identityservice.entity.Company;
+import  com.shawilTech.netproxi.entity.Company;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

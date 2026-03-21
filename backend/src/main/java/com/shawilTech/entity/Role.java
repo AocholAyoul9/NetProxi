@@ -1,4 +1,4 @@
-package com.shawilTech.identityservice.entity;
+package com.shawilTech.netproxi.entity;
 
 
 
