@@ -18,9 +18,9 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 
-import { provideStore } from '@ngrx/store';
+import { provideStore, provideState } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { companyReducer } from './features/companies/state/company.reducer';
+import { companyFeature } from './features/companies/state/company.reducer';
 import { bookingReducer } from './shared/state/booking/booking.reducer';
 import { CompanyEffects } from './features/companies/state/company.effects';
 import { BookingEffects } from './shared/state/booking/booking.effects';
@@ -47,13 +47,12 @@ export const appConfig: ApplicationConfig = {
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 
     provideStore({
-      company: companyReducer,
       booking: bookingReducer,
       auth: authReducer,
       client: clientReducer,
-      employee: employeeReducer
-     
+      employee: employeeReducer,
     }),
+    provideState(companyFeature),
     provideEffects([CompanyEffects, BookingEffects, AuthEffects, ClientEffects , EmployeeEffects]),
   ],
 };

@@ -1,13 +1,10 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { CompanyState } from './company.reducer';
+import { createSelector } from '@ngrx/store';
+import { companyFeature } from './company.reducer';
 
-interface Company {
+interface CompanyPlan {
   active: boolean;
   activePlan: 'FREE' | 'BASIC' | 'PREMIUM' | 'ENTERPRISE' | null;
 }
-
-export const selectCompanyState =
-  createFeatureSelector<CompanyState>('company');
 
 export interface CompanyStats {
   totalCompanies: number;
@@ -15,11 +12,24 @@ export interface CompanyStats {
   totalRevenue: number;
 }
 
-export const selectAllCompanies = createSelector(
+// Auto-generated selectors from createFeature
+export const {
   selectCompanyState,
-  (state) => state.allCompanies
-);
+  selectAllCompanies,
+  selectCurrentCompany,
+  selectNearbyCompanies,
+  selectCompanyEmployees,
+  selectCompanyBookings,
+  selectCompanyServices,
+  selectLoading,
+  selectError,
+} = companyFeature;
 
+// Backward-compatible aliases
+export const selectCompanyLoading = selectLoading;
+export const selectCompanyError = selectError;
+
+// Computed selector: derive stats from all companies
 export const selectCompanyStats = createSelector(
   selectAllCompanies,
   (companies) => {
@@ -27,57 +37,21 @@ export const selectCompanyStats = createSelector(
 
     const activeCompanies = companies.filter(c => c.active).length;
 
-    const PLAN_PRICES: Record<NonNullable<Company['activePlan']>, number> = {
+    const PLAN_PRICES: Record<NonNullable<CompanyPlan['activePlan']>, number> = {
       FREE: 0,
       BASIC: 49.99,
       PREMIUM: 99.9,
       ENTERPRISE: 249.99,
     };
 
-   const totalRevenue = companies.reduce((sum, c) => {
-  if (c.active && c.activePlan !== null) {
-    const plan = c.activePlan as NonNullable<Company['activePlan']>;
-    return sum + PLAN_PRICES[plan];
+    const totalRevenue = companies.reduce((sum, c) => {
+      if (c.active && c.activePlan !== null) {
+        const plan = c.activePlan as NonNullable<CompanyPlan['activePlan']>;
+        return sum + PLAN_PRICES[plan];
+      }
+      return sum;
+    }, 0);
+
+    return { totalCompanies, activeCompanies, totalRevenue } as CompanyStats;
   }
-  return sum;
-}, 0);
-
-
-    return {
-      totalCompanies,
-      activeCompanies,
-      totalRevenue,
-    } as CompanyStats;
-  }
-);
-
-export const selectCurrentCompany = createSelector(
-  selectCompanyState,
-  (state) => state.currentCompany
-);
-export const selectNearbyCompanies = createSelector(
-  selectCompanyState,
-  (state) => state.nearbyCompanies
-);
-export const selectCompanyLoading = createSelector(
-  selectCompanyState,
-  (state) => state.loading
-);
-export const selectCompanyError = createSelector(
-  selectCompanyState,
-  (state) => state.error
-);
-
-export const selectCompanyServices = createSelector(
-  selectCompanyState,
-  (state) => state.companyServices
-);
-export const selectCompanyBookings = createSelector(
-  selectCompanyState,
-  (state) => state.companyBookings
-);
-
-export const selectCompanyEmployees = createSelector(
-  selectCompanyState,
-  (state) => state.companyEmployees
 );

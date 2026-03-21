@@ -1,7 +1,6 @@
-import { createReducer, on } from '@ngrx/store';
+import { createFeature, createReducer, on } from '@ngrx/store';
 import * as CompanyAction from './company.actions';
 import { Company } from '../models/company.model';
-import { ServiceModel } from '../../../shared/models/service.model';
 
 export interface CompanyState {
   companyEmployees: any[];
@@ -25,8 +24,10 @@ export const initialState: CompanyState = {
   error: null,
 };
 
-export const companyReducer = createReducer(
-  initialState,
+export const companyFeature = createFeature({
+  name: 'company' as const,
+  reducer: createReducer(
+    initialState,
 
   on(CompanyAction.assignEmployeeToBooking, (state) => ({
     ...state,
@@ -162,8 +163,10 @@ on(CompanyAction.updateCompanyServiceSuccess, (state, { service }) => ({
       s.id === service.id ? service : s
     ),
   }))
+  ),
+});
 
-);
+export const companyReducer = companyFeature.reducer;
 
 
 
