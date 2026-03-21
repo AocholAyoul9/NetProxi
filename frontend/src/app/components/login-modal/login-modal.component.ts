@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, HostListener } from '@angular/core';
 import { Store } from '@ngrx/store';
-import * as AuthActions from '../../shared/state/auth/auth.actions';
+import * as AuthActions from '../../auth/store/auth.actions';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
