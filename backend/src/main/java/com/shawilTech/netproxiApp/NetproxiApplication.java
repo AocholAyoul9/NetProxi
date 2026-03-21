@@ -1,4 +1,4 @@
-package com.shawilTech.netproxi;
+package com.shawilTech.netproxiApp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
