@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { Company as CompanyResponseDto } from '../../shared/models/company.model';
+import { Company as CompanyResponseDto } from '../../features/companies/models/company.model';
 
 import * as AdminActions from '../../shared/state/company/company.actions';
 import * as AdminSelectors from '../../shared/state/company/company.selectors';

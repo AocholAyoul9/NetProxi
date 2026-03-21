@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Company } from '../../models/company.model';
+import { Company } from '../../../features/companies/models/company.model';
 import { ServiceModel } from '../../models/service.model';
 
 

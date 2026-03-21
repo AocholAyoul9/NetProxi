@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import * as ClientActions from '../client/client.actions';
-import { Company } from '../../models/company.model';
+import { Company } from '../../../features/companies/models/company.model';
 import { ServiceModel } from '../../models/service.model';
 import { Booking } from '../../models/booking.model';
 

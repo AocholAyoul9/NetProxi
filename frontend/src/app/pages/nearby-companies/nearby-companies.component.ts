@@ -10,7 +10,7 @@ import * as CompanySelectors from '../../shared/state/company/company.selectors'
 import {
   Company,
   ServiceResponseDto as ServiceModel,
-} from '../../shared/models/company.model';
+} from '../../features/companies/models/company.model';
 import { RouterLink } from "@angular/router";
 
 @Component({

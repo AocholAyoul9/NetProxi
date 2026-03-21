@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { Company } from '../../shared/models/company.model';
+import { Company } from '../../features/companies/models/company.model';
 import {
   ServiceModel,
   ServiceModel as ServiceResponseDto,

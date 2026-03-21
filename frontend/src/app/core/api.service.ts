@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { getClientId } from '../auth/utils/token-storage';
-import { Company } from '../shared/models/company.model';
+import { Company } from '../features/companies/models/company.model';
 import { ServiceModel } from '../shared/models/service.model';
 import { Booking, CreateBookingRequest } from '../shared/models/booking.model';
 import { NearbyCompany, ClientProfile } from '../shared/models/client.model';

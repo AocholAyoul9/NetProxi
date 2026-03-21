@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { Company, getPriceRange,ServiceResponseDto } from '../../../../shared/models/company.model';
+import { Company, getPriceRange,ServiceResponseDto } from '../../models/company.model';
 import { Store } from '@ngrx/store';
 import { ActivatedRoute } from '@angular/router';
 import * as CompanyActions from '../../../../shared/state/company/company.actions';

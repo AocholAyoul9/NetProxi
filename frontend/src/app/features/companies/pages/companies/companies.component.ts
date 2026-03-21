@@ -11,7 +11,7 @@ import {
   Company,
   ServiceResponseDto as ServiceModel,
   getPriceRange,
-} from '../../../../shared/models/company.model';
+} from '../../models/company.model';
 import { RouterLink } from '@angular/router';
 
 
