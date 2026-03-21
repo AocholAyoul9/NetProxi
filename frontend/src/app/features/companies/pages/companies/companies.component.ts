@@ -4,14 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { Store } from '@ngrx/store';
 import { Observable, map } from 'rxjs';
-import * as CompanyActions from '../../shared/state/company/company.actions';
-import * as CompanySelectors from '../../shared/state/company/company.selectors';
+import * as CompanyActions from '../../../../shared/state/company/company.actions';
+import * as CompanySelectors from '../../../../shared/state/company/company.selectors';
 
 import {
   Company,
   ServiceResponseDto as ServiceModel,
   getPriceRange,
-} from '../../shared/models/company.model';
+} from '../../../../shared/models/company.model';
 import { RouterLink } from '@angular/router';
 
 

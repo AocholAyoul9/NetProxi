@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { NearbyCompaniesComponent } from './pages/nearby-companies/nearby-companies.component';
-import { CompaniesComponent } from './pages/companies/companies.component';
+import { CompaniesComponent } from './features/companies/pages/companies/companies.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ContactComponent } from './pages/contact/contact.component';
-import { CompanyDetailComponent } from './pages/company-detail/company-detail.component';
+import { CompanyDetailComponent } from './features/companies/pages/company-detail/company-detail.component';
 import { CompanyAdminDashboardComponent } from './pages/company-admin-dashboard/company-admin-dashboard.component';
 import { SuperAdminDashboardComponent } from './pages/super-admin-dashboard/super-admin-dashboard.component';
 import { SignupModalComponent } from './components/signup-modal/signup-modal.component';
