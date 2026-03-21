@@ -4,7 +4,7 @@ import { BookingApiService } from '../services/booking.api';
 import * as BookingActions from './booking.actions';
 import { catchError, from, map, mergeMap, of } from 'rxjs';
 import { Booking } from '../models/booking.model';
-import * as ClientActions from '../../../shared/state/client/client.actions';
+import * as ClientActions from '../../client/state/client.actions';
 
 @Injectable()
 export class BookingEffects {

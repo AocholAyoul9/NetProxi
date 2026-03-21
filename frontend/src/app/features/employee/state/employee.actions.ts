@@ -5,7 +5,7 @@ import {
   EmployeeProfile, 
   EmployeeStats,
   EmployeeSchedule 
-} from '../../models/employee.model';
+} from '../models/employee.model';
 
 // Load Profile
 export const loadEmployeeProfile = createAction('[Employee] Load Profile');

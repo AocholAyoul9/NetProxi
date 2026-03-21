@@ -13,9 +13,9 @@ import {
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 
-import { NearbyCompany } from '../../../../shared/models/client.model';
-import * as ClientSelectors from '../../../../shared/state/client/client.selector';
-import * as ClientActions from '../../../../shared/state/client/client.actions';
+import { NearbyCompany } from '../../../client/models/client.model';
+import * as ClientSelectors from '../../../client/state/client.selectors';
+import * as ClientActions from '../../../client/state/client.actions';
 import * as BookingActions from '../../../booking/state/booking.actions';
 
 import { Booking, CreateBookingRequest } from '../../../booking/models/booking.model';

@@ -1,4 +1,4 @@
-import { EmployeeTask, EmployeeNotification, EmployeeProfile, EmployeeStats } from '../../models/employee.model';
+import { EmployeeTask, EmployeeNotification, EmployeeProfile, EmployeeStats } from '../models/employee.model';
 
 export interface EmployeeState {
   profile: EmployeeProfile | null;

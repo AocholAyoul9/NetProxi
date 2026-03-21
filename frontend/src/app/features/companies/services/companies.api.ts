@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Company } from '../models/company.model';
 import { ServiceModel } from '../../../shared/models/service.model';
 import { Booking, CreateBookingRequest } from '../../../features/booking/models/booking.model';
-import { NearbyCompany } from '../../../shared/models/client.model';
+import { NearbyCompany } from '../../client/models/client.model';
 
 @Injectable({
   providedIn: 'root',

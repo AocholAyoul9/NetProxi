@@ -28,10 +28,10 @@ import { authFeature } from './features/auth/state/auth.reducer';
 import { AuthEffects } from './features/auth/state/auth.effects';
 import { authInterceptor } from './features/auth/interceptors/auth.interceptor';
 import { GoogleMapsModule } from '@angular/google-maps';
-import { ClientEffects } from './shared/state/client/client.effects';
-import { clientReducer } from './shared/state/client/client.reducer';
-import { employeeReducer } from './shared/state/employee/employee.reducer';
-import { EmployeeEffects } from './shared/state/employee/employee.effects';
+import { ClientEffects } from './features/client/state/client.effects';
+import { clientReducer } from './features/client/state/client.reducer';
+import { employeeReducer } from './features/employee/state/employee.reducer';
+import { EmployeeEffects } from './features/employee/state/employee.effects';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 

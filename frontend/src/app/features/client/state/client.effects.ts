@@ -3,12 +3,12 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import * as ClientActions from './client.actions';
-import * as AuthActions from '../../../features/auth/state/auth.actions';
+import * as AuthActions from '../../auth/state/auth.actions';
 import { ApiService } from '../../../core/api.service';
 import {
   NearbyCompany,
-} from '../../models/client.model';
-import { Booking } from '../../../features/booking/models/booking.model';
+} from '../models/client.model';
+import { Booking } from '../../booking/models/booking.model';
 
 @Injectable()
 export class ClientEffects {

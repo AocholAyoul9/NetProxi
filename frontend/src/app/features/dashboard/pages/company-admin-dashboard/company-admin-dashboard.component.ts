@@ -14,7 +14,7 @@ import {
   Employee,
   EmployeeCreateModel,
   EmployeeUpdateModel,
-} from '../../../../shared/models/employee.model';
+} from '../../../employee/models/employee.model';
 
 import * as CompanySelectors from '../../../companies/state/company.selectors';
 import * as CompanyActions from '../../../companies/state/company.actions';

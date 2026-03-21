@@ -2,8 +2,8 @@ import { createAction, props } from '@ngrx/store';
 import { 
   NearbyCompany, 
   ClientProfile 
-} from '../../models/client.model';
-import { Booking } from '../../../features/booking/models/booking.model';
+} from '../models/client.model';
+import { Booking } from '../../booking/models/booking.model';
 
 
 export const registerClient = createAction('[Client] Register Client', props<{name: string; email: string; password: string; phone: string; address: string}>());

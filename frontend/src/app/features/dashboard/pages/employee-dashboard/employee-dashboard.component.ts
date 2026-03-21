@@ -5,9 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription, interval, of } from 'rxjs';
 
-import * as EmployeeSelectors from '../../../../shared/state/employee/employee.selector';
-import * as EmployeeActions from '../../../../shared/state/employee/employee.actions';
-import { EmployeeTask, EmployeeNotification } from '../../../../shared/models/employee.model';
+import * as EmployeeSelectors from '../../../employee/state/employee.selectors';
+import * as EmployeeActions from '../../../employee/state/employee.actions';
+import { EmployeeTask, EmployeeNotification } from '../../../employee/models/employee.model';
 
 @Component({
   selector: 'app-employee-dashboard',
