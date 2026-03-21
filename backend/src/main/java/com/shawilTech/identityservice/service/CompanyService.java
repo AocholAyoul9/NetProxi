@@ -192,7 +192,6 @@ List<Company> companies = companyRepository.findAll();
                 .name(company.getName())
                 .address(company.getAddress())
                 .email(company.getEmail())
-                .password(company.getPassword())
                 .phone(company.getPhone())
                 .logoUrl(company.getLogoUrl())
                 .website(company.getWebsite())

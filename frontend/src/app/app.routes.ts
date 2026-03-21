@@ -9,6 +9,7 @@ import { SuperAdminDashboardComponent } from './pages/super-admin-dashboard/supe
 import { SignupModalComponent } from './components/signup-modal/signup-modal.component';
 import { ClientDashboardComponent } from './pages/client-dashboard/client-dashboard.component';
 import { EmployeeDashboardComponent } from './pages/employee-dashboard/employee-dashboard.component';
+import { AuthGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: NearbyCompaniesComponent },
@@ -16,14 +17,30 @@ export const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'company/:id', component: CompanyDetailComponent },
-  { path: 'company-admin', component: CompanyAdminDashboardComponent },
-  { path: 'super-admin', component: SuperAdminDashboardComponent },
+  {
+    path: 'company-admin',
+    component: CompanyAdminDashboardComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ROLE_COMPANY', 'ROLE_COMPANY_ADMIN'] },
+  },
+  {
+    path: 'super-admin',
+    component: SuperAdminDashboardComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ROLE_SUPER_ADMIN'] },
+  },
   { path: 'client-signup', component: SignupModalComponent },
-  { path: 'client-dashboard', component: ClientDashboardComponent },
+  {
+    path: 'client-dashboard',
+    component: ClientDashboardComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['ROLE_CLIENT'] },
+  },
   {
     path: 'employee-dashboard',
     component: EmployeeDashboardComponent,
-    //canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: { roles: ['ROLE_EMPLOYEE'] },
   },
   { path: '**', redirectTo: '' },
 ];

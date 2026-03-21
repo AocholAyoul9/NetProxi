@@ -4,14 +4,12 @@ import lombok.Data;
 
 @Data
 public class RegisterCompanyRequest {
+    private String username;
     private String email;
     private String password;
-
-    private int phone;
+    private String phone;
     private String companyName;
-
     private String address;
-
-    private Double siteWeb;
-    private Double description;
+    private String website;
+    private String description;
 }

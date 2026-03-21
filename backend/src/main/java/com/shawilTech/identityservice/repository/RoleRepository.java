@@ -2,9 +2,13 @@ package com.shawilTech.identityservice.repository;
 
 import com.shawilTech.identityservice.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
-public interface RoleRepository extends JpaRepository<Role, Long> {
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface RoleRepository extends JpaRepository<Role, UUID> {
     Optional<Role> findByName(String name);
     boolean existsByName(String name);
 }

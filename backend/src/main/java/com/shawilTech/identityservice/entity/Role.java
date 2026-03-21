@@ -1,7 +1,5 @@
 package com.shawilTech.identityservice.entity;
 
-
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
@@ -17,6 +15,9 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /**
+     * Role names: ROLE_SUPER_ADMIN, ROLE_COMPANY_ADMIN, ROLE_EMPLOYEE, ROLE_CLIENT
+     */
     @Column(unique = true, nullable = false)
     private String name;
 }
