@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Company } from '../models/company.model';
 import { ServiceModel } from '../../../shared/models/service.model';
-import { Booking, CreateBookingRequest } from '../../../shared/models/booking.model';
+import { Booking, CreateBookingRequest } from '../../../features/booking/models/booking.model';
 import { NearbyCompany } from '../../../shared/models/client.model';
 
 @Injectable({

@@ -8,7 +8,7 @@ import { ApiService } from '../../../core/api.service';
 import {
   NearbyCompany,
 } from '../../models/client.model';
-import { Booking } from '../../models/booking.model';
+import { Booking } from '../../../features/booking/models/booking.model';
 
 @Injectable()
 export class ClientEffects {

@@ -19,7 +19,7 @@ import {
 import * as CompanySelectors from '../../features/companies/state/company.selectors';
 import * as CompanyActions from '../../features/companies/state/company.actions';
 import { FormsModule } from '@angular/forms';
-import { Booking } from '../../shared/models/booking.model';
+import { Booking } from '../../../features/booking/models/booking.model';
 
 type TabType = 'overview' | 'services' | 'bookings' | 'employees';
 

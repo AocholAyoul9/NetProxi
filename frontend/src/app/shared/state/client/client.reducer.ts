@@ -2,7 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import * as ClientActions from '../client/client.actions';
 import { Company } from '../../../features/companies/models/company.model';
 import { ServiceModel } from '../../models/service.model';
-import { Booking } from '../../models/booking.model';
+import { Booking } from '../../../features/booking/models/booking.model';
 
 export interface ClientState {
   address: string;
