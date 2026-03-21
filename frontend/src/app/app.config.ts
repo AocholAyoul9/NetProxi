@@ -14,6 +14,8 @@ import {
 import {
   provideHttpClient,
   withFetch,
+  withInterceptorsFromDi,
+  HTTP_INTERCEPTORS,
 } from '@angular/common/http';
 
 import { provideStore } from '@ngrx/store';
@@ -29,6 +31,7 @@ import { ClientEffects } from './shared/state/client/client.effects';
 import { clientReducer } from './shared/state/client/client.reducer';
 import { employeeReducer } from './shared/state/employee/employee.reducer';
 import { EmployeeEffects } from './shared/state/employee/employee.effects';
+import { AuthInterceptor } from './core/auth.interceptor';
 
 
 export const appConfig: ApplicationConfig = {
@@ -37,8 +40,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
 
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
     importProvidersFrom(GoogleMapsModule),
+
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 
     provideStore({
       company: companyReducer,

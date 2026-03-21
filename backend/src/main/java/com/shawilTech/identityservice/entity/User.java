@@ -7,7 +7,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "idx_user_email", columnList = "email")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,19 +23,20 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
-
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private  String phone;
+    private String phone;
 
-    @Column(nullable = false)
-    private  String address;
+    private String address;
 
+    @Builder.Default
+    private boolean enabled = true;
+
+    @Builder.Default
     private boolean active = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -44,7 +47,7 @@ public class User {
     )
     private Set<Role> roles;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 }
