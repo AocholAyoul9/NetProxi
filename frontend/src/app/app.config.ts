@@ -12,6 +12,7 @@ import {
 } from '@angular/platform-browser';
 
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withFetch,
   withInterceptors,

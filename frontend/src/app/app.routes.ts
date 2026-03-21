@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
 import { NearbyCompaniesComponent } from './pages/nearby-companies/nearby-companies.component';
 import { CompaniesComponent } from './pages/companies/companies.component';
 import { AboutComponent } from './pages/about/about.component';
