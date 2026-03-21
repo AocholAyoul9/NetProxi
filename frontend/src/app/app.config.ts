@@ -14,8 +14,7 @@ import {
 import {
   provideHttpClient,
   withFetch,
-  withInterceptorsFromDi,
-  HTTP_INTERCEPTORS,
+  withInterceptors,
 } from '@angular/common/http';
 
 import { provideStore } from '@ngrx/store';
@@ -24,8 +23,9 @@ import { companyReducer } from './shared/state/company/company.reducer';
 import { bookingReducer } from './shared/state/booking/booking.reducer';
 import { CompanyEffects } from './shared/state/company/company.effects';
 import { BookingEffects } from './shared/state/booking/booking.effects';
-import { authReducer } from './shared/state/auth/auth.reducer';
-import { AuthEffects } from './shared/state/auth/auth.effects';
+import { authReducer } from './auth/store/auth.reducer';
+import { AuthEffects } from './auth/store/auth.effects';
+import { authInterceptor } from './auth/interceptors/auth.interceptor';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { ClientEffects } from './shared/state/client/client.effects';
 import { clientReducer } from './shared/state/client/client.reducer';
@@ -40,7 +40,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
 
-    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     importProvidersFrom(GoogleMapsModule),
 
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

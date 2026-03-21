@@ -5,8 +5,8 @@ import { SignupModalComponent } from '../../../components/signup-modal/signup-mo
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { selectCurrentCompany, selectIsCompanyLoggedIn ,selectIsClientLoggedIn, selectClient} from '../../../shared/state/auth/auth.selectors';
-import * as AuthActions from '../../../shared/state/auth/auth.actions';
+import { selectCurrentCompany, selectIsCompanyLoggedIn ,selectIsClientLoggedIn, selectClient} from '../../../auth/store/auth.selectors';
+import * as AuthActions from '../../../auth/store/auth.actions';
 
 @Component({
   selector: 'app-header',
