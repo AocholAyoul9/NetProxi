@@ -24,6 +24,17 @@ export function setRefreshToken(token: string): void {
   localStorage.setItem(REFRESH_TOKEN_KEY, token);
 }
 
+export function getClientId(): string {
+  if (typeof window === 'undefined') return '';
+  const raw = localStorage.getItem('client');
+  if (!raw) return '';
+  try {
+    return JSON.parse(raw).id || '';
+  } catch {
+    return '';
+  }
+}
+
 export function clearTokens(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(ACCESS_TOKEN_KEY);

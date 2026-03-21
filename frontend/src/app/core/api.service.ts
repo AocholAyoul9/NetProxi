@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
+import { getClientId } from '../auth/utils/token-storage';
 import { Company } from '../shared/models/company.model';
 import { ServiceModel } from '../shared/models/service.model';
 import { Booking, CreateBookingRequest } from '../shared/models/booking.model';
@@ -14,7 +14,7 @@ import { EmployeeProfile, EmployeeTask ,EmployeeSchedule , EmployeeStats, Employ
 export class ApiService {
   private baseUrl = 'http://localhost:8082/api';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   /* private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();
@@ -251,7 +251,7 @@ export class ApiService {
 
 // ---------------- Client Profile ----------------
 getClientProfile(): Observable<ClientProfile> {
-  const clientId = this.authService.getClientId();
+  const clientId = getClientId();
 
   return this.http.get<ClientProfile>(`${this.baseUrl}/clients/profile`, {
     headers: new HttpHeaders({
