@@ -1,8 +1,8 @@
-package com.shawilTech.identityservice.controller;
+package com.shawilTech.netproxi.controller;
 
-import com.shawilTech.identityservice.dto.ServiceRequestDto;
-import com.shawilTech.identityservice.dto.ServiceResponseDto;
-import com.shawilTech.identityservice.service.CompanyService;
+import com.shawilTech.netproxi.dto.ServiceRequestDto;
+import com.shawilTech.netproxi.dto.ServiceResponseDto;
+import com.shawilTech.netproxi.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

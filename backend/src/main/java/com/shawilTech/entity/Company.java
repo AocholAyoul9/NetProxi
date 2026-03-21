@@ -1,11 +1,11 @@
-package com.shawilTech.identityservice.entity;
+package com.shawilTech.netproxi.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.shawilTech.identityservice.entity.ServiceEntity;
+import com.shawilTech.netproxi.entity.ServiceEntity;
 
 
 @Entity

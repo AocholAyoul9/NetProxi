@@ -1,6 +1,6 @@
-package com.shawilTech.identityservice.repository;
+package com.shawilTech.netproxi.repository;
 
-import com.shawilTech.identityservice.entity.Role;
+import com.shawilTech.netproxi.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

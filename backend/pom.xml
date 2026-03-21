@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.shawilTech</groupId>
-	<artifactId>identity-service</artifactId>
+	<artifactId>netproxi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>identity-service</name>
-	<description>identity-service description</description>
+	<name>netproxi</name>
+	<description>netproxi description</description>
 	<url/>
 	<licenses>
 		<license/>

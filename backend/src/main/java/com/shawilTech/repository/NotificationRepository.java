@@ -1,11 +1,11 @@
-package com.shawilTech.identityservice.repository;
+package com.shawilTech.netproxi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
-import com.shawilTech.identityservice.entity.*;
+import com.shawilTech.netproxi.entity.*;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {

@@ -1,12 +1,12 @@
-package com.shawilTech.identityservice.service;
+package com.shawilTech.netproxi.service;
 
-import com.shawilTech.identityservice.entity.*;
-import com.shawilTech.identityservice.dto.*;
-import com.shawilTech.identityservice.repository.*;
+import com.shawilTech.netproxi.entity.*;
+import com.shawilTech.netproxi.dto.*;
+import com.shawilTech.netproxi.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.shawilTech.identityservice.service.GeocodingService;
+import com.shawilTech.netproxi.service.GeocodingService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.shawilTech.identityservice.security.JwtTokenProvider;

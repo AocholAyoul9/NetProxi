@@ -1,6 +1,6 @@
-package com.shawilTech.identityservice.dto;
+package com.shawilTech.netproxi.dto;
 
-import com.shawilTech.identityservice.entity.BookingStatus;
+import com.shawilTech.netproxi.entity.BookingStatus;
 
 import lombok.Data;
 import java.util.UUID;
