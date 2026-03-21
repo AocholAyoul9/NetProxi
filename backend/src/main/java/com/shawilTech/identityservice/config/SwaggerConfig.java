@@ -1,4 +1,4 @@
-package com.cleanhive.identity.config;
+package com.shawilTech.identityservice.config;
 
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.*;
