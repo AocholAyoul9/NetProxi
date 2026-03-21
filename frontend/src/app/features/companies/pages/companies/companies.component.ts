@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { Store } from '@ngrx/store';
 import { Observable, map } from 'rxjs';
-import * as CompanyActions from '../../../../shared/state/company/company.actions';
-import * as CompanySelectors from '../../../../shared/state/company/company.selectors';
+import * as CompanyActions from '../../state/company.actions';
+import * as CompanySelectors from '../../state/company.selectors';
 
 import {
   Company,

@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { Company, getPriceRange,ServiceResponseDto } from '../../models/company.model';
 import { Store } from '@ngrx/store';
 import { ActivatedRoute } from '@angular/router';
-import * as CompanyActions from '../../../../shared/state/company/company.actions';
-import * as CompanySelectors from '../../../../shared/state/company/company.selectors';
+import * as CompanyActions from '../../state/company.actions';
+import * as CompanySelectors from '../../state/company.selectors';
 import { CommonModule } from '@angular/common';
 
 @Component({

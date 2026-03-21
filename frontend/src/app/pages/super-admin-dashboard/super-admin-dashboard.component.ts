@@ -6,8 +6,8 @@ import { Store } from '@ngrx/store';
 
 import { Company as CompanyResponseDto } from '../../features/companies/models/company.model';
 
-import * as AdminActions from '../../shared/state/company/company.actions';
-import * as AdminSelectors from '../../shared/state/company/company.selectors';
+import * as AdminActions from '../../features/companies/state/company.actions';
+import * as AdminSelectors from '../../features/companies/state/company.selectors';
 
 @Component({
   selector: 'app-super-admin-dashboard',

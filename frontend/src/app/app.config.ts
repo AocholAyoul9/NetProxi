@@ -20,9 +20,9 @@ import {
 
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { companyReducer } from './shared/state/company/company.reducer';
+import { companyReducer } from './features/companies/state/company.reducer';
 import { bookingReducer } from './shared/state/booking/booking.reducer';
-import { CompanyEffects } from './shared/state/company/company.effects';
+import { CompanyEffects } from './features/companies/state/company.effects';
 import { BookingEffects } from './shared/state/booking/booking.effects';
 import { authReducer } from './auth/store/auth.reducer';
 import { AuthEffects } from './auth/store/auth.effects';

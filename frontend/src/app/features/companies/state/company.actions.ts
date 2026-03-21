@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
-import { Company } from '../../../features/companies/models/company.model';
-import { ServiceModel } from '../../models/service.model';
+import { Company } from '../models/company.model';
+import { ServiceModel } from '../../../shared/models/service.model';
 
 
 

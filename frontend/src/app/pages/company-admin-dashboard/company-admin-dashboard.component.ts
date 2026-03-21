@@ -16,8 +16,8 @@ import {
   EmployeeUpdateModel,
 } from '../../shared/models/employee.model';
 
-import * as CompanySelectors from '../../shared/state/company/company.selectors';
-import * as CompanyActions from '../../shared/state/company/company.actions';
+import * as CompanySelectors from '../../features/companies/state/company.selectors';
+import * as CompanyActions from '../../features/companies/state/company.actions';
 import { FormsModule } from '@angular/forms';
 import { Booking } from '../../shared/models/booking.model';
 
