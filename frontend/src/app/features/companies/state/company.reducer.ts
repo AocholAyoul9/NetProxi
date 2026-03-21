@@ -1,0 +1,173 @@
+import { createFeature, createReducer, on } from '@ngrx/store';
+import * as CompanyAction from './company.actions';
+import { Company } from '../models/company.model';
+
+export interface CompanyState {
+  companyEmployees: any[];
+  companyBookings: any[];
+  currentCompany: Company | null;
+  nearbyCompanies: Company[];
+  allCompanies: Company[];
+  companyServices: any[];
+  loading: boolean;
+  error: any;
+}
+
+export const initialState: CompanyState = {
+  companyEmployees: [],
+  companyBookings: [],
+  currentCompany: null,
+  companyServices: [],
+  nearbyCompanies: [],
+  allCompanies: [],
+  loading: false,
+  error: null,
+};
+
+export const companyFeature = createFeature({
+  name: 'company' as const,
+  reducer: createReducer(
+    initialState,
+
+  on(CompanyAction.assignEmployeeToBooking, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(CompanyAction.assignEmployeeToBookingSuccess, (state, { booking }) => ({
+    ...state,
+    companyBookings: state.companyBookings.map(b =>
+      b.id === booking.id ? booking : b
+    ),
+    loading: false,
+  })),
+
+  on(CompanyAction.assignEmployeeToBookingFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+
+  on(CompanyAction.loadCompanyEmployees, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(CompanyAction.loadCompanyEmployeesSuccess, (state, { employees }) => ({
+    ...state,
+    companyEmployees: employees,
+    loading: false,
+  })),
+  on(CompanyAction.loadCompanyEmployeesFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+  on(CompanyAction.loadCompanyBookings, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(CompanyAction.loadCompanyBookingsSuccess, (state, { bookings }) => ({
+    ...state,
+    companyBookings: bookings,
+    loading: false,
+  })),
+  on(CompanyAction.loadCompanyBookingsFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+
+  on(CompanyAction.loadCompanyServices, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(CompanyAction.loadCompanyServicesSuccess, (state, { services }) => ({
+    ...state,
+    companyServices: services,
+    loading: false,
+  })),
+  on(CompanyAction.loadCompanyServicesFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+  on(CompanyAction.loadAllCompanies, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(CompanyAction.loadAllCompaniesSuccess, (state, { companies }) => ({
+    ...state,
+    loading: false,
+    allCompanies: companies,
+  })),
+  on(CompanyAction.loadAllCompaniesFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
+
+  on(CompanyAction.loadCompany, (state) => ({ ...state, loading: true })),
+  on(CompanyAction.loadCompanySuccess, (state, { company }) => ({
+    ...state,
+    currentCompany: company,
+    loading: false,
+  })),
+  on(CompanyAction.loadCompanyFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+  on(CompanyAction.loadNearbyCompanies, (state) => ({
+    ...state,
+    loading: true,
+  })),
+  on(CompanyAction.loadNearbyCompaniesSuccess, (state, { companies }) => ({
+    ...state,
+    nearbyCompanies: companies,
+    loading: false,
+  })),
+  on(CompanyAction.loadNearbyCompaniesFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false,
+  })),
+
+  on(CompanyAction.addCompanyEmployeeSuccess, (state, { employee }) => ({
+    ...state,
+    companyEmployees: [...state.companyEmployees, employee],
+  })),
+
+  on(CompanyAction.updateCompanyEmployeeSuccess, (state, { employee }) => ({
+    ...state,
+    companyEmployees: state.companyEmployees.map(emp =>
+      emp.id === employee.id ? employee : emp
+    ),
+  })),
+on(CompanyAction.deleteCompanyEmployeeSuccess, (state, { employeeId }) => ({
+    ...state,
+    companyEmployees: state.companyEmployees.filter(emp => emp.id !== employeeId)
+  })),
+  
+  on(CompanyAction.createCompanyServiceSuccess, (state, { services }) => ({
+    ...state,
+    companyServices: [...state.companyServices, services],
+  })),
+  on(CompanyAction.deleteCompanyServiceSuccess, (state, { serviceId }) => ({
+    ...state,
+    companyServices: state.companyServices.filter(s => s.id !== serviceId)
+})),
+
+on(CompanyAction.updateCompanyServiceSuccess, (state, { service }) => ({
+    ...state,
+    companyServices: state.companyServices.map(s =>
+      s.id === service.id ? service : s
+    ),
+  }))
+  ),
+});
+
+export const companyReducer = companyFeature.reducer;
+
+
+
+

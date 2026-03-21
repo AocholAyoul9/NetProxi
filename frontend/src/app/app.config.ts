@@ -12,26 +12,27 @@ import {
 } from '@angular/platform-browser';
 
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withFetch,
   withInterceptors,
 } from '@angular/common/http';
 
-import { provideStore } from '@ngrx/store';
+import { provideStore, provideState } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { companyReducer } from './shared/state/company/company.reducer';
-import { bookingReducer } from './shared/state/booking/booking.reducer';
-import { CompanyEffects } from './shared/state/company/company.effects';
-import { BookingEffects } from './shared/state/booking/booking.effects';
-import { authReducer } from './auth/store/auth.reducer';
-import { AuthEffects } from './auth/store/auth.effects';
-import { authInterceptor } from './auth/interceptors/auth.interceptor';
+import { companyFeature } from './features/companies/state/company.reducer';
+import { bookingFeature } from './features/booking/state/booking.reducer';
+import { CompanyEffects } from './features/companies/state/company.effects';
+import { BookingEffects } from './features/booking/state/booking.effects';
+import { authFeature } from './features/auth/state/auth.reducer';
+import { AuthEffects } from './features/auth/state/auth.effects';
+import { authInterceptor } from './features/auth/interceptors/auth.interceptor';
 import { GoogleMapsModule } from '@angular/google-maps';
-import { ClientEffects } from './shared/state/client/client.effects';
-import { clientReducer } from './shared/state/client/client.reducer';
-import { employeeReducer } from './shared/state/employee/employee.reducer';
-import { EmployeeEffects } from './shared/state/employee/employee.effects';
-import { AuthInterceptor } from './core/auth.interceptor';
+import { ClientEffects } from './features/client/state/client.effects';
+import { clientReducer } from './features/client/state/client.reducer';
+import { employeeReducer } from './features/employee/state/employee.reducer';
+import { EmployeeEffects } from './features/employee/state/employee.effects';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 
 export const appConfig: ApplicationConfig = {
@@ -46,13 +47,12 @@ export const appConfig: ApplicationConfig = {
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 
     provideStore({
-      company: companyReducer,
-      booking: bookingReducer,
-      auth: authReducer,
       client: clientReducer,
-      employee: employeeReducer
-     
+      employee: employeeReducer,
     }),
+    provideState(companyFeature),
+    provideState(authFeature),
+    provideState(bookingFeature),
     provideEffects([CompanyEffects, BookingEffects, AuthEffects, ClientEffects , EmployeeEffects]),
   ],
 };
