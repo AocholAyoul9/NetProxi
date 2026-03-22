@@ -1,10 +1,11 @@
 .header {
-  background: #ffffff;
+  background: var(--bg-color, #ffffff);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
   border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.3s ease;
 
   .container {
     max-width: 1200px;
@@ -269,6 +270,26 @@
       background: #1d4ed8;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+  }
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  select {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.25s ease;
+
+    &:hover,
+    &:focus {
+      border-color: var(--primary-color, #2563eb);
+      outline: none;
     }
   }
 }

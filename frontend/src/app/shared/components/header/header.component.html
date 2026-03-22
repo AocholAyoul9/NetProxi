@@ -85,6 +85,18 @@
       (closeModal)="closeSignup()">
     </app-signup-modal>
 
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+      <select
+        [value]="currentTheme"
+        (change)="setTheme($any($event.target).value)"
+        aria-label="Select theme">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+
     <!-- Hamburger (only for public users) -->
     <button
       *ngIf="!(isCompanyLoggedIn$ | async)"
