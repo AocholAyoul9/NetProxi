@@ -1,0 +1,39 @@
+// ─── Theme Token Maps ────────────────────────────────────────────────────────
+
+$light-theme: (
+  bg: #ffffff,
+  text: #000000,
+  primary: #1976d2
+);
+
+$dark-theme: (
+  bg: #121212,
+  text: #ffffff,
+  primary: #90caf9
+);
+
+// ─── Mixin: Generate CSS variables from a theme map ──────────────────────────
+
+@mixin theme-vars($theme) {
+  --bg-color: #{map-get($theme, bg)};
+  --text-color: #{map-get($theme, text)};
+  --primary-color: #{map-get($theme, primary)};
+}
+
+// ─── Apply themes via body class ─────────────────────────────────────────────
+
+:root {
+  @include theme-vars($light-theme);
+}
+
+body.dark-theme {
+  @include theme-vars($dark-theme);
+}
+
+// ─── Global theme-aware base styles ──────────────────────────────────────────
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

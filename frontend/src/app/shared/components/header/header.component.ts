@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectCurrentCompany, selectIsCompanyLoggedIn ,selectIsClientLoggedIn, selectClient} from '../../../features/auth/state/auth.selectors';
 import * as AuthActions from '../../../features/auth/state/auth.actions';
+import { ThemeService, ThemeMode } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -25,13 +26,14 @@ export class HeaderComponent {
   company$: Observable<any>;
   client$: Observable<any>;
 
-  constructor(private store
-    : Store) {
+  currentTheme: ThemeMode;
+
+  constructor(private store: Store, private themeService: ThemeService) {
     this.isCompanyLoggedIn$ = this.store.select(selectIsCompanyLoggedIn);
     this.isClientLoggedIn$ = this.store.select(selectIsClientLoggedIn);
     this.company$ = this.store.select(selectCurrentCompany);
     this.client$ = this.store.select(selectClient);
-
+    this.currentTheme = this.themeService.getTheme();
   }
 
   showLogin = false;
@@ -39,6 +41,11 @@ export class HeaderComponent {
   menuIsOpen = false;
 
   menuOpen = signal(false);
+
+  setTheme(theme: string): void {
+    this.currentTheme = theme as ThemeMode;
+    this.themeService.setTheme(this.currentTheme);
+  }
 
   toggleMenu() {
     this.menuOpen.set(!this.menuOpen());
