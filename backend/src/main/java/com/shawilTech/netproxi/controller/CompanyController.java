@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.*;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/companies")
 @RequiredArgsConstructor
