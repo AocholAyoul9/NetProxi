@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Router } from '@angular/router';
 import { catchError, map, mergeMap, of, tap } from 'rxjs';
@@ -11,6 +11,9 @@ import { setToken, setRefreshToken, clearTokens } from '../utils/token-storage';
 
 @Injectable()
 export class AuthEffects {
+  private actions$ = inject(Actions);
+  private authApiService = inject(AuthApiService);
+
   // New unified login effect
   login$ = createEffect(() =>
     this.actions$.pipe(
@@ -266,9 +269,7 @@ export class AuthEffects {
     { dispatch: false }
   );
 
-  constructor(
-    private actions$: Actions,
-    private authApiService: AuthApiService,
-    private router: Router
-  ) {}
+  private router = inject(Router);
+
+  constructor() {}
 }

@@ -1,10 +1,15 @@
 // client.selectors.ts
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { ClientState } from './client.reducer';
+import { Booking } from '../../booking/models/booking.model';
+import { NearbyCompany } from '../models/client.model';
+
+type TabType = 'overview' | 'reservations' | 'companies' | 'history';
 
 
 // Feature selector
 export const selectClientState = createFeatureSelector<ClientState>('client');
+
 
 
 
@@ -59,7 +64,7 @@ export const selectSearchQuery = createSelector(
 
 export const selectActiveTab = createSelector(
   selectClientState,
-  (state) => state.activeTab
+  (state): TabType => (state.activeTab as TabType) || 'overview'
 );
 
 export const selectReservationFilter = createSelector(
@@ -75,33 +80,33 @@ export const selectPagination = createSelector(
 // 3️⃣ Derived selectors
 export const selectUpcomingReservations = createSelector(
   selectClientReservations,
-  (reservations) => {
+  (reservations: Booking[]) => {
     const now = new Date();
     return reservations
-      .filter(r => new Date(r.startTime) >= now && r.status !== 'CANCELLED' && r.status !== 'COMPLETED')
-      .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+      .filter((r: Booking) => new Date(r.startTime) >= now && r.status !== 'CANCELLED' && r.status !== 'COMPLETED')
+      .sort((a: Booking, b: Booking) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
   }
 );
 
 export const selectRecentReservations = createSelector(
   selectClientReservations,
-  (reservations) =>
+  (reservations: Booking[]) =>
     reservations
-      .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
+      .sort((a: Booking, b: Booking) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
       .slice(0, 5)
 );
 
 export const selectFilteredReservations = createSelector(
   selectClientReservations,
   selectReservationFilter,
-  (reservations, filter) => {
+  (reservations: Booking[], filter: string) => {
     switch (filter) {
       case 'upcoming':
-        return reservations.filter(r => ['PENDING', 'CONFIRMED', 'IN_PROGRESS'].includes(r.status));
+        return reservations.filter((r: Booking) => ['PENDING', 'CONFIRMED', 'IN_PROGRESS'].includes(r.status));
       case 'completed':
-        return reservations.filter(r => r.status === 'COMPLETED');
+        return reservations.filter((r: Booking) => r.status === 'COMPLETED');
       case 'cancelled':
-        return reservations.filter(r => r.status === 'CANCELLED');
+        return reservations.filter((r: Booking) => r.status === 'CANCELLED');
       default:
         return reservations;
     }
@@ -111,7 +116,7 @@ export const selectFilteredReservations = createSelector(
 export const selectPaginatedReservations = createSelector(
   selectFilteredReservations,
   selectPagination,
-  (reservations, pagination) => {
+  (reservations: Booking[], pagination: { currentPage: number; itemsPerPage: number; totalItems: number }) => {
     const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
     return reservations.slice(startIndex, startIndex + pagination.itemsPerPage);
   }
@@ -120,27 +125,27 @@ export const selectPaginatedReservations = createSelector(
 export const selectTotalPages = createSelector(
   selectFilteredReservations,
   selectPagination,
-  (reservations, pagination) => Math.ceil(reservations.length / pagination.itemsPerPage)
+  (reservations: Booking[], pagination: { currentPage: number; itemsPerPage: number; totalItems: number }) => Math.ceil(reservations.length / pagination.itemsPerPage)
 );
 
 export const selectDisplayedCompanies = createSelector(
   selectNearbyCompanies,
   selectSearchResults,
   selectSearchQuery,
-  (nearbyCompanies, searchResults, searchQuery) => searchQuery ? searchResults : nearbyCompanies
+  (nearbyCompanies: NearbyCompany[], searchResults: NearbyCompany[], searchQuery: string) => searchQuery ? searchResults : nearbyCompanies
 );
 
 export const selectHasSearchResults = createSelector(
   selectSearchQuery,
-  (query) => query.length > 0
+  (query: string) => query.length > 0
 );
 
 // Selector for the latest booking created
 export const selectLatestBooking = createSelector(
   selectClientReservations,
-  (reservations) => {
+  (reservations: Booking[]) => {
     if (!reservations || reservations.length === 0) return null;
-    return reservations.reduce((latest, current) =>
+    return reservations.reduce((latest: Booking, current: Booking) =>
       new Date(current.startTime) > new Date(latest.startTime) ? current : latest
     );
   }

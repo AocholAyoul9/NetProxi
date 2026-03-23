@@ -3,7 +3,6 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import * as ClientActions from './client.actions';
-import * as AuthActions from '../../auth/state/auth.actions';
 import { ApiService } from '../../../core/api.service';
 import {
   NearbyCompany,
@@ -12,21 +11,22 @@ import { Booking } from '../../booking/models/booking.model';
 
 @Injectable()
 export class ClientEffects {
-  loadClientReservations$;
-  loadNearbyCompanies$;
-  searchCompanies$;
-  updateReservationStatus$;
-  addReservationReview$;
-  toggleFavoriteCompany$;
-  loadClientProfileAfterLogin$;
-  loadClientProfile$;
+  loadClientReservations$: any;
+  loadNearbyCompanies$: any;
+  searchCompanies$: any;
+  updateReservationStatus$: any;
+  addReservationReview$: any;
+  toggleFavoriteCompany$: any;
+  loadClientProfileAfterLogin$: any;
+  loadClientProfile$: any;
+  
   constructor(
     private actions$: Actions,
     private api: ApiService
   ) {
     this.loadClientProfileAfterLogin$ = createEffect(() =>
       this.actions$.pipe(
-        ofType(AuthActions.loginClientSuccess),
+        ofType(ClientActions.loginClientSuccess),
         map(() => ClientActions.loadClientProfile())
       )
     );
@@ -36,10 +36,10 @@ export class ClientEffects {
         ofType(ClientActions.loadClientProfile),
         mergeMap(() =>
           this.api.getClientProfile().pipe(
-            map((profile) =>
+            map((profile: any) =>
               ClientActions.loadClientProfileSuccess({ profile })
             ),
-            catchError((error) =>
+            catchError((error: any) =>
               of(
                 ClientActions.loadClientProfileFailure({ error: error.message })
               )
@@ -49,38 +49,33 @@ export class ClientEffects {
       )
     );
 
-// ---------------- Load client reservations ----------------
-this.loadClientReservations$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(ClientActions.loadClientReservations),
-    mergeMap(({ clientId }) => {
-      if (!clientId) {
-        return of(
-          ClientActions.loadClientReservationsFailure({
-            error: 'Client ID not found',
-          })
-        );
-      }
+    // Load client reservations
+    this.loadClientReservations$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(ClientActions.loadClientReservations),
+        mergeMap(({ clientId }: { clientId: string }) => {
+          if (!clientId) {
+            return of(
+              ClientActions.loadClientReservationsFailure({
+                error: 'Client ID not found',
+              })
+            );
+          }
 
-      return this.api.getClientReservations(clientId).pipe(
-        map((reservations: Booking[]) =>
-          ClientActions.loadClientReservationsSuccess({ reservations })
-        ),
-        catchError((error) =>
-          of(
-            ClientActions.loadClientReservationsFailure({
-              error: error.message,
-            })
-          )
-        )
-      );
-    })
-  )
-);
-
-
-
-
-
-
+          return this.api.getClientReservations(clientId).pipe(
+            map((reservations: Booking[]) =>
+              ClientActions.loadClientReservationsSuccess({ reservations })
+            ),
+            catchError((error: any) =>
+              of(
+                ClientActions.loadClientReservationsFailure({
+                  error: error.message,
+                })
+              )
+            )
+          );
+        })
+      )
+    );
+  }
 }
