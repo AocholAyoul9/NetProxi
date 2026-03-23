@@ -20,7 +20,6 @@ import com.shawilTech.netproxi.service.RefreshTokenService;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
