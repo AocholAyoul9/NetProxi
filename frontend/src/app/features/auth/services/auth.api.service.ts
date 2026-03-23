@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
-  private baseUrl = 'http://localhost:8082/api';
+  private baseUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
 
@@ -14,17 +14,17 @@ export class AuthApiService {
     userType: 'client' | 'company' | 'employee'
   ): Observable<any> {
     const endpointMap: Record<string, string> = {
-      client: '/clients/login',
-      company: '/companies/login',
-      employee: '/companies/employees/login',
+      client: '/auth/clients/login',
+      company: '/auth/companies/login',
+      employee: '/auth/companies/employees/login',
     };
     return this.http.post(`${this.baseUrl}${endpointMap[userType]}`, { email, password });
   }
 
   register(userData: any, userType: 'client' | 'company'): Observable<any> {
     const endpointMap: Record<string, string> = {
-      client: '/clients/register',
-      company: '/companies/register',
+      client: '/auth/clients/register',
+      company: '/auth/companies/register',
     };
     return this.http.post(`${this.baseUrl}${endpointMap[userType]}`, userData);
   }
