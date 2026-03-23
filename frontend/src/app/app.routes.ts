@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
-import { NearbyCompaniesComponent } from './pages/nearby-companies/nearby-companies.component';
-import { AboutComponent } from './pages/about/about.component';
-import { ContactComponent } from './pages/contact/contact.component';
+import { NearbyCompaniesComponent } from './features/companies/pages/nearby-companies/nearby-companies.component';
+
 import { SignupModalComponent } from './components/signup-modal/signup-modal.component';
 
 
@@ -14,8 +13,7 @@ export const routes: Routes = [
         (m) => m.companiesRoutes
       ),
   },
-  { path: 'about', component: AboutComponent },
-  { path: 'contact', component: ContactComponent },
+
   {
     path: 'company/:id',
     loadComponent: () =>
