@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 // ─── Theme Token Maps ────────────────────────────────────────────────────────
 
 $light-theme: (
@@ -15,9 +17,9 @@ $dark-theme: (
 // ─── Mixin: Generate CSS variables from a theme map ──────────────────────────
 
 @mixin theme-vars($theme) {
-  --bg-color: #{map-get($theme, bg)};
-  --text-color: #{map-get($theme, text)};
-  --primary-color: #{map-get($theme, primary)};
+  --bg-color: #{map.get($theme, bg)};
+  --text-color: #{map.get($theme, text)};
+  --primary-color: #{map.get($theme, primary)};
 }
 
 // ─── Apply themes via body class ─────────────────────────────────────────────

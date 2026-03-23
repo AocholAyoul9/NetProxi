@@ -5,6 +5,16 @@ import {
 } from '../models/client.model';
 import { Booking } from '../../booking/models/booking.model';
 
+// Load client profile
+export const loadClientProfile = createAction('[Client] Load Client Profile');
+export const loadClientProfileSuccess = createAction(
+  '[Client] Load Client Profile Success',
+  props<{ profile: ClientProfile }>()
+);
+export const loadClientProfileFailure = createAction(
+  '[Client] Load Client Profile Failure',
+  props<{ error: string }>()
+);
 
 export const registerClient = createAction('[Client] Register Client', props<{name: string; email: string; password: string; phone: string; address: string}>());
 export const registerClientSuccess = createAction('[Client] Register Client Success', props<{clientId: string}>());
@@ -15,9 +25,7 @@ export const loginClientSuccess = createAction('[Client] Login Client Success', 
 export const loginClientFailure = createAction('[Client] Login Client Failure', props<{error: any}>());
 
 export const setAddress = createAction('[Client] Set Address', props<{address: string; lat: number; lng: number}>());
-export const loadNearbyCompanies = createAction('[Client] Load Nearby Companies');
-export const loadNearbyCompaniesSuccess = createAction('[Client] Load Nearby Companies Success', props<{companies: Company[]}>());
-export const loadNearbyCompaniesFailure = createAction('[Client] Load Nearby Companies Failure', props<{error: any}>());
+
 
 // Load client reservations
 export const loadClientReservations = createAction('[Client] Load Reservations', props<{clientId: string}>());
@@ -97,6 +105,32 @@ export const toggleFavoriteCompany = createAction(
 export const toggleFavoriteCompanySuccess = createAction(
   '[Client] Toggle Favorite Company Success',
   props<{ companyId: string; isFavorite: boolean }>()
+);
+
+// Select company and service
+export const selectCompany = createAction(
+  '[Client] Select Company',
+  props<{ company: NearbyCompany }>()
+);
+export const selectService = createAction(
+  '[Client] Select Service',
+  props<{ service: any }>()
+);
+export const setBookingDate = createAction(
+  '[Client] Set Booking Date',
+  props<{ date: Date }>()
+);
+export const confirmBooking = createAction(
+  '[Client] Confirm Booking',
+  props<{ companyId: string; serviceId: string; date: string; time: string }>()
+);
+export const confirmBookingSuccess = createAction(
+  '[Client] Confirm Booking Success',
+  props<{ booking: Booking }>()
+);
+export const confirmBookingFailure = createAction(
+  '[Client] Confirm Booking Failure',
+  props<{ error: string }>()
 );
 
 // UI actions
