@@ -18,8 +18,8 @@ import { selectLoading, selectError } from '../../features/auth/state/auth.selec
         <h2>Sign Up</h2>
         <form (ngSubmit)="onSubmit()">
           <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" [(ngModel)]="signupData.name" name="name" required>
+            <label for="username">Username</label>
+            <input type="text" id="username" [(ngModel)]="signupData.username" name="username" required>
           </div>
           <div class="form-group">
             <label for="email">Email</label>
@@ -108,7 +108,7 @@ export class SignupModalComponent {
   @Output() close = new EventEmitter<void>();
   
   signupData = { 
-    name: '', 
+    username: '', 
     email: '', 
     password: '', 
     phone: '',
@@ -123,12 +123,12 @@ export class SignupModalComponent {
   }
 
   onSubmit(): void {
-    const { name, email, password, phone, userType } = this.signupData;
-    if (!name || !email || !password || !phone) return;
+    const { username, email, password, phone, userType } = this.signupData;
+    if (!username || !email || !password || !phone) return;
     
     if (userType === 'client') {
       this.store.dispatch(register({ 
-        userData: { name, email, password, phone }, 
+        userData: { username, email, password, phone }, 
         userType: 'client' 
       }));
     }

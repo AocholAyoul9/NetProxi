@@ -23,8 +23,8 @@ export class AuthApiService {
 
   register(userData: any, userType: 'client' | 'company'): Observable<any> {
     const endpointMap: Record<string, string> = {
-      client: '/auth/clients/register',
-      company: '/auth/companies/register',
+      client: '/auth/register/client',
+      company: '/auth/register/company',
     };
     return this.http.post(`${this.baseUrl}${endpointMap[userType]}`, userData);
   }
