@@ -16,7 +16,7 @@ import { selectLoading, selectError } from '../../state/auth.selectors';
 export class RegisterPageComponent implements OnInit {
   accountType: 'client' | 'company' = 'client';
   formData = {
-    name: '',
+    username: '',
     email: '',
     password: '',
     phone: '',
@@ -33,8 +33,8 @@ export class RegisterPageComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { name, email, password, phone, address } = this.formData;
-    if (!name || !email || !password) return;
-    this.store.dispatch(register({ userData: { name, email, password, phone, address }, userType: this.accountType }));
+    const { username, email, password, phone, address } = this.formData;
+    if (!username || !email || !password) return;
+    this.store.dispatch(register({ userData: { username, email, password, phone, address }, userType: this.accountType }));
   }
 }

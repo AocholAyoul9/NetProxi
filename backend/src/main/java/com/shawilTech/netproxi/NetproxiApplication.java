@@ -1,9 +1,9 @@
-package com.shawilTech.netproxiApp;
+package com.shawilTech.netproxi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.shawilTech")
 public class NetproxiApplication {
 
 	public static void main(String[] args) {
