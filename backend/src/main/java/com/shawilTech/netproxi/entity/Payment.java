@@ -13,8 +13,9 @@ import java.math.BigDecimal;
 @Builder
 public class Payment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+   @Id
+    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     @ManyToOne

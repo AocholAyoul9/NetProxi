@@ -14,7 +14,8 @@ import java.math.BigDecimal;
 @Table(name = "bookings")
 public class Booking {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     @ManyToOne

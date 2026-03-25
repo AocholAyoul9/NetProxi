@@ -12,7 +12,8 @@ import java.util.UUID;
 @Builder
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
     /**

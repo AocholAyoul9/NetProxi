@@ -13,9 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class RefreshToken {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     @Column(nullable = false, unique = true)

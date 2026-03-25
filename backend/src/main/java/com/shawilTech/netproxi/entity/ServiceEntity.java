@@ -11,7 +11,8 @@ import java.util.UUID;
 @Builder
 public class ServiceEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     private String name;
@@ -22,6 +23,6 @@ public class ServiceEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
-
+    @Builder.Default
     private  boolean active = true;
 }

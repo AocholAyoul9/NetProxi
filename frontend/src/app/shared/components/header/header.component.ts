@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LoginModalComponent } from '../../../components/login-modal/login-modal.component';
-import { SignupModalComponent } from '../../../components/signup-modal/signup-modal.component';
+import { RegisterPageComponent} from '../../../features/auth/pages/register/register.component';
+import { LoginPageComponent } from '../../../features/auth/pages/login/login.component';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -13,8 +13,8 @@ import { ThemeService, ThemeMode } from '../../../core/services/theme.service';
   selector: 'app-header',
   imports: [
     RouterModule,
-    SignupModalComponent,
-    LoginModalComponent,
+    RegisterPageComponent,
+    LoginPageComponent,
     CommonModule,
   ],
   templateUrl: './header.component.html',

@@ -20,7 +20,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     private String name;
@@ -41,20 +42,24 @@ public class Employee {
     private String avatarUrl;
 
     @Column(name = "role")
+    @Builder.Default
     private String role = "EMPLOYEE"; // Default role
 
     @ElementCollection
     @CollectionTable(name = "employee_skills", joinColumns = @JoinColumn(name = "employee_id"))
     @Column(name = "skill")
+    @Builder.Default
     private List<String> skills = new ArrayList<>();
 
     @Column(name = "is_available")
+    @Builder.Default
     private boolean isAvailable = true;
 
     @Column(name = "rating")
     private Double rating;
 
     @Column(name = "total_tasks_completed")
+    @Builder.Default
     private Integer totalTasksCompleted = 0;
 
     private String token;
