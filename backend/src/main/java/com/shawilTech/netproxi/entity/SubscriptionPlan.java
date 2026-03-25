@@ -1,10 +1,8 @@
 package com.shawilTech.netproxi.entity;
-import jakarta.persistence.*;
-import lombok.*;
+
 
 
 import lombok.Getter;
-import java.math.BigDecimal;
 
 @Getter
 public  enum SubscriptionPlan {

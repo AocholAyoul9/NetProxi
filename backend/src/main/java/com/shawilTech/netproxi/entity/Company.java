@@ -5,7 +5,6 @@ import lombok.*;
 import java.util.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-
 @Entity
 @Table(name = "companies")
 @Data
@@ -13,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @AllArgsConstructor
 @Builder
 public class Company {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     private String name;
@@ -23,18 +22,17 @@ public class Company {
     @Column(name = "address")
     private String address;
     private String email;
-    private  String password;
+    private String password;
     private String phone;
 
+    @Builder.Default
     private boolean active = true;
 
     private Integer maxEmployees;
     private Integer maxActiveBookings;
 
-
     private Double latitude;
     private Double longitude;
-
 
     private String logoUrl;
     private String website;
@@ -42,8 +40,7 @@ public class Company {
     @Column(length = 2000)
     private String description;
 
-
-    private  String token;
+    private String token;
 
     private String pricing;
     private String openingHours;

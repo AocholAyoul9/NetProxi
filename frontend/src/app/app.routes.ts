@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { NearbyCompaniesComponent } from './features/companies/pages/nearby-companies/nearby-companies.component';
+import { RegisterPageComponent } from './features/auth/pages/register/register.component';
 
-import { SignupModalComponent } from './components/signup-modal/signup-modal.component';
 
 
 export const routes: Routes = [
@@ -21,7 +21,7 @@ export const routes: Routes = [
         (m) => m.CompanyDetailComponent
       ),
   },
-  { path: 'client-signup', component: SignupModalComponent },
+  { path: 'client-signup', component: RegisterPageComponent },
   { path: '', loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes) },
   { path: '', loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes) },
   { path: '**', redirectTo: '' },

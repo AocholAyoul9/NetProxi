@@ -73,15 +73,15 @@
 
    
     <!-- Modals -->
-    <app-login-modal
+    <app-login-page
       *ngIf="showLogin"
       (close)="closeLogin()">
-    </app-login-modal>
+    </app-login-page>
 
-    <app-signup-modal
+    <app-register-page
       *ngIf="showSignup"
       (close)="closeSignup()">
-    </app-signup-modal>
+    </app-register-page>
 
     <!-- Theme Toggle -->
     <div class="theme-toggle">

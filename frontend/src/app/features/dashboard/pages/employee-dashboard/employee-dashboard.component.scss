@@ -390,7 +390,7 @@ $border-color: #e5e7eb;
                       color: white;
 
                       &:hover {
-                        background: darken($primary-color, 10%);
+                        background: $primary-color;
                       }
                     }
 
@@ -399,7 +399,7 @@ $border-color: #e5e7eb;
                       color: white;
 
                       &:hover {
-                        background: darken($success-color, 10%);
+                        background: $success-color;
                       }
                     }
                   }
@@ -518,7 +518,7 @@ $border-color: #e5e7eb;
               color: white;
 
               &:hover {
-                background: darken($danger-color, 10%);
+                background: $danger-color;
               }
             }
           }
@@ -733,7 +733,7 @@ $border-color: #e5e7eb;
             color: white;
 
             &:hover {
-              background: darken($primary-color, 10%);
+              background: $primary-color;
             }
           }
 
@@ -742,7 +742,7 @@ $border-color: #e5e7eb;
             color: white;
 
             &:hover {
-              background: darken($success-color, 10%);
+              background: $success-color, 10%;
             }
           }
         }

@@ -14,9 +14,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @AllArgsConstructor
 @Builder
 public class Subscription {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     @ManyToOne

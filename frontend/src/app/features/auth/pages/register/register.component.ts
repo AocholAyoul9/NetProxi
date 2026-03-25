@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -36,5 +36,11 @@ export class RegisterPageComponent implements OnInit {
     const { username, email, password, phone, address } = this.formData;
     if (!username || !email || !password) return;
     this.store.dispatch(register({ userData: { username, email, password, phone, address }, userType: this.accountType }));
+  }
+
+   @Output() close = new EventEmitter<void>();
+
+  closeModal() {
+    this.close.emit();
   }
 }

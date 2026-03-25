@@ -1,5 +1,8 @@
-<div class="login-page">
-  <div class="login-card">
+<div class="login-page" (click)="closeModal()">
+  <div class="login-card" (click)="$event.stopPropagation()">
+
+        <button class="close-btn" (click)="closeModal()">✖</button>
+
     <h2>Connexion</h2>
 
     <div *ngIf="error$ | async as error" class="error-message">{{ error }}</div>
