@@ -2,12 +2,10 @@ package com.shawilTech.netproxi.service;
 
 import com.shawilTech.netproxi.dto.*;
 import com.shawilTech.netproxi.entity.*;
-import com.shawilTech.netproxi.repository.*;
 import com.shawilTech.netproxi.repository.ClientRepository;
 import com.shawilTech.netproxi.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 
-//import org.springframework.boot.autoconfigure.security.oauth2.server.servlet.OAuth2AuthorizationServerProperties.Client;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

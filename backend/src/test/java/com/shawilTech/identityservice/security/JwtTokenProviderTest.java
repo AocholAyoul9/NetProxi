@@ -2,9 +2,15 @@ package com.shawilTech.identityservice.security;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import com.shawilTech.netproxi.security.JwtTokenProvider;
+
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+import java.util.Base64;
+
+import javax.crypto.SecretKey;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,10 +20,13 @@ class JwtTokenProviderTest {
 
     @BeforeEach
     void setUp() {
-        jwtTokenProvider = new JwtTokenProvider();
-        ReflectionTestUtils.setField(jwtTokenProvider, "jwtSecret",
-                "mySuperSecretKeyThatIsAtLeast512BitsLongAndBase64Encoded1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
-        ReflectionTestUtils.setField(jwtTokenProvider, "jwtExpirationMs", 3600000L);
+        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        String base64Secret = Base64.getEncoder().encodeToString(key.getEncoded());
+
+        jwtTokenProvider = new JwtTokenProvider(
+                base64Secret,
+                3600000L,
+                604800000L);
     }
 
     @Test

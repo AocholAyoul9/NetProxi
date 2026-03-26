@@ -12,22 +12,25 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    // Use a 64-byte base64-encoded key in your application.properties
-    @Value("${jwt.secret}")
-    private String jwtSecretBase64;
+    private final String jwtSecretBase64;
+    private final long jwtExpirationMs;
+    private final long refreshExpirationMs;
 
-    @Value("${jwt.expirationMs}")
-    private long jwtExpirationMs;
-
-    @Value("${jwt.refreshExpirationMs:604800000}") // optional, defaults 7 days
-    private long refreshExpirationMs;
+    public JwtTokenProvider(
+            @Value("${jwt.secret}") String jwtSecretBase64,
+            @Value("${jwt.expirationMs}") long jwtExpirationMs,
+            @Value("${jwt.refreshExpirationMs:604800000}") long refreshExpirationMs) {
+        this.jwtSecretBase64 = jwtSecretBase64;
+        this.jwtExpirationMs = jwtExpirationMs;
+        this.refreshExpirationMs = refreshExpirationMs;
+    }
 
     private SecretKey getSigningKey() {
-        // Decode Base64 key (ensures at least 512-bit)
         byte[] keyBytes = Base64.getDecoder().decode(jwtSecretBase64);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    
     // Generate JWT token
     public String generateToken(String username) {
         return Jwts.builder()
