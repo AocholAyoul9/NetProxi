@@ -1,6 +1,96 @@
 /* You can add global styles to this file, and also import other style files */
 
-@use 'styles/themes';
+@use "styles/themes";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: var(--transition-default);
+}
+
+/* Global theme variables */
+:root {
+  /* Backgrounds */
+  --bg-color: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-header: #ffffff;
+
+  /* Text colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+
+  /* Borders */
+  --border-color: #e5e7eb;
+
+  /* Primary brand color */
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+
+  /* Danger / logout button */
+  --danger-color: #ef4444;
+  --danger-hover-bg: #fee2e2;
+
+  /* Menu toggle (hamburger) icon color */
+  --menu-toggle-color: #374151;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --transition-default: all 0.3s ease;
+
+  --scrolled-bg: rgba(255, 255, 255, 0.95);
+  --primary-light: #f0f8ff;
+}
+
+/* Dark theme – applied when <body class="dark"> */
+.dark {
+  --bg-color: #111827;
+  --bg-secondary: #1f2937;
+  --bg-header: #1f2937;
+
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+
+  --border-color: #374151;
+
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+
+  --danger-color: #f87171;
+  --danger-hover-bg: rgba(239, 68, 68, 0.2);
+
+  --menu-toggle-color: #e5e7eb;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+/* Optional: respect system preference automatically */
+@media (prefers-color-scheme: dark) {
+  /* Only applies if no explicit class is set */
+  :root:not(.light) {
+    --bg-color: #111827;
+    --bg-secondary: #1f2937;
+    --bg-header: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --border-color: #374151;
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --danger-color: #f87171;
+    --danger-hover-bg: rgba(239, 68, 68, 0.2);
+    --menu-toggle-color: #e5e7eb;
+    --scrolled-bg: rgba(17, 24, 39, 0.95);
+    --primary-light: rgba(59, 130, 246, 0.1);
+  }
+}

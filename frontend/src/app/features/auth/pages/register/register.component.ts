@@ -15,6 +15,7 @@ import { selectLoading, selectError } from '../../state/auth.selectors';
 })
 export class RegisterPageComponent implements OnInit {
   accountType: 'client' | 'company' = 'client';
+
   formData = {
     username: '',
     email: '',
@@ -22,8 +23,11 @@ export class RegisterPageComponent implements OnInit {
     phone: '',
     address: '',
   };
+
   loading$!: Observable<boolean>;
   error$!: Observable<string | null>;
+
+  @Output() close = new EventEmitter<void>();
 
   constructor(private store: Store) {}
 
@@ -34,11 +38,17 @@ export class RegisterPageComponent implements OnInit {
 
   onSubmit(): void {
     const { username, email, password, phone, address } = this.formData;
-    if (!username || !email || !password) return;
-    this.store.dispatch(register({ userData: { username, email, password, phone, address }, userType: this.accountType }));
-  }
 
-   @Output() close = new EventEmitter<void>();
+    if (!username || !email || !password) return;
+
+    // Dispatch unified registration action with accountType
+    this.store.dispatch(
+      register({
+        userData: { username, email, password, phone, address },
+        userType: this.accountType,
+      })
+    );
+  }
 
   closeModal() {
     this.close.emit();

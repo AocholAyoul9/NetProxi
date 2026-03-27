@@ -1,7 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import { AuthUser } from '../models/user.model';
 
-// Login
+// ----------------------
+// LOGIN
+// ----------------------
 export const login = createAction(
   '[Auth] Login',
   props<{ email: string; password: string; userType: 'client' | 'company' | 'employee' }>()
@@ -17,15 +19,17 @@ export const loginFailure = createAction(
   props<{ error: string }>()
 );
 
-// Register
+// ----------------------
+// REGISTER
+// ----------------------
 export const register = createAction(
   '[Auth] Register',
-  props<{ userData: any; userType: 'client' | 'company' }>()
+  props<{ userData: any; userType: 'client' | 'company' | 'employee' }>()
 );
 
 export const registerSuccess = createAction(
   '[Auth] Register Success',
-  props<{ user: any }>()
+  props<{ user: any; userType: 'client' | 'company' | 'employee' }>()
 );
 
 export const registerFailure = createAction(
@@ -33,10 +37,14 @@ export const registerFailure = createAction(
   props<{ error: string }>()
 );
 
-// Logout
+// ----------------------
+// LOGOUT
+// ----------------------
 export const logout = createAction('[Auth] Logout');
 
-// Refresh Token
+// ----------------------
+// REFRESH TOKEN
+// ----------------------
 export const refreshToken = createAction(
   '[Auth] Refresh Token',
   props<{ token: string }>()
@@ -52,7 +60,9 @@ export const refreshTokenFailure = createAction(
   props<{ error: string }>()
 );
 
-// Load Current User
+// ----------------------
+// LOAD CURRENT USER
+// ----------------------
 export const loadCurrentUser = createAction('[Auth] Load Current User');
 
 export const loadCurrentUserSuccess = createAction(
@@ -64,74 +74,3 @@ export const loadCurrentUserFailure = createAction(
   '[Auth] Load Current User Failure',
   props<{ error: string }>()
 );
-
-// ---------------------------------------------------------------------------
-// Backward-compatible aliases kept so other parts of the app still compile
-// ---------------------------------------------------------------------------
-export const loginCompany = createAction(
-  '[Auth] login company',
-  props<{ email: string; password: string }>()
-);
-export const loginCompanySuccess = createAction(
-  '[Auth] Login company Success',
-  props<{ company: any; token: string }>()
-);
-export const loginCompanyFailure = createAction(
-  '[Auth] Login company Failure',
-  props<{ error: any }>()
-);
-export const logOut = createAction('[Auth] logOut company');
-
-export const registerCompany = createAction(
-  '[Auth] register company',
-  props<{ company: any }>()
-);
-export const registerCompanySuccess = createAction(
-  '[Auth] register company success',
-  props<{ company: any }>()
-);
-export const registerCompanyFailure = createAction(
-  '[Auth] register company Failure',
-  props<{ error: any }>()
-);
-
-export const registerClient = createAction(
-  '[Auth] register client',
-  props<{ client: any }>()
-);
-export const registerClientSuccess = createAction(
-  '[Auth] register client success',
-  props<{ client: any }>()
-);
-export const registerClientFailure = createAction(
-  '[Auth] register client Failure',
-  props<{ error: any }>()
-);
-
-export const loginClient = createAction(
-  '[Auth] login client',
-  props<{ email: string; password: string }>()
-);
-export const loginClientSuccess = createAction(
-  '[Auth] Login client Success',
-  props<{ client: any; token: string }>()
-);
-export const loginClientFailure = createAction(
-  '[Auth] Login client Failure',
-  props<{ error: any }>()
-);
-export const logOutClient = createAction('[Auth] logOut client');
-
-export const loginEmployee = createAction(
-  '[Auth] login employee',
-  props<{ email: string; password: string }>()
-);
-export const loginEmployeeSuccess = createAction(
-  '[Auth] Login employee Success',
-  props<{ employee: any; token: string }>()
-);
-export const loginEmployeeFailure = createAction(
-  '[Auth] Login employee Failure',
-  props<{ error: any }>()
-);
-export const logOutEmployee = createAction('[Auth] logOut employee');
