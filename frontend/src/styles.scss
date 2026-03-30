@@ -1,96 +1,122 @@
-/* You can add global styles to this file, and also import other style files */
+/* ─── Load SCSS Map Utilities ───────────────────────── */
+@use "sass:map";
 
-@use "styles/themes";
+/* ─── Design Tokens (already defined) ───────────────── */
+$tokens-light: (
+  color-bg: #ffffff,
+  color-surface: #f9fafb,
+  color-text: #111827,
+  color-text-muted: #6b7280,
+  color-border: #e5e7eb,
 
-html,
+  color-primary: #1976d2,
+  color-primary-hover: #1565c0,
+  color-primary-light: #e3f2fd,
+
+  color-danger: #ef4444,
+  color-danger-bg: #fee2e2
+);
+
+$tokens-dark: (
+  color-bg: #121212,
+  color-surface: #1e1e1e,
+  color-text: #f9fafb,
+  color-text-muted: #9ca3af,
+  color-border: #2c2c2c,
+
+  color-primary: #90caf9,
+  color-primary-hover: #64b5f6,
+  color-primary-light: #1e3a5f,
+
+  color-danger: #f87171,
+  color-danger-bg: #3f1d1d
+);
+
+/* ─── Theme Mixin ─────────────────────────── */
+@mixin theme($tokens) {
+  --bg: #{map.get($tokens, color-bg)};
+  --surface: #{map.get($tokens, color-surface)};
+  --text: #{map.get($tokens, color-text)};
+  --text-muted: #{map.get($tokens, color-text-muted)};
+  --border: #{map.get($tokens, color-border)};
+
+  --primary: #{map.get($tokens, color-primary)};
+  --primary-hover: #{map.get($tokens, color-primary-hover)};
+  --primary-light: #{map.get($tokens, color-primary-light)};
+
+  --danger: #{map.get($tokens, color-danger)};
+  --danger-bg: #{map.get($tokens, color-danger-bg)};
+}
+
+/* ─── Apply Themes ───────────────────────── */
 body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-primary);
-  transition: var(--transition-default);
+  @include theme($tokens-light);
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Global theme variables */
-:root {
-  /* Backgrounds */
-  --bg-color: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-header: #ffffff;
-
-  /* Text colors */
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-
-  /* Borders */
-  --border-color: #e5e7eb;
-
-  /* Primary brand color */
-  --primary-color: #2563eb;
-  --primary-hover: #1d4ed8;
-
-  /* Danger / logout button */
-  --danger-color: #ef4444;
-  --danger-hover-bg: #fee2e2;
-
-  /* Menu toggle (hamburger) icon color */
-  --menu-toggle-color: #374151;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-
-  /* Transitions */
-  --transition-default: all 0.3s ease;
-
-  --scrolled-bg: rgba(255, 255, 255, 0.95);
-  --primary-light: #f0f8ff;
+body.dark-theme {
+  @include theme($tokens-dark);
 }
 
-/* Dark theme – applied when <body class="dark"> */
-.dark {
-  --bg-color: #111827;
-  --bg-secondary: #1f2937;
-  --bg-header: #1f2937;
-
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-
-  --border-color: #374151;
-
-  --primary-color: #3b82f6;
-  --primary-hover: #2563eb;
-
-  --danger-color: #f87171;
-  --danger-hover-bg: rgba(239, 68, 68, 0.2);
-
-  --menu-toggle-color: #e5e7eb;
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+/* ─── Global Page Styles ───────────────────────── */
+.page-container {
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
 }
 
-/* Optional: respect system preference automatically */
-@media (prefers-color-scheme: dark) {
-  /* Only applies if no explicit class is set */
-  :root:not(.light) {
-    --bg-color: #111827;
-    --bg-secondary: #1f2937;
-    --bg-header: #1f2937;
-    --text-primary: #f9fafb;
-    --text-secondary: #9ca3af;
-    --border-color: #374151;
-    --primary-color: #3b82f6;
-    --primary-hover: #2563eb;
-    --danger-color: #f87171;
-    --danger-hover-bg: rgba(239, 68, 68, 0.2);
-    --menu-toggle-color: #e5e7eb;
-    --scrolled-bg: rgba(17, 24, 39, 0.95);
-    --primary-light: rgba(59, 130, 246, 0.1);
+/* ─── Upper Section ───────────────────────── */
+.upper-section-wrapper {
+  background: var(--primary);
+  border-radius: 0 0 1.5rem 1.5rem;
+  padding: 2rem 2rem 3rem;
+  margin: -2rem -2rem 2rem;
+}
+
+/* ─── Search Input ───────────────────────── */
+.search-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+
+  &:focus {
+    border-color: var(--primary);
+    background: var(--bg);
+    outline: none;
   }
+}
+
+/* ─── Buttons ───────────────────────── */
+.btn-primary {
+  background: var(--primary);
+  color: var(--bg);
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: var(--bg);
+
+  &:hover {
+    background: var(--danger-bg);
+  }
+}
+
+/* ─── Cards ───────────────────────── */
+.company-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: var(--text);
 }
