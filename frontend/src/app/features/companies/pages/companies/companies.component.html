@@ -6,7 +6,12 @@
       <p class="subtitle">Découvrez nos partenaires de confiance</p>
     </div>
   </div>
-  <!-- End of Blue Background Upper Section -->
+
+  <!-- Leaflet Map Container -->
+  <div class="map-wrapper">
+    <div #mapContainer class="map-container"></div>
+  </div>
+
   <div class="bottom-wrapper">
     <!-- Results Header -->
     <div class="results-header" *ngIf="filteredCompanies$ | async as companies">
@@ -88,25 +93,7 @@
               company.phone || "Non renseigné"
             }}</span>
           </div>
-          <!----  <div class="detail-item">
-          <i class="fas fa-clock"></i>
-          <span class="detail-text">{{ company.responseTime || "24" }}h de réponse</span>
-        </div>-->
         </div>
-
-        <!-- Pricing --
-      <div class="pricing-card">
-        <div class="pricing-header">
-          <i class="fas fa-tag"></i>
-          <span>Tarifs moyens</span>
-        </div>
-        <div class="price-display">
-          <span class="price-range">{{ getPriceDisplay(company) }}</span>
-          <span class="price-note" *ngIf="company.minimumPrice">
-            Minimum : {{ company.minimumPrice }} €
-          </span>
-        </div>
-      </div>-->
 
         <!-- Services -->
         <div class="services-section">
@@ -121,22 +108,17 @@
             </div>
           </div>
         </div>
-<div class="form-section" *ngIf="selectedService()">
-        <label class="form-label">Date et heure</label>
-        <input
-          type="datetime-local"
-          class="form-input"
-        />
-      </div>
 
-      <div class="form-section" *ngIf="selectedService()">
-        <label class="form-label">Adresse du rendez-vous</label>
-        <input
-          type="text"
-          class="form-input"
-          placeholder="Entrez l'adresse..."
-        />
-      </div>
+        <div class="form-section" *ngIf="selectedService()">
+          <label class="form-label">Date et heure</label>
+          <input type="datetime-local" class="form-input" />
+        </div>
+
+        <div class="form-section" *ngIf="selectedService()">
+          <label class="form-label">Adresse du rendez-vous</label>
+          <input type="text" class="form-input" placeholder="Entrez l'adresse..." />
+        </div>
+
         <!-- Actions -->
         <div class="card-actions">
           <button class="btn btn-primary" (click)="openBooking(company)">
