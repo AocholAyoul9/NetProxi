@@ -10,7 +10,7 @@ export const dashboardRoutes: Routes = [
       ),
   },
   {
-    path: 'company-admin',
+    path: 'company-admin-dashboard',
     loadComponent: () =>
       import('./pages/company-admin-dashboard/company-admin-dashboard.component').then(
         (m) => m.CompanyAdminDashboardComponent
@@ -19,7 +19,7 @@ export const dashboardRoutes: Routes = [
     data: { roles: ['ROLE_COMPANY', 'ROLE_COMPANY_ADMIN'] },
   },
   {
-    path: 'super-admin',
+    path: 'super-admin-dashboard',
     loadComponent: () =>
       import('./pages/super-admin-dashboard/super-admin-dashboard.component').then(
         (m) => m.SuperAdminDashboardComponent

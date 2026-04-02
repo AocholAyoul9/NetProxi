@@ -14,9 +14,9 @@ export class AuthApiService {
     userType: 'client' | 'company' | 'employee',
   ): Observable<any> {
     const endpointMap: Record<string, string> = {
-      client: '/auth/clients/login',
-      company: '/auth/companies/login',
-      employee: '/auth/companies/employees/login',
+      client: '/auth/login',
+      company: '/companies/login',
+      employee: '/employee/login',
     };
     return this.http.post(`${this.baseUrl}${endpointMap[userType]}`, { email, password });
   }

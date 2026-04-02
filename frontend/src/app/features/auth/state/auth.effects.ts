@@ -24,15 +24,13 @@ export class AuthEffects {
           tap((res) => {
             setToken(res.token);
             if (res.refreshToken) setRefreshToken(res.refreshToken);
-            // Store user dynamically by type
-            localStorage.setItem(userType, JSON.stringify(res[userType] ?? res));
+            localStorage.setItem(userType, JSON.stringify(res));
           }),
           map((res) => {
-            const rawUser = res[userType] ?? res;
             const user: AuthUser = {
-              id: rawUser.id,
-              name: rawUser.name,
-              email: rawUser.email ?? '',
+              id: res.id ?? '',
+              name: res.name ?? res.username ?? '',
+              email: res.email ?? '',
               role: userType,
             };
             return AuthActions.loginSuccess({ user, accessToken: res.token, userType });
@@ -59,7 +57,7 @@ export class AuthEffects {
         tap(({ userType }) => {
           const routeMap: Record<string, string> = {
             client: '/client-dashboard',
-            company: '/company-admin',
+            company: '/company-admin-dashboard',
             employee: '/employee-dashboard',
           };
           this.router.navigate([routeMap[userType] ?? '/']);
@@ -76,7 +74,10 @@ export class AuthEffects {
       ofType(AuthActions.register),
       mergeMap(({ userData, userType }) =>
         this.authApiService.register(userData, userType).pipe(
-          map((res) => AuthActions.registerSuccess({ user: res[userType] ?? res, userType })),
+          tap((res) => {
+            if (res.token) setToken(res.token);
+          }),
+          map((res) => AuthActions.registerSuccess({ user: res, userType })),
           catchError((error) =>
             of(
               AuthActions.registerFailure({
@@ -97,7 +98,7 @@ export class AuthEffects {
         tap(({ userType }) => {
           const routeMap: Record<string, string> = {
             client: '/client-dashboard',
-            company: '/company-admin',
+            company: '/company-admin-dashboard',
             employee: '/employee-dashboard',
           };
           this.router.navigate([routeMap[userType] ?? '/']);

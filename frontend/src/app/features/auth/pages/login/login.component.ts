@@ -37,8 +37,6 @@ export class LoginPageComponent implements OnInit {
     this.store.dispatch(login({ email, password, userType }));
   }
 
-  @Output() close = new EventEmitter<void>();
-
   closeModal() {
     this.close.emit();
   }

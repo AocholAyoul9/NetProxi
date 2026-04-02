@@ -42,8 +42,6 @@ export class RegisterPageComponent implements OnInit {
     this.store.dispatch(register({ userData: { username, email, password, phone, address }, userType: this.accountType }));
   }
 
-   @Output() close = new EventEmitter<void>();
-
   closeModal() {
     this.close.emit();
   }

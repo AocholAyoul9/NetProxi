@@ -27,7 +27,6 @@ import { BookingEffects } from './features/booking/state/booking.effects';
 import { authFeature } from './features/auth/state/auth.reducer';
 import { AuthEffects } from './features/auth/state/auth.effects';
 import { authInterceptor } from './features/auth/interceptors/auth.interceptor';
-import { GoogleMapsModule } from '@angular/google-maps';
 import { ClientEffects } from './features/client/state/client.effects';
 import { clientReducer } from './features/client/state/client.reducer';
 import { employeeReducer } from './features/employee/state/employee.reducer';
@@ -42,7 +41,6 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
 
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
-    importProvidersFrom(GoogleMapsModule),
 
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 
