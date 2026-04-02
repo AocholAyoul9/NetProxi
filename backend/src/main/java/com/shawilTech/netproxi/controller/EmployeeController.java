@@ -12,53 +12,49 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 
-
 @RestController
-@RequestMapping("/api/companies/{companyId}/employees")
+@RequestMapping("/api/employees")
 @RequiredArgsConstructor
 @Tag(name = "Employees", description = "APIs for managing Employees")
 public class EmployeeController {
 
-    private  final  EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
+    //  Create employee
     @Operation(summary = "Register Employee")
     @PostMapping
-    public  EmployeeResponseDto createEmployee(@PathVariable UUID companyId, @RequestBody EmployeeRequestDto dto){
-
-        return  employeeService.createEmployee(dto, companyId);
-
+    public EmployeeResponseDto createEmployee(@RequestBody EmployeeRequestDto dto) {
+        return employeeService.createEmployee(dto);
     }
-    // get all employees
-    @Operation(summary = "get all  Employee from spicific company")
+
+    // Get all employees (from logged-in user's company)
+    @Operation(summary = "Get all employees of current company")
     @GetMapping
-    public List<EmployeeResponseDto> getEmployees(@PathVariable UUID companyId){
-        return  employeeService.getEmployeesByCompany(companyId);
+    public List<EmployeeResponseDto> getEmployees() {
+        return employeeService.getEmployees();
     }
 
-    //get single employee
-    @Operation(summary = "get   Employee By Id")
+    //  Get single employee
+    @Operation(summary = "Get employee by ID")
     @GetMapping("/{employeeId}")
-    public EmployeeResponseDto getEmployeesById(@PathVariable UUID companyId, @PathVariable UUID employeeId){
-        return employeeService.getEmployeeById(companyId, employeeId);
+    public EmployeeResponseDto getEmployeeById(@PathVariable UUID employeeId) {
+        return employeeService.getEmployeeById(employeeId);
     }
 
+    // Update employee
+    @Operation(summary = "Update employee")
     @PutMapping("/{employeeId}")
     public EmployeeResponseDto updateEmployee(
-            @PathVariable UUID companyId,
             @PathVariable UUID employeeId,
             @RequestBody EmployeeRequestDto dto
-    ){
-        return employeeService.updateEmployee(companyId,employeeId, dto);
+    ) {
+        return employeeService.updateEmployee(employeeId, dto);
     }
 
+    //  Delete employee
+    @Operation(summary = "Delete employee")
     @DeleteMapping("/{employeeId}")
-    public void  deleteEmployee(
-            @PathVariable UUID companyId,
-            @PathVariable UUID employeeId)
-    {
-        employeeService.deleteEmployee(companyId, employeeId);
+    public void deleteEmployee(@PathVariable UUID employeeId) {
+        employeeService.deleteEmployee(employeeId);
     }
-
-    
-
 }

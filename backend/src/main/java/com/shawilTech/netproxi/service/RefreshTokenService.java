@@ -23,14 +23,15 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public RefreshToken createRefreshToken(String username) {
         User user = userRepository.findByUsername(username)
                 .or(() -> userRepository.findByEmail(username))
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         // Delete any existing refresh token for this user
-        refreshTokenRepository.deleteByUser(user);
-
+        deleteByUser(user);
+         refreshTokenRepository.flush();
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .token(UUID.randomUUID().toString())

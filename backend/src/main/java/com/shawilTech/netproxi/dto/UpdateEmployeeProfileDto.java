@@ -10,6 +10,7 @@ import java.util.List;
 public class UpdateEmployeeProfileDto {
     private String name;
     private String phone;
+    private String address;
     private String avatarUrl;
     private List<String> skills;
     private Boolean isAvailable;

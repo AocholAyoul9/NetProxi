@@ -11,7 +11,7 @@ export class AuthApiService {
   login(
     email: string,
     password: string,
-    userType: 'client' | 'company' | 'employee'
+    userType: 'client' | 'company' | 'employee',
   ): Observable<any> {
     const endpointMap: Record<string, string> = {
       client: '/auth/clients/login',
@@ -21,7 +21,10 @@ export class AuthApiService {
     return this.http.post(`${this.baseUrl}${endpointMap[userType]}`, { email, password });
   }
 
-  register(userData: any, userType: 'client' | 'company'): Observable<any> {
+  register(
+    userData: any,
+    userType: 'client' | 'company' | 'employee',
+  ): Observable<any> {
     const endpointMap: Record<string, string> = {
       client: '/auth/register/client',
       company: '/auth/register/company',
@@ -29,8 +32,12 @@ export class AuthApiService {
     return this.http.post(`${this.baseUrl}${endpointMap[userType]}`, userData);
   }
 
-  refreshToken(token: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/refresh`, { token });
+  refreshToken(refreshToken: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/refresh`, { refreshToken });
+  }
+
+  logout(username: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/auth/logout`, { username });
   }
 
   getCurrentUser(): Observable<any> {

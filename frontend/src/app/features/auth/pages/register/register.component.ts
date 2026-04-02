@@ -15,6 +15,7 @@ import { selectLoading, selectError } from '../../state/auth.selectors';
 })
 export class RegisterPageComponent implements OnInit {
   accountType: 'client' | 'company' = 'client';
+
   formData = {
     username: '',
     email: '',
@@ -22,8 +23,11 @@ export class RegisterPageComponent implements OnInit {
     phone: '',
     address: '',
   };
+
   loading$!: Observable<boolean>;
   error$!: Observable<string | null>;
+
+  @Output() close = new EventEmitter<void>();
 
   constructor(private store: Store) {}
 

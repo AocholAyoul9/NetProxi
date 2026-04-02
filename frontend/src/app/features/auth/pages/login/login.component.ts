@@ -21,6 +21,8 @@ export class LoginPageComponent implements OnInit {
   loading$!: Observable<boolean>;
   error$!: Observable<string | null>;
 
+  @Output() close = new EventEmitter<void>();
+
   constructor(private store: Store) {}
 
   ngOnInit(): void {
@@ -31,6 +33,7 @@ export class LoginPageComponent implements OnInit {
   onSubmit(): void {
     const { email, password, userType } = this.loginData;
     if (!email || !password) return;
+
     this.store.dispatch(login({ email, password, userType }));
   }
 

@@ -1,6 +1,122 @@
-/* You can add global styles to this file, and also import other style files */
+/* ─── Load SCSS Map Utilities ───────────────────────── */
+@use "sass:map";
 
-@use 'styles/themes';
+/* ─── Design Tokens (already defined) ───────────────── */
+$tokens-light: (
+  color-bg: #ffffff,
+  color-surface: #f9fafb,
+  color-text: #111827,
+  color-text-muted: #6b7280,
+  color-border: #e5e7eb,
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+  color-primary: #1976d2,
+  color-primary-hover: #1565c0,
+  color-primary-light: #e3f2fd,
+
+  color-danger: #ef4444,
+  color-danger-bg: #fee2e2
+);
+
+$tokens-dark: (
+  color-bg: #121212,
+  color-surface: #1e1e1e,
+  color-text: #f9fafb,
+  color-text-muted: #9ca3af,
+  color-border: #2c2c2c,
+
+  color-primary: #90caf9,
+  color-primary-hover: #64b5f6,
+  color-primary-light: #1e3a5f,
+
+  color-danger: #f87171,
+  color-danger-bg: #3f1d1d
+);
+
+/* ─── Theme Mixin ─────────────────────────── */
+@mixin theme($tokens) {
+  --bg: #{map.get($tokens, color-bg)};
+  --surface: #{map.get($tokens, color-surface)};
+  --text: #{map.get($tokens, color-text)};
+  --text-muted: #{map.get($tokens, color-text-muted)};
+  --border: #{map.get($tokens, color-border)};
+
+  --primary: #{map.get($tokens, color-primary)};
+  --primary-hover: #{map.get($tokens, color-primary-hover)};
+  --primary-light: #{map.get($tokens, color-primary-light)};
+
+  --danger: #{map.get($tokens, color-danger)};
+  --danger-bg: #{map.get($tokens, color-danger-bg)};
+}
+
+/* ─── Apply Themes ───────────────────────── */
+body {
+  @include theme($tokens-light);
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-theme {
+  @include theme($tokens-dark);
+}
+
+/* ─── Global Page Styles ───────────────────────── */
+.page-container {
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ─── Upper Section ───────────────────────── */
+.upper-section-wrapper {
+  background: var(--primary);
+  border-radius: 0 0 1.5rem 1.5rem;
+  padding: 2rem 2rem 3rem;
+  margin: -2rem -2rem 2rem;
+}
+
+/* ─── Search Input ───────────────────────── */
+.search-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+
+  &:focus {
+    border-color: var(--primary);
+    background: var(--bg);
+    outline: none;
+  }
+}
+
+/* ─── Buttons ───────────────────────── */
+.btn-primary {
+  background: var(--primary);
+  color: var(--bg);
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: var(--bg);
+
+  &:hover {
+    background: var(--danger-bg);
+  }
+}
+
+/* ─── Cards ───────────────────────── */
+.company-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: var(--text);
+}

@@ -1,163 +1,132 @@
 package com.shawilTech.netproxi.controller;
 
 import com.shawilTech.netproxi.dto.*;
+import com.shawilTech.netproxi.service.EmployeeDashboardService;
 import com.shawilTech.netproxi.service.EmployeeService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/companies/employees")
+@RequestMapping("/api/employee")
 @RequiredArgsConstructor
 public class EmployeeDashboardController {
 
-    private final EmployeeService employeeService;
+    private final EmployeeDashboardService dashboardService;
+    private final EmployeeService employeeService; // only for login
 
-    // === Dashboard Endpoints ===
-
-
-    //0. empployee login
+    // 0. Employee login (stays in EmployeeService)
     @PostMapping("/login")
     public ResponseEntity<EmployeeResponseDto> employeeLogin(
             @RequestBody EmployeeLoginRequestDto loginRequestDto) {
-        EmployeeResponseDto responseDto = employeeService.employeeLogin(loginRequestDto);
-        return ResponseEntity.ok(responseDto);
-    }
-    // 1. Get employee profile for dashboard
-    @GetMapping("/profile")
-    public ResponseEntity<EmployeeProfileResponseDto> getEmployeeProfile(
-            @RequestHeader("employeeId") UUID employeeId
-    ) {
-        EmployeeProfileResponseDto profile = employeeService.getEmployeeProfile(employeeId);
-        return ResponseEntity.ok(profile);
+        return ResponseEntity.ok(employeeService.employeeLogin(loginRequestDto));
     }
 
-    // 2. Update employee profile
+    //  1. Profile
+    @GetMapping("/profile")
+    public ResponseEntity<EmployeeProfileResponseDto> getEmployeeProfile() {
+        return ResponseEntity.ok(dashboardService.getProfile());
+    }
+
+    //  2. Update profile
     @PatchMapping("/profile")
     public ResponseEntity<EmployeeProfileResponseDto> updateEmployeeProfile(
-            @RequestHeader("employeeId") UUID employeeId,
             @RequestBody UpdateEmployeeProfileDto dto) {
-        EmployeeProfileResponseDto updatedProfile = employeeService.updateEmployeeProfile(employeeId, dto);
-        return ResponseEntity.ok(updatedProfile);
+        return ResponseEntity.ok(dashboardService.updateProfile(dto));
     }
 
-    // 3. Get employee tasks (with filtering)
+    // 3. Tasks
     @GetMapping("/tasks")
-    public ResponseEntity<List<EmployeeTaskResponseDto>> getEmployeeTasks(
-            @RequestHeader("employeeId") UUID employeeId,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String date,
-            @RequestParam(required = false) String priority) {
-        List<EmployeeTaskResponseDto> tasks = employeeService.getEmployeeTasks(employeeId, status, date, priority);
-        return ResponseEntity.ok(tasks);
+    public ResponseEntity<List<EmployeeTaskResponseDto>> getEmployeeTasks() {
+        return ResponseEntity.ok(dashboardService.getTasks());
     }
 
-    // 4. Get today's tasks
+    //  4. Today tasks
     @GetMapping("/tasks/today")
-    public ResponseEntity<List<EmployeeTaskResponseDto>> getTodayTasks(
-            @RequestHeader("employeeId") UUID employeeId) {
-        List<EmployeeTaskResponseDto> tasks = employeeService.getTodayTasks(employeeId);
-        return ResponseEntity.ok(tasks);
+    public ResponseEntity<List<EmployeeTaskResponseDto>> getTodayTasks() {
+        return ResponseEntity.ok(dashboardService.getTodayTasks());
     }
 
-    // 5. Get upcoming tasks (next 7 days)
+    //  5. Upcoming tasks
     @GetMapping("/tasks/upcoming")
-    public ResponseEntity<List<EmployeeTaskResponseDto>> getUpcomingTasks(
-            @RequestHeader("employeeId") UUID employeeId) {
-        List<EmployeeTaskResponseDto> tasks = employeeService.getUpcomingTasks(employeeId);
-        return ResponseEntity.ok(tasks);
+    public ResponseEntity<List<EmployeeTaskResponseDto>> getUpcomingTasks() {
+        return ResponseEntity.ok(dashboardService.getUpcomingTasks());
     }
 
-    // 6. Get completed tasks
+    // 6. Completed tasks
     @GetMapping("/tasks/completed")
     public ResponseEntity<List<EmployeeTaskResponseDto>> getCompletedTasks(
-            @RequestHeader("employeeId") UUID employeeId,
-            @RequestParam(required = false, defaultValue = "30") int days) {
-        List<EmployeeTaskResponseDto> tasks = employeeService.getCompletedTasks(employeeId, days);
-        return ResponseEntity.ok(tasks);
+            @RequestParam(defaultValue = "30") int days) {
+        return ResponseEntity.ok(dashboardService.getCompletedTasks(days));
     }
 
     // 7. Update task status
     @PatchMapping("/tasks/{taskId}/status")
     public ResponseEntity<EmployeeTaskResponseDto> updateTaskStatus(
-            @RequestHeader("employeeId") UUID employeeId,
-            @PathVariable UUID taskId,
+            @PathVariable java.util.UUID taskId,
             @RequestBody UpdateTaskStatusDto dto) {
-        EmployeeTaskResponseDto updatedTask = employeeService.updateTaskStatus(employeeId, taskId, dto);
-        return ResponseEntity.ok(updatedTask);
+        return ResponseEntity.ok(dashboardService.updateTaskStatus(taskId, dto));
     }
 
-    // 8. Get task details
+    //  8. Task details
     @GetMapping("/tasks/{taskId}")
     public ResponseEntity<EmployeeTaskResponseDto> getTaskDetails(
-            @RequestHeader("employeeId") UUID employeeId,
-            @PathVariable UUID taskId) {
-        EmployeeTaskResponseDto task = employeeService.getTaskDetails(employeeId, taskId);
-        return ResponseEntity.ok(task);
+            @PathVariable java.util.UUID taskId) {
+        return ResponseEntity.ok(dashboardService.getTaskDetails(taskId));
     }
 
-    // 9. Get notifications
+    // 9. Notifications
     @GetMapping("/notifications")
     public ResponseEntity<List<EmployeeNotificationResponseDto>> getNotifications(
-            @RequestHeader("employeeId") UUID employeeId,
-            @RequestParam(required = false, defaultValue = "false") boolean unreadOnly) {
-        List<EmployeeNotificationResponseDto> notifications = employeeService.getNotifications(employeeId, unreadOnly);
-        return ResponseEntity.ok(notifications);
+            @RequestParam(defaultValue = "false") boolean unreadOnly) {
+        return ResponseEntity.ok(dashboardService.getNotifications(unreadOnly));
     }
 
-    // 10. Mark notification as read
+    //  10. Mark one as read
     @PatchMapping("/notifications/{notificationId}/read")
     public ResponseEntity<Void> markNotificationAsRead(
-            @RequestHeader("employeeId") UUID employeeId,
-            @PathVariable UUID notificationId) {
-        employeeService.markNotificationAsRead(employeeId, notificationId);
+            @PathVariable java.util.UUID notificationId) {
+        dashboardService.markNotificationAsRead(notificationId);
         return ResponseEntity.ok().build();
     }
 
-    // 11. Mark all notifications as read
+    // 11. Mark all read
     @PostMapping("/notifications/mark-all-read")
-    public ResponseEntity<Void> markAllNotificationsAsRead(
-            @RequestHeader("employeeId") UUID employeeId) {
-        employeeService.markAllNotificationsAsRead(employeeId);
+    public ResponseEntity<Void> markAllNotificationsAsRead() {
+        dashboardService.markAllNotificationsAsRead();
         return ResponseEntity.ok().build();
     }
 
-    // 12. Clear all notifications
+    //  12. Clear notifications
     @DeleteMapping("/notifications")
-    public ResponseEntity<Void> clearAllNotifications(
-            @RequestHeader("employeeId") UUID employeeId) {
-        employeeService.clearAllNotifications(employeeId);
+    public ResponseEntity<Void> clearAllNotifications() {
+        dashboardService.clearAllNotifications();
         return ResponseEntity.ok().build();
     }
 
-    // 13. Get employee statistics
+    //  13. Stats
     @GetMapping("/stats")
     public ResponseEntity<EmployeeStatsResponseDto> getEmployeeStats(
-            @RequestHeader("employeeId") UUID employeeId,
-            @RequestParam(required = false, defaultValue = "monthly") String period) {
-        EmployeeStatsResponseDto stats = employeeService.getEmployeeStats(employeeId, period);
-        return ResponseEntity.ok(stats);
+            @RequestParam(defaultValue = "monthly") String period) {
+        return ResponseEntity.ok(dashboardService.getStats(period));
     }
 
-    // 14. Get employee schedule
+    // 14. Schedule
     @GetMapping("/schedule")
     public ResponseEntity<List<EmployeeScheduleResponseDto>> getEmployeeSchedule(
-            @RequestHeader("employeeId") UUID employeeId,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
-        List<EmployeeScheduleResponseDto> schedule = employeeService.getEmployeeSchedule(employeeId, startDate, endDate);
-        return ResponseEntity.ok(schedule);
+        return ResponseEntity.ok(dashboardService.getSchedule(startDate, endDate));
     }
 
-    // 15. Update availability status
+    //  15. Availability
     @PatchMapping("/availability")
     public ResponseEntity<Void> updateAvailability(
-            @RequestHeader("employeeId") UUID employeeId,
             @RequestBody UpdateAvailabilityDto dto) {
-        employeeService.updateAvailability(employeeId, dto);
+        dashboardService.updateAvailability(dto);
         return ResponseEntity.ok().build();
     }
 }

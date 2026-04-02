@@ -1,7 +1,6 @@
 package com.shawilTech.netproxi.dto;
 
 import lombok.Data;
-import java.util.UUID;
 
 @Data
 public  class ServiceRequestDto {
@@ -9,5 +8,4 @@ public  class ServiceRequestDto {
     private  String description;
     private Double basePrice;
     private Integer durationInMinutes;
-    private UUID companyId;
 }

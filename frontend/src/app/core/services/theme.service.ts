@@ -1,60 +1,61 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable } from '@angular/core';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly storageKey = 'theme';
+  private key = 'theme';
   private mediaQuery: MediaQueryList | null = null;
-  private mediaListener: (() => void) | null = null;
 
-  /** Initialize theme on app startup. */
-  init(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    const saved = (localStorage.getItem(this.storageKey) as ThemeMode) ?? 'system';
-    this.applyTheme(saved);
+  init() {
+    const saved = localStorage.getItem(this.key) || 'system';
+    this.setTheme(saved as ThemeMode);
+    this.setupSystemThemeListener();
   }
 
-  /** Persist and apply a theme choice. */
-  setTheme(theme: ThemeMode): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    localStorage.setItem(this.storageKey, theme);
-    this.applyTheme(theme);
+  private setupSystemThemeListener() {
+    this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    this.mediaQuery.addEventListener('change', () => {
+      if (this.getTheme() === 'system') {
+        this.applySystemTheme();
+      }
+    });
   }
 
-  /** Return the currently stored theme preference. */
+  private applySystemTheme() {
+    const body = document.body;
+    body.classList.remove('light-theme', 'dark-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    body.classList.add(prefersDark ? 'dark-theme' : 'light-theme');
+  }
+
+setTheme(theme: ThemeMode) {
+  console.log('Setting theme:', theme);
+
+  const body = document.body;
+
+  body.classList.remove('light-theme', 'dark-theme');
+
+  if (theme === 'system') {
+    this.applySystemTheme();
+  } else {
+    body.classList.add(`${theme}-theme`);
+  }
+
+  localStorage.setItem(this.key, theme);
+}
+
   getTheme(): ThemeMode {
-    if (!isPlatformBrowser(this.platformId)) return 'system';
-    return (localStorage.getItem(this.storageKey) as ThemeMode) ?? 'system';
+    return (localStorage.getItem(this.key) as ThemeMode) || 'system';
   }
 
-  private applyTheme(theme: ThemeMode): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    this.removeMediaListener();
-
-    if (theme === 'system') {
-      this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      this.applyDarkClass(this.mediaQuery.matches);
-      this.mediaListener = () => this.applyDarkClass((this.mediaQuery as MediaQueryList).matches);
-      this.mediaQuery.addEventListener('change', this.mediaListener);
+  toggle() {
+    const currentTheme = this.getTheme();
+    if (currentTheme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.setTheme(prefersDark ? 'light' : 'dark');
     } else {
-      this.applyDarkClass(theme === 'dark');
-    }
-  }
-
-  private applyDarkClass(dark: boolean): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    document.body.classList.toggle('dark-theme', dark);
-  }
-
-  private removeMediaListener(): void {
-    if (this.mediaQuery && this.mediaListener) {
-      this.mediaQuery.removeEventListener('change', this.mediaListener);
-      this.mediaListener = null;
+      this.setTheme(currentTheme === 'dark' ? 'light' : 'dark');
     }
   }
 }

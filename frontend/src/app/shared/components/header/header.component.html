@@ -1,7 +1,7 @@
 <header class="header">
   <div class="container">
 
-    <!-- Logo (always visible) -->
+    <!-- Logo -->
     <div class="logo">
       <a routerLink="/" class="logo-link">
         <span class="logo-icon"></span>
@@ -9,50 +9,37 @@
       </a>
     </div>
 
-    <!-- ================= COMPANY HEADER ================= -->
-    <ng-container *ngIf="isCompanyLoggedIn$ | async">
+    <!-- ================= AUTHENTICATED USERS ================= -->
+    <ng-container *ngIf="isAuthenticated$ | async; else publicHeader">
+      <nav class="nav" [class.active]="menuOpen()">
+        <div class="user-info" *ngIf="currentUser$ | async as user">
+          <!-- Dynamic User Info -->
+          <ng-container [ngSwitch]="currentUserType$ | async">
+            <span *ngSwitchCase="'company'" class="company-name">{{ user.name }}</span>
+            <span *ngSwitchCase="'client'" class="client-name">
+              <i class="fas fa-user"></i>
+              {{ user.firstName }} {{ user.lastName }}
+            </span>
+            <span *ngSwitchCase="'employee'" class="employee-name">{{ user.name }}</span>
+          </ng-container>
 
-      <nav class="nav company-nav">
-        <div class="company-info" *ngIf="company$ | async as company">
-          <span class="company-name">
-            {{ company.name }}
-          </span>
-
-          <button class="btn-logout" (click)="logoutCompany()">
-            <i class="fas fa-sign-out-alt"></i>
-            Déconnexion
-          </button>
-        </div>
-      </nav>
-
-    </ng-container>
-
-    <!-- ================= CLIENT HEADER ================= -->
-    <ng-container *ngIf="!(isCompanyLoggedIn$ | async) && (isClientLoggedIn$ | async)">
-
-      <nav class="nav client-nav">
-        <div class="client-info" *ngIf="client$ | async as client">
-          <span class="client-name">
-            <i class="fas fa-user"></i>
-            {{ client.firstName }} {{ client.lastName }}
-          </span>
-
-          <a routerLink="/client/dashboard" class="btn-dashboard">
+          <!-- Boutons -->
+          <a *ngIf="(currentUserType$ | async) === 'client'" 
+             routerLink="/client/dashboard" 
+             class="btn-dashboard">
             Mon espace
           </a>
 
-          <button class="btn-logout" (click)="logoutClient()">
+          <button class="btn-logout" (click)="logout()">
             <i class="fas fa-sign-out-alt"></i>
             Déconnexion
           </button>
         </div>
       </nav>
-
     </ng-container>
 
-    <!-- ================= PUBLIC HEADER ================= -->
-    <ng-container *ngIf="!(isCompanyLoggedIn$ | async) && !(isClientLoggedIn$ | async)">
-
+    <!-- ================= PUBLIC USERS ================= -->
+    <ng-template #publicHeader>
       <nav class="nav" [class.active]="menuOpen()">
         <a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a>
         <a routerLink="/companies" routerLinkActive="active" class="nav-link">Entreprises</a>
@@ -68,10 +55,8 @@
           Inscription
         </button>
       </div>
+    </ng-template>
 
-    </ng-container>
-
-   
     <!-- Modals -->
     <app-login-page
       *ngIf="showLogin"
@@ -95,9 +80,9 @@
       </select>
     </div>
 
-    <!-- Hamburger (only for public users) -->
+    <!-- Hamburger menu -->
     <button
-      *ngIf="!(isCompanyLoggedIn$ | async)"
+      *ngIf="!(isAuthenticated$ | async)"
       class="menu-toggle"
       (click)="toggleMenu()"
       aria-label="Toggle menu"
@@ -109,7 +94,3 @@
 
   </div>
 </header>
-
-
-
-
