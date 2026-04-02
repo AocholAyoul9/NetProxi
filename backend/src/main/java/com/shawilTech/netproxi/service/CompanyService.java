@@ -24,7 +24,7 @@ public class CompanyService {
         private final CompanyRepository companyRepository;
         private final SubscriptionRepository subscriptionRepository;
         private final ServiceRepository serviceRepository;
-        private final UserRepository userRepository;
+
         private final PasswordEncoder passwordEncoder;
         private final JwtTokenProvider jwtProvider;
 
@@ -91,6 +91,17 @@ public class CompanyService {
                 double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
                 return EARTH_RADIUS_KM * c;
+        }
+
+        private CompanyResponseDto mapToDto(Company company) {
+                return CompanyResponseDto.builder()
+                                .id(company.getId())
+                                .name(company.getName())
+                                .address(company.getAddress())
+                                .latitude(company.getLatitude())
+                                .longitude(company.getLongitude())
+                                .active(company.isActive())
+                                .build();
         }
 
         /**
@@ -284,24 +295,22 @@ public class CompanyService {
         /**
          * create new cleaning service for a company
          */
+
         @Transactional
         public ServiceResponseDto createService(ServiceRequestDto dto) {
+                // Validate company exists
+                Company company = companyRepository.findById(dto.getCompanyId())
+                                .orElseThrow(() -> new RuntimeException("Company not found"));
 
-                String username = SecurityContextHolder.getContext()
-                                .getAuthentication()
-                                .getName();
-
-                User user = userRepository.findByUsername(username)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
-
-                Company company = user.getCompany(); 
-
-                if (serviceRepository.existsByNameAndCompanyId(dto.getName(), company.getId())) {
-                        throw new RuntimeException("Service already exists");
+                // Check if service with same name already exists for this company
+                if (serviceRepository.existsByNameAndCompanyId(dto.getName(), dto.getCompanyId())) {
+                        throw new RuntimeException("Service with this name already exists for this company");
                 }
 
-                //checkServiceCreationLimits(company);
+                // Check subscription plan limitations
+                checkServiceCreationLimits(company);
 
+                // Create service
                 ServiceEntity service = ServiceEntity.builder()
                                 .name(dto.getName())
                                 .description(dto.getDescription())
@@ -311,7 +320,9 @@ public class CompanyService {
                                 .active(true)
                                 .build();
 
-                return mapToServiceResponseDto(serviceRepository.save(service));
+                ServiceEntity savedService = serviceRepository.save(service);
+
+                return mapToServiceResponseDto(savedService);
         }
 
         /**
@@ -432,6 +443,4 @@ public class CompanyService {
                                 .active(service.isActive())
                                 .build();
         }
-
-        
 }

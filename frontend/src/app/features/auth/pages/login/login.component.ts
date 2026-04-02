@@ -5,7 +5,6 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { login } from '../../state/auth.actions';
 import { selectLoading, selectError } from '../../state/auth.selectors';
-
 @Component({
   selector: 'app-login-page',
   standalone: true,
@@ -19,7 +18,6 @@ export class LoginPageComponent implements OnInit {
     password: '',
     userType: 'client' as 'client' | 'company' | 'employee',
   };
-
   loading$!: Observable<boolean>;
   error$!: Observable<string | null>;
 
@@ -38,6 +36,8 @@ export class LoginPageComponent implements OnInit {
 
     this.store.dispatch(login({ email, password, userType }));
   }
+
+  @Output() close = new EventEmitter<void>();
 
   closeModal() {
     this.close.emit();

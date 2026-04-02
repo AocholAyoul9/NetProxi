@@ -1,7 +1,7 @@
 import { Component, signal, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
-import { RegisterPageComponent } from '../../../features/auth/pages/register/register.component';
+import { RegisterPageComponent} from '../../../features/auth/pages/register/register.component';
 import { LoginPageComponent } from '../../../features/auth/pages/login/login.component';
 import { CommonModule } from '@angular/common';
 import { Observable, Subscription } from 'rxjs';
@@ -16,7 +16,12 @@ import { ThemeService, ThemeMode } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterModule, RegisterPageComponent, LoginPageComponent, CommonModule],
+  imports: [
+    RouterModule,
+    RegisterPageComponent,
+    LoginPageComponent,
+    CommonModule,
+  ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   standalone: true

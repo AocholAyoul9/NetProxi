@@ -43,18 +43,6 @@
       <nav class="nav" [class.active]="menuOpen()">
         <a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a>
         <a routerLink="/companies" routerLinkActive="active" class="nav-link">Entreprises</a>
-        
-        <!-- Actions mobiles dans le menu -->
-        <div class="mobile-actions">
-          <button class="btn-login" (click)="openLogin()">
-            <i class="fas fa-sign-in-alt"></i>
-            Connexion
-          </button>
-          <button class="btn-signup" (click)="openSignup()">
-            <i class="fas fa-user-plus"></i>
-            Inscription
-          </button>
-        </div>
       </nav>
 
       <div class="actions">
@@ -70,8 +58,15 @@
     </ng-template>
 
     <!-- Modals -->
-    <app-login-page *ngIf="showLogin" (close)="closeLogin()"></app-login-page>
-    <app-register-page *ngIf="showSignup" (close)="closeSignup()"></app-register-page>
+    <app-login-page
+      *ngIf="showLogin"
+      (close)="closeLogin()">
+    </app-login-page>
+
+    <app-register-page
+      *ngIf="showSignup"
+      (close)="closeSignup()">
+    </app-register-page>
 
     <!-- Theme Toggle -->
     <div class="theme-toggle">

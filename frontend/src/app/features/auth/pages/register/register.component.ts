@@ -38,17 +38,11 @@ export class RegisterPageComponent implements OnInit {
 
   onSubmit(): void {
     const { username, email, password, phone, address } = this.formData;
-
     if (!username || !email || !password) return;
-
-    // Dispatch unified registration action with accountType
-    this.store.dispatch(
-      register({
-        userData: { username, email, password, phone, address },
-        userType: this.accountType,
-      })
-    );
+    this.store.dispatch(register({ userData: { username, email, password, phone, address }, userType: this.accountType }));
   }
+
+   @Output() close = new EventEmitter<void>();
 
   closeModal() {
     this.close.emit();
