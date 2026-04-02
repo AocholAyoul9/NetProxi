@@ -1,5 +1,6 @@
 package com.shawilTech.netproxi.security;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,9 +22,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService customUserDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain)
+    protected boolean shouldNotFilter(@Nonnull HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path.startsWith("/swagger-ui.html")) {
+            return true;
+        }
+
+        // Ignore public authentication and OPTIONS requests
+        return path.startsWith("/api/auth") || "OPTIONS".equalsIgnoreCase(request.getMethod());
+    }
+
+    @Override
+    protected void doFilterInternal(@Nonnull HttpServletRequest request,
+                                    @Nonnull HttpServletResponse response,
+                                    @Nonnull FilterChain filterChain)
             throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
@@ -42,6 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

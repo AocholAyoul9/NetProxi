@@ -14,8 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
-
 import com.shawilTech.netproxi.security.JwtAuthenticationFilter;
 
 @Configuration
@@ -25,8 +23,9 @@ import com.shawilTech.netproxi.security.JwtAuthenticationFilter;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    /** Provided by {@link WebConfig}; shared with the Spring Security CORS filter. */
-    private final CorsConfigurationSource corsConfigurationSource;
+    /**
+     * Provided by {@link WebConfig}; shared with the Spring Security CORS filter.
+     */
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,30 +34,11 @@ public class SecurityConfig {
                 // tokens passed via the Authorization header, not cookies. CSRF attacks require
                 // cookie-based session authentication, which is not used here.
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .cors(org.springframework.security.config.Customizer.withDefaults())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Allow Swagger and OpenAPI endpoints
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**")
-                        .permitAll()
-
-                        // Public authentication endpoints
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-
-                        // Public API endpoints
-                        .requestMatchers("/api/bookings/**").permitAll()
-                        .requestMatchers("/api/companies/**").permitAll()
-                        .requestMatchers("/api/subscriptions/**").permitAll()
-                        .requestMatchers("/api/services/**").permitAll()
-                        .requestMatchers("/api/clients/**").permitAll()
-                        .requestMatchers("/api/employees/**").permitAll()
-
-                        // Everything else requires authentication
                         .anyRequest().authenticated())
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)

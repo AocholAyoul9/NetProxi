@@ -56,8 +56,6 @@
       <nav class="nav" [class.active]="menuOpen()">
         <a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a>
         <a routerLink="/companies" routerLinkActive="active" class="nav-link">Entreprises</a>
-        <a routerLink="/about" routerLinkActive="active" class="nav-link">À propos</a>
-        <a routerLink="/contact" routerLinkActive="active" class="nav-link">Contact</a>
       </nav>
 
       <div class="actions">
@@ -75,15 +73,15 @@
 
    
     <!-- Modals -->
-    <app-login-modal
+    <app-login-page
       *ngIf="showLogin"
-      (closeModal)="closeLogin()">
-    </app-login-modal>
+      (close)="closeLogin()">
+    </app-login-page>
 
-    <app-signup-modal
+    <app-register-page
       *ngIf="showSignup"
-      (closeModal)="closeSignup()">
-    </app-signup-modal>
+      (close)="closeSignup()">
+    </app-register-page>
 
     <!-- Theme Toggle -->
     <div class="theme-toggle">

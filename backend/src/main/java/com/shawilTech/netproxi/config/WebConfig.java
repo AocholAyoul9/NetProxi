@@ -11,7 +11,6 @@ import java.util.List;
 @Configuration
 public class WebConfig {
 
-    // TODO: Replace with the production frontend URL before deploying to production
     private static final String ALLOWED_ORIGIN = "http://localhost:4200";
 
     /**
@@ -27,7 +26,7 @@ public class WebConfig {
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

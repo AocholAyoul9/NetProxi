@@ -1,5 +1,6 @@
 
 package com.shawilTech.netproxi.entity;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Builder;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.util.UUID;
-import  java.util.Set;
+import java.util.Set;
 
 @Entity
 @Table(name = "clients")
@@ -17,7 +18,8 @@ import  java.util.Set;
 @AllArgsConstructor
 public class Client {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     private String name;

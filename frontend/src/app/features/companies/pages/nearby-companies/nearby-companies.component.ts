@@ -5,12 +5,12 @@ import { Store } from '@ngrx/store';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { Observable, map } from 'rxjs';
 
-import * as CompanyActions from '../../features/companies/state/company.actions';
-import * as CompanySelectors from '../../features/companies/state/company.selectors';
+import * as CompanyActions from '../../state/company.actions';
+import * as CompanySelectors from '../../state/company.selectors';
 import {
   Company,
   ServiceResponseDto as ServiceModel,
-} from '../../features/companies/models/company.model';
+} from '../../models/company.model';
 import { RouterLink } from "@angular/router";
 
 @Component({

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -16,7 +16,7 @@ import { selectLoading, selectError } from '../../state/auth.selectors';
 export class RegisterPageComponent implements OnInit {
   accountType: 'client' | 'company' = 'client';
   formData = {
-    name: '',
+    username: '',
     email: '',
     password: '',
     phone: '',
@@ -33,8 +33,14 @@ export class RegisterPageComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { name, email, password, phone, address } = this.formData;
-    if (!name || !email || !password) return;
-    this.store.dispatch(register({ userData: { name, email, password, phone, address }, userType: this.accountType }));
+    const { username, email, password, phone, address } = this.formData;
+    if (!username || !email || !password) return;
+    this.store.dispatch(register({ userData: { username, email, password, phone, address }, userType: this.accountType }));
+  }
+
+   @Output() close = new EventEmitter<void>();
+
+  closeModal() {
+    this.close.emit();
   }
 }

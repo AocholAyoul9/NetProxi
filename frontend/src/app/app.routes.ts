@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
-import { NearbyCompaniesComponent } from './pages/nearby-companies/nearby-companies.component';
-import { AboutComponent } from './pages/about/about.component';
-import { ContactComponent } from './pages/contact/contact.component';
-import { SignupModalComponent } from './components/signup-modal/signup-modal.component';
+import { NearbyCompaniesComponent } from './features/companies/pages/nearby-companies/nearby-companies.component';
+import { RegisterPageComponent } from './features/auth/pages/register/register.component';
+
 
 
 export const routes: Routes = [
@@ -14,8 +13,7 @@ export const routes: Routes = [
         (m) => m.companiesRoutes
       ),
   },
-  { path: 'about', component: AboutComponent },
-  { path: 'contact', component: ContactComponent },
+
   {
     path: 'company/:id',
     loadComponent: () =>
@@ -23,7 +21,7 @@ export const routes: Routes = [
         (m) => m.CompanyDetailComponent
       ),
   },
-  { path: 'client-signup', component: SignupModalComponent },
+  { path: 'client-signup', component: RegisterPageComponent },
   { path: '', loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes) },
   { path: '', loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes) },
   { path: '**', redirectTo: '' },
