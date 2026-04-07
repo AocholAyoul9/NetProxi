@@ -27,6 +27,7 @@ public class CompanyService {
 
         private final PasswordEncoder passwordEncoder;
         private final JwtTokenProvider jwtProvider;
+        private final UserRepository userRepository;
 
         /**
          * Find companies near a point (lat, lng) within radius in km
@@ -295,20 +296,34 @@ public class CompanyService {
         /**
          * create new cleaning service for a company
          */
-
         @Transactional
         public ServiceResponseDto createService(ServiceRequestDto dto) {
-                // Validate company exists
-                Company company = companyRepository.findById(dto.getCompanyId())
-                                .orElseThrow(() -> new RuntimeException("Company not found"));
 
-                // Check if service with same name already exists for this company
-                if (serviceRepository.existsByNameAndCompanyId(dto.getName(), dto.getCompanyId())) {
+                //  Get logged-in user
+                String username = SecurityContextHolder
+                                .getContext()
+                                .getAuthentication()
+                                .getName();
+
+                User user = userRepository.findByUsername(username)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                // Get company from user
+                Company company = user.getCompany();
+
+                if (company == null) {
+                        throw new RuntimeException("User is not associated with any company");
+                }
+
+        
+
+                //  Check duplicate service
+                if (serviceRepository.existsByNameAndCompanyId(dto.getName(), company.getId())) {
                         throw new RuntimeException("Service with this name already exists for this company");
                 }
 
-                // Check subscription plan limitations
-                checkServiceCreationLimits(company);
+                // Check subscription
+                //checkServiceCreationLimits(company);
 
                 // Create service
                 ServiceEntity service = ServiceEntity.builder()
@@ -316,7 +331,7 @@ public class CompanyService {
                                 .description(dto.getDescription())
                                 .basePrice(dto.getBasePrice())
                                 .durationInMinutes(dto.getDurationInMinutes())
-                                .company(company)
+                                .company(company) 
                                 .active(true)
                                 .build();
 

@@ -65,7 +65,6 @@ export class CompanyAdminDashboardComponent {
     description: '',
     basePrice: 0,
     durationInMinutes: 0,
-    companyId: '',
   };
 
   editingService: ServiceModel | null = null;
@@ -137,7 +136,6 @@ export class CompanyAdminDashboardComponent {
       description: '',
       basePrice: 0,
       durationInMinutes: 0,
-      companyId: this.companyId,
     };
     this.isServiceModalOpen = true;
   }
@@ -166,13 +164,11 @@ export class CompanyAdminDashboardComponent {
 
   updateService(): void {
     if (this.editingService && this.editingService.id) {
-      const updateData: ServiceUpdateModel = {
-        id: this.editingService.id,
+      const updateData: ServiceModel = {
         name: this.editingService.name,
         description: this.editingService.description,
         basePrice: this.editingService.basePrice,
         durationInMinutes: this.editingService.durationInMinutes,
-        companyId: this.companyId
       };
 
       // Dispatch action to update service

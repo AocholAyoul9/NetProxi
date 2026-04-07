@@ -39,6 +39,10 @@ public class AuthController {
     @Operation(summary = "Login with username/email and password")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+
+        System.out.println("EMAIL: " + request.getEmail());
+        System.out.println("PASSWORD: " + request.getPassword());
+        System.out.println("USERTYPE: " + request.getUserType());
         AuthResponse authResponse = authService.login(request);
 
         // Create a persistent refresh token

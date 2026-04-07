@@ -35,8 +35,8 @@ export class CompanyEffects {
   loadCompanyServices$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CompanyActions.loadCompanyServices),
-      mergeMap(({ companyId }) =>
-        this.api.getCompanyService(companyId).pipe(
+      mergeMap(() =>
+        this.api.getCompanyService().pipe(
           map((services) => CompanyActions.loadCompanyServicesSuccess({ services })),
           catchError((error) => of(CompanyActions.loadCompanyServicesFailure({ error })))
         )

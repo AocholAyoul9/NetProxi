@@ -2,13 +2,16 @@ package com.shawilTech.netproxi.controller;
 
 import com.shawilTech.netproxi.dto.ServiceRequestDto;
 import com.shawilTech.netproxi.dto.ServiceResponseDto;
+import com.shawilTech.netproxi.entity.Company;
+import com.shawilTech.netproxi.entity.User;
 import com.shawilTech.netproxi.service.CompanyService;
+import com.shawilTech.netproxi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +24,7 @@ import java.util.UUID;
 public class ServiceController {
 
     private final CompanyService companyService;
+    private final UserRepository userRepository;
 
     @Operation(summary = "Create a new service")
     @PostMapping
@@ -29,12 +33,20 @@ public class ServiceController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Get all company services")
-    @GetMapping("/company/{companyId}")
-    public ResponseEntity<List<ServiceResponseDto>> getCompanyServices(@PathVariable UUID companyId) {
-        List<ServiceResponseDto> services = companyService.getCompanyServices(companyId);
-        return ResponseEntity.ok(services);
-    }
+  @Operation(summary = "Get services for logged-in user's company")
+@GetMapping("/company/me")
+public ResponseEntity<List<ServiceResponseDto>> getMyCompanyServices() {
+    // Get username from security context
+    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    User user = userRepository.findByUsername(username)
+                  .orElseThrow(() -> new RuntimeException("User not found"));
+
+    Company company = user.getCompany();
+
+    List<ServiceResponseDto> services = companyService.getCompanyServices(company.getId());
+    return ResponseEntity.ok(services);
+}
 
     @Operation(summary = "Get a single service")
     @GetMapping("/{serviceId}")
@@ -46,7 +58,7 @@ public class ServiceController {
     @Operation(summary = "Update a service")
     @PutMapping("/{serviceId}")
     public ResponseEntity<ServiceResponseDto> updateService(
-            @PathVariable UUID serviceId,
+            @PathVariable("serviceId") UUID serviceId, // <-- specify name
             @RequestBody ServiceRequestDto request) {
         ServiceResponseDto updatedService = companyService.updateService(serviceId, request);
         return ResponseEntity.ok(updatedService);
@@ -54,14 +66,14 @@ public class ServiceController {
 
     @Operation(summary = "DeActivate a service")
     @DeleteMapping("deactivate/{serviceId}")
-    public ResponseEntity<Void> deactivateService(@PathVariable UUID serviceId) {
+    public ResponseEntity<Void> deactivateService(@PathVariable("serviceId") UUID serviceId) {
         companyService.deactivateService(serviceId);
         return ResponseEntity.noContent().build();
     }
-    
-    @Operation(summary ="Delete a service")
+
+    @Operation(summary = "Delete a service")
     @DeleteMapping("delete/{serviceId}")
-    public ResponseEntity<Void> deleteService(@PathVariable UUID serviceId){
+    public ResponseEntity<Void> deleteService(@PathVariable("serviceId") UUID serviceId) {
         companyService.deactivateService(serviceId);
 
         return ResponseEntity.noContent().build();

@@ -52,9 +52,9 @@ export class CompaniesApiService {
 
   // ------------ Company Services --------------
 
-  getCompanyService(companyId: string): Observable<ServiceModel[]> {
+  getCompanyService(): Observable<ServiceModel[]> {
     return this.http.get<ServiceModel[]>(
-      `${this.baseUrl}/services/company/${companyId}`
+      `${this.baseUrl}/services/company/me`
     );
   }
 

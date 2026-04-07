@@ -13,7 +13,7 @@ export class AuthApiService {
     password: string,
     userType: 'client' | 'company' | 'employee',
   ): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/login`, { email, password });
+    return this.http.post(`${this.baseUrl}/auth/login`, { email, password , userType });
   }
 
   register(
@@ -23,6 +23,7 @@ export class AuthApiService {
     const endpointMap: Record<string, string> = {
       client: '/auth/register/client',
       company: '/auth/register/company',
+      employee: '/auth/register/employee',
     };
     return this.http.post(`${this.baseUrl}${endpointMap[userType]}`, userData);
   }
