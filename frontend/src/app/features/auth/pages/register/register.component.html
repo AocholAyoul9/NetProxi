@@ -55,6 +55,11 @@
         <input type="text" [(ngModel)]="formData.address" name="address" />
       </div>
 
+      <div class="form-group" *ngIf="accountType === 'company'">
+        <label>Nom de l'entreprise</label>
+        <input type="text" [(ngModel)]="formData.companyName" name="companyName" required />
+      </div>
+
       <button type="submit" [disabled]="loading$ | async">
         {{ (loading$ | async) ? "Inscription..." : "S'inscrire" }}
       </button>

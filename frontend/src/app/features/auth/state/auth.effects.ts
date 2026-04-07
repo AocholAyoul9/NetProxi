@@ -75,7 +75,8 @@ export class AuthEffects {
       mergeMap(({ userData, userType }) =>
         this.authApiService.register(userData, userType).pipe(
           tap((res) => {
-            if (res.token) setToken(res.token);
+            setToken(res.token);
+            if (res.refreshToken) setRefreshToken(res.refreshToken);
           }),
           map((res) => AuthActions.registerSuccess({ user: res, userType })),
           catchError((error) =>

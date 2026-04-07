@@ -22,6 +22,7 @@ export class RegisterPageComponent implements OnInit {
     password: '',
     phone: '',
     address: '',
+    companyName: '',
   };
 
   loading$!: Observable<boolean>;
@@ -37,9 +38,14 @@ export class RegisterPageComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { username, email, password, phone, address } = this.formData;
+    const { username, email, password, phone, address, companyName } = this.formData;
     if (!username || !email || !password) return;
-    this.store.dispatch(register({ userData: { username, email, password, phone, address }, userType: this.accountType }));
+    
+    const userData = this.accountType === 'company'
+      ? { username, email, password, phone, address, companyName }
+      : { username, email, password, phone, address };
+    
+    this.store.dispatch(register({ userData, userType: this.accountType }));
   }
 
   closeModal() {

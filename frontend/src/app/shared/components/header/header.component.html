@@ -13,19 +13,37 @@
     <ng-container *ngIf="isAuthenticated$ | async; else publicHeader">
       <nav class="nav" [class.active]="menuOpen()">
         <div class="user-info" *ngIf="currentUser$ | async as user">
-          <!-- Dynamic User Info -->
+            <!-- Dynamic User Info -->
           <ng-container [ngSwitch]="currentUserType$ | async">
-            <span *ngSwitchCase="'company'" class="company-name">{{ user.name }}</span>
+            <span *ngSwitchCase="'company'" class="company-name">
+              <i class="fas fa-building"></i>
+              {{ user.name }}
+            </span>
             <span *ngSwitchCase="'client'" class="client-name">
               <i class="fas fa-user"></i>
               {{ user.firstName }} {{ user.lastName }}
             </span>
-            <span *ngSwitchCase="'employee'" class="employee-name">{{ user.name }}</span>
+            <span *ngSwitchCase="'employee'" class="employee-name">
+              <i class="fas fa-user-tie"></i>
+              {{ user.name }}
+            </span>
           </ng-container>
 
           <!-- Boutons -->
           <a *ngIf="(currentUserType$ | async) === 'client'" 
              routerLink="/client/dashboard" 
+             class="btn-dashboard">
+            Mon espace
+          </a>
+
+          <a *ngIf="(currentUserType$ | async) === 'company'" 
+             routerLink="/company-admin" 
+             class="btn-dashboard">
+            Espace entreprise
+          </a>
+
+          <a *ngIf="(currentUserType$ | async) === 'employee'" 
+             routerLink="/employee-dashboard" 
              class="btn-dashboard">
             Mon espace
           </a>
@@ -82,7 +100,6 @@
 
     <!-- Hamburger menu -->
     <button
-      *ngIf="!(isAuthenticated$ | async)"
       class="menu-toggle"
       (click)="toggleMenu()"
       aria-label="Toggle menu"
