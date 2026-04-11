@@ -1,6 +1,5 @@
 <header class="header">
   <div class="container">
-
     <!-- Logo -->
     <div class="logo">
       <a routerLink="/" class="logo-link">
@@ -13,7 +12,7 @@
     <ng-container *ngIf="isAuthenticated$ | async; else publicHeader">
       <nav class="nav" [class.active]="menuOpen()">
         <div class="user-info" *ngIf="currentUser$ | async as user">
-            <!-- Dynamic User Info -->
+          <!-- Dynamic User Info -->
           <ng-container [ngSwitch]="currentUserType$ | async">
             <span *ngSwitchCase="'company'" class="company-name">
               <i class="fas fa-building"></i>
@@ -30,21 +29,27 @@
           </ng-container>
 
           <!-- Boutons -->
-          <a *ngIf="(currentUserType$ | async) === 'client'" 
-             routerLink="/client/dashboard" 
-             class="btn-dashboard">
+          <a
+            *ngIf="(currentUserType$ | async) === 'client'"
+            routerLink="/client/dashboard"
+            class="btn-dashboard"
+          >
             Mon espace
           </a>
 
-          <a *ngIf="(currentUserType$ | async) === 'company'" 
-             routerLink="/company-admin" 
-             class="btn-dashboard">
+          <a
+            *ngIf="(currentUserType$ | async) === 'company'"
+            routerLink="/company-admin"
+            class="btn-dashboard"
+          >
             Espace entreprise
           </a>
 
-          <a *ngIf="(currentUserType$ | async) === 'employee'" 
-             routerLink="/employee-dashboard" 
-             class="btn-dashboard">
+          <a
+            *ngIf="(currentUserType$ | async) === 'employee'"
+            routerLink="/employee-dashboard"
+            class="btn-dashboard"
+          >
             Mon espace
           </a>
 
@@ -60,7 +65,14 @@
     <ng-template #publicHeader>
       <nav class="nav" [class.active]="menuOpen()">
         <a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a>
-        <a routerLink="/companies" routerLinkActive="active" class="nav-link">Entreprises</a>
+        <a routerLink="/companies" routerLinkActive="active" class="nav-link"
+          >Entreprises</a
+        >
+
+        <div class="mobile-actions">
+          <button class="btn-login" (click)="openLogin()">Connexion</button>
+          <button class="btn-signup" (click)="openSignup()">Inscription</button>
+        </div>
       </nav>
 
       <div class="actions">
@@ -76,14 +88,9 @@
     </ng-template>
 
     <!-- Modals -->
-    <app-login-page
-      *ngIf="showLogin"
-      (close)="closeLogin()">
-    </app-login-page>
+    <app-login-page *ngIf="showLogin" (close)="closeLogin()"> </app-login-page>
 
-    <app-register-page
-      *ngIf="showSignup"
-      (close)="closeSignup()">
+    <app-register-page *ngIf="showSignup" (close)="closeSignup()">
     </app-register-page>
 
     <!-- Theme Toggle -->
@@ -91,7 +98,8 @@
       <select
         [value]="currentTheme"
         (change)="setTheme($any($event.target).value)"
-        aria-label="Select theme">
+        aria-label="Select theme"
+      >
         <option value="system">System</option>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
@@ -103,11 +111,11 @@
       class="menu-toggle"
       (click)="toggleMenu()"
       aria-label="Toggle menu"
-      [class.active]="menuOpen()">
-      <span></span>
-      <span></span>
-      <span></span>
+      [class.active]="menuOpen()"
+    >
+      <span class="menu-line"> </span>
+      <span class="menu-line"> </span>
+      <span class="menu-line"> </span>
     </button>
-
   </div>
 </header>

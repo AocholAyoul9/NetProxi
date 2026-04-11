@@ -92,6 +92,14 @@ export class CompanyEffects {
     )
   );
 
+  // Load services after company is loaded
+  loadServicesOnCompanyLoad$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CompanyActions.loadCompanySuccess),
+      map(() => CompanyActions.loadCompanyServices())
+    )
+  );
+
   loadNearbyCompanies$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CompanyActions.loadNearbyCompanies),

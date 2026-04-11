@@ -2,6 +2,7 @@ package com.shawilTech.netproxi.controller;
 
 import com.shawilTech.netproxi.dto.*;
 import com.shawilTech.netproxi.service.CompanyService;
+import com.shawilTech.netproxi.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import java.util.*;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final EmployeeService employeeService;
 
 
     /**
@@ -67,5 +69,33 @@ public class CompanyController {
             @RequestBody CompanyRequestDto updatedCompany
     ) {
         return companyService.updateCompany(companyId, updatedCompany);
+    }
+
+    // ---------------- EMPLOYEE ENDPOINTS ----------------
+
+    @Operation(summary = "Get company employees")
+    @GetMapping("/{companyId}/employees")
+    public List<EmployeeResponseDto> getCompanyEmployees(@PathVariable UUID companyId) {
+        return employeeService.getEmployeesByCompanyId(companyId);
+    }
+
+    @Operation(summary = "Add company employee")
+    @PostMapping("/{companyId}/employees")
+    public EmployeeResponseDto addCompanyEmployee(
+            @PathVariable UUID companyId,
+            @RequestBody EmployeeRequestDto dto
+    ) {
+        System.out.println("Creating employee for company: " + companyId);
+        System.out.println("Employee data: " + dto);
+        return employeeService.createEmployeeByCompanyId(companyId, dto);
+    }
+
+    @Operation(summary = "Delete company employee")
+    @DeleteMapping("/{companyId}/employees/{employeeId}")
+    public void deleteCompanyEmployee(
+            @PathVariable UUID companyId,
+            @PathVariable UUID employeeId
+    ) {
+        employeeService.deleteEmployeeByCompanyId(companyId, employeeId);
     }
 }

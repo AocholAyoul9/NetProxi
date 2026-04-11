@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Observable, map } from 'rxjs';
@@ -18,6 +18,7 @@ import {
 
 import * as CompanySelectors from '../../../companies/state/company.selectors';
 import * as CompanyActions from '../../../companies/state/company.actions';
+import * as AuthSelectors from '../../../auth/state/auth.selectors';
 import { FormsModule } from '@angular/forms';
 import { Booking } from '../../../booking/models/booking.model';
 
@@ -36,7 +37,7 @@ interface DashboardTab {
   templateUrl: './company-admin-dashboard.component.html',
   styleUrls: ['./company-admin-dashboard.component.scss'],
 })
-export class CompanyAdminDashboardComponent {
+export class CompanyAdminDashboardComponent implements OnInit {
   // Selectors
   company$: Observable<Company | null>;
   services$: Observable<ServiceResponseDto[]>;
@@ -57,6 +58,15 @@ export class CompanyAdminDashboardComponent {
 
   // Recent bookings for overview tab
   recentBookings$: Observable<Booking[]>;
+
+  ngOnInit(): void {
+    // Load company data if not already loaded
+    this.store.select(CompanySelectors.selectCurrentCompany).subscribe((company) => {
+      if (!company && this.companyId) {
+        this.store.dispatch(CompanyActions.loadCompany({ companyId: this.companyId }));
+      }
+    });
+  }
 
   // Service modals
   newService: ServiceModel = {
@@ -108,6 +118,14 @@ export class CompanyAdminDashboardComponent {
     this.company$.subscribe((company) => {
       if (company) {
         this.companyId = company.id;
+      }
+    });
+
+    // Fallback: get companyId from auth state if not in company state
+    this.store.select(AuthSelectors.selectCurrentUser).subscribe((user) => {
+      if (user && !this.companyId) {
+        this.companyId = user.id;
+        console.log('Using companyId from auth:', this.companyId);
       }
     });
 
@@ -203,10 +221,15 @@ export class CompanyAdminDashboardComponent {
   }
 
   createEmployee(): void {
+    if (!this.companyId) {
+      console.error('Company ID not available');
+      return;
+    }
     if (
       this.newEmployee.name &&
       this.newEmployee.email &&
-      this.newEmployee.phone
+      this.newEmployee.phone &&
+      this.newEmployee.password
     ) {
       // Dispatch action to create employee
       this.store.dispatch(

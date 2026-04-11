@@ -1,5 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import * as CompanyAction from './company.actions';
+import * as AuthActions from '../../auth/state/auth.actions';
 import { Company } from '../models/company.model';
 
 export interface CompanyState {
@@ -28,6 +29,11 @@ export const companyFeature = createFeature({
   name: 'company' as const,
   reducer: createReducer(
     initialState,
+
+    // ----------------------
+    // LOGOUT - CLEAR COMPANY STATE
+    // ----------------------
+    on(AuthActions.logout, () => initialState),
 
   on(CompanyAction.assignEmployeeToBooking, (state) => ({
     ...state,

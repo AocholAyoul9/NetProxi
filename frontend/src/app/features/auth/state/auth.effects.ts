@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, map, mergeMap, of, tap } from 'rxjs';
 import { AuthApiService } from '../services/auth.api.service';
 import * as AuthActions from './auth.actions';
+import * as CompanyActions from '../../companies/state/company.actions';
 import { AuthUser } from '../models/user.model';
 import { setToken, setRefreshToken, clearTokens } from '../utils/token-storage';
 
@@ -27,13 +28,18 @@ export class AuthEffects {
             localStorage.setItem(userType, JSON.stringify(res));
           }),
           map((res) => {
+            const userId = userType === 'company' 
+              ? (res.companyId ?? res.id ?? '')
+              : (res.id ?? '');
             const user: AuthUser = {
-              id: res.id ?? '',
+              id: userId,
               name: res.name ?? res.username ?? '',
               email: res.email ?? '',
               role: userType,
             };
-            return AuthActions.loginSuccess({ user, accessToken: res.token, userType });
+            console.log('Login response:', res);
+            console.log('User created:', user);
+            return AuthActions.loginSuccess({ user, accessToken: res.token ?? res.accessToken, userType });
           }),
           catchError((error) =>
             of(
@@ -120,6 +126,25 @@ export class AuthEffects {
         })
       ),
     { dispatch: false }
+  );
+
+  // ----------------------
+  // LOGIN SUCCESS - LOAD COMPANY DATA
+  // ----------------------
+  loadCompanyDataOnLogin$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.loginSuccess),
+      mergeMap(({ user, userType }) => {
+        if (userType === 'company') {
+          return of(
+            CompanyActions.loadCompany({ companyId: user.id }),
+            CompanyActions.loadCompanyServices(),
+            CompanyActions.loadCompanyEmployees({ companyId: user.id })
+          );
+        }
+        return of();
+      })
+    )
   );
 
   // ----------------------
