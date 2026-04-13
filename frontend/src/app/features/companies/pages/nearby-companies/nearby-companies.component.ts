@@ -1,9 +1,21 @@
-import { Component, signal, OnInit } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+  PLATFORM_ID,
+  inject,
+  afterNextRender,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { Observable, map } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 import * as CompanyActions from '../../state/company.actions';
 import * as CompanySelectors from '../../state/company.selectors';
@@ -11,7 +23,6 @@ import {
   Company,
   ServiceResponseDto as ServiceModel,
 } from '../../models/company.model';
-import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-nearby-companies',
@@ -20,292 +31,337 @@ import { RouterLink } from "@angular/router";
   templateUrl: './nearby-companies.component.html',
   styleUrls: ['./nearby-companies.component.scss'],
 })
-export class NearbyCompaniesComponent implements OnInit {
-  
-  address = signal('');
-  lat = signal<number | null>(null);
-  lng = signal<number | null>(null);
-  radiusKm = signal(200); 
-  selectedDateTime: string = '';
-  bookingAddress: string = '';
+export class NearbyCompaniesComponent implements OnDestroy {
+  // ── DI ──────────────────────────────────────────────────────────────
+  private readonly store = inject(Store);
+  private readonly platformId = inject(PLATFORM_ID);
 
-  loading$: Observable<boolean>;
-  error$: Observable<string | null>;
-  companies$: Observable<Company[]>;
+  @ViewChild('searchInput') searchInputRef?: ElementRef<HTMLInputElement>;
 
-  // Filter properties
-  popularServices = ['Bureaux', 'Vitres', 'Tapis', 'Entretien complet'];
+  // ── Location signals ─────────────────────────────────────────────────
+  readonly address = signal('');
+  readonly lat = signal<number | null>(null);
+  readonly lng = signal<number | null>(null);
+  readonly radiusKm = signal(10);
+  readonly radiusOptions = [5, 10, 20] as const;
+
+  // ── Map state ────────────────────────────────────────────────────────
+  readonly mapCenter = computed(() => ({
+    lat: this.lat() ?? 48.8566,
+    lng: this.lng() ?? 2.3522,
+  }));
+  readonly mapZoom = signal(12);
+  readonly mapOptions = {
+    streetViewControl: false,
+    mapTypeControl: false,
+    fullscreenControl: false,
+    zoomControl: true,
+  };
+
+  // ── UI state ─────────────────────────────────────────────────────────
+  readonly selectedCompanyId = signal<string | null>(null);
+  readonly hoveredCompanyId = signal<string | null>(null);
+  readonly isLocating = signal(false);
+
+  // ── Filter ───────────────────────────────────────────────────────────
+  readonly popularServices = ['Bureaux', 'Vitres', 'Tapis', 'Entretien complet'];
   activeFilter: string | null = null;
 
-  // Booking modal signals
-  bookingCompany = signal<Company | null>(null);
-  selectedService = signal<ServiceModel | null>(null);
-  bookingSuccess = signal('');
+  // ── Booking modal ────────────────────────────────────────────────────
+  selectedDateTime = '';
+  bookingAddress = '';
+  bookingEmail = '';
+  readonly bookingCompany = signal<Company | null>(null);
+  readonly selectedService = signal<ServiceModel | null>(null);
+  readonly bookingSuccess = signal('');
 
-  constructor(private store: Store) {
-    this.loading$ = this.store.select(CompanySelectors.selectCompanyLoading);
-    this.error$ = this.store.select(CompanySelectors.selectCompanyError);
-    this.companies$ = this.store.select(CompanySelectors.selectNearbyCompanies);
+  // ── NgRx observables ─────────────────────────────────────────────────
+  readonly loading$: Observable<boolean> = this.store.select(
+    CompanySelectors.selectCompanyLoading
+  );
+  readonly error$: Observable<string | null> = this.store.select(
+    CompanySelectors.selectCompanyError
+  );
+
+  private readonly baseCompanies$: Observable<Company[]> = this.store
+    .select(CompanySelectors.selectNearbyCompanies)
+    .pipe(
+      map((companies) =>
+        [...companies].sort(
+          (a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity)
+        )
+      )
+    );
+
+  viewCompanies$: Observable<Company[]> = this.baseCompanies$;
+
+  // ── Autocomplete cleanup ─────────────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private autocompleteInstance: any = null;
+
+  constructor() {
+    afterNextRender(() => {
+      this.triggerGeolocation();
+      this.waitForGoogleMapsAndInit();
+    });
   }
 
-  ngOnInit(): void {
-    this.getCurrentLocation();
-  }
-
-  /**
-   * Gets user's current location using browser geolocation API
-   */
-
-  private getCurrentLocation(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.lat.set(position.coords.latitude);
-          this.lng.set(position.coords.longitude);
-
-          // Reverse geocode to get address
-          this.reverseGeocode(
-            position.coords.latitude,
-            position.coords.longitude
-          );
-        },
-        (error) => {
-          console.warn('Geolocation error:', error);
-          // Fallback to Paris coordinates
-          this.lat.set(48.8566);
-          this.lng.set(2.3522);
-          this.address.set('Paris, France');
-        }
-      );
-    } else {
-      console.warn('Geolocation is not supported by this browser.');
-      // Fallback to Paris coordinates
-      this.lat.set(48.8566);
-      this.lng.set(2.3522);
-      this.address.set('Paris, France');
+  /** Poll for google.maps.places availability (async script load) */
+  private waitForGoogleMapsAndInit(attempts = 0): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const win = window as any;
+    if (win.google?.maps?.places) {
+      this.initPlacesAutocomplete();
+    } else if (attempts < 20) {
+      setTimeout(() => this.waitForGoogleMapsAndInit(attempts + 1), 250);
     }
   }
 
-  /**
-   * Reverse geocode coordinates to get address
-   */
-  private async reverseGeocode(lat: number, lng: number): Promise<void> {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+  ngOnDestroy(): void {
+    if (this.autocompleteInstance) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).google?.maps?.event?.clearInstanceListeners(
+        this.autocompleteInstance
       );
-      const data = await response.json();
-
-      if (data && data.display_name) {
-        this.address.set(data.display_name);
-      }
-    } catch (error) {
-      console.warn('Reverse geocoding failed:', error);
     }
   }
 
-  /**
-   * Handles address input changes
-   */
-  onAddressChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.address.set(input.value);
-  }
+  // ── Geolocation ──────────────────────────────────────────────────────
 
-  /**
-   * Searches for nearby companies based on address
-   */
-  async searchNearby(): Promise<void> {
-    const addr = this.address().trim();
-    if (!addr) {
-      console.warn('Address is empty.');
+  private triggerGeolocation(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (!navigator.geolocation) {
+      this.setDefaultLocation();
       return;
     }
-
-    try {
-      // Fetch geocoding data from Nominatim
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          addr
-        )}`
-      );
-
-      // Parse JSON response
-      const data = await res.json();
-
-      // Check if Nominatim returned anything
-      if (!data || !data.length) {
-        console.warn('No results from Nominatim for:', addr);
-        return;
+    this.isLocating.set(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.lat.set(pos.coords.latitude);
+        this.lng.set(pos.coords.longitude);
+        this.mapZoom.set(13);
+        this.isLocating.set(false);
+        this.reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+        this.dispatchNearbySearch();
+      },
+      () => {
+        this.isLocating.set(false);
+        this.setDefaultLocation();
       }
+    );
+  }
 
-      // Take the first (most relevant) result
-      const first = data[0];
-      const lat = parseFloat(first.lat);
-      const lng = parseFloat(first.lon);
+  useMyLocation(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.triggerGeolocation();
+  }
 
-      // Set component signals
-      this.lat.set(lat);
-      this.lng.set(lng);
+  private setDefaultLocation(): void {
+    this.lat.set(48.8566);
+    this.lng.set(2.3522);
+    this.address.set('Paris, France');
+  }
 
-      // Dispatch NgRx action to load nearby companies
-      this.store.dispatch(
-        CompanyActions.loadNearbyCompanies({
-          lat,
-          lng,
-          radiusKm: this.radiusKm(),
-        })
+  private async reverseGeocode(lat: number, lng: number): Promise<void> {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
       );
-
-      this.clearFilter();
-    } catch (err: any) {
-      console.error('Error searching nearby:', err);
+      const data = await res.json();
+      if (data?.display_name) {
+        this.address.set(data.display_name);
+      }
+    } catch {
+      // silently ignore reverse-geocode failures
     }
   }
 
-  /**
-   * Gets appropriate icon for service type
-   */
-  getServiceIcon(serviceName: string): string {
-    const iconMap: { [key: string]: string } = {
-      Bureaux: 'fa-building',
-      Vitres: 'fa-window-restore',
-      Tapis: 'fa-rug',
-      'Entretien complet': 'fa-home',
-    };
-    return iconMap[serviceName] || 'fa-tools';
+  // ── Places Autocomplete ──────────────────────────────────────────────
+
+  private initPlacesAutocomplete(): void {
+    if (!this.searchInputRef?.nativeElement) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const win = window as any;
+    if (!win.google?.maps?.places) return;
+
+    const autocomplete = new win.google.maps.places.Autocomplete(
+      this.searchInputRef.nativeElement,
+      { types: ['geocode'], fields: ['geometry', 'formatted_address'] }
+    );
+    this.autocompleteInstance = autocomplete;
+
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+      if (place?.geometry?.location) {
+        this.lat.set(place.geometry.location.lat());
+        this.lng.set(place.geometry.location.lng());
+        this.address.set(place.formatted_address ?? '');
+        this.mapZoom.set(13);
+        this.clearFilter();
+        this.dispatchNearbySearch();
+      }
+    });
   }
 
-  /**
-   * Filters companies by service type
-   */
-  filterByService(serviceName: string): void {
-    this.activeFilter = serviceName;
-    this.companies$ = this.store
-      .select(CompanySelectors.selectNearbyCompanies)
-      .pipe(
-        map((companies) =>
-          companies.filter((company) =>
-            company.services?.some((s) => s.name === serviceName)
-          )
-        )
+  // ── Search ────────────────────────────────────────────────────────────
+
+  onAddressInput(event: Event): void {
+    this.address.set((event.target as HTMLInputElement).value);
+  }
+
+  onSearchKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') this.searchByAddress();
+  }
+
+  async searchByAddress(): Promise<void> {
+    const addr = this.address().trim();
+    if (!addr) return;
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`
       );
+      const data = await res.json();
+      if (!data?.length) return;
+      this.lat.set(parseFloat(data[0].lat));
+      this.lng.set(parseFloat(data[0].lon));
+      this.mapZoom.set(13);
+      this.clearFilter();
+      this.dispatchNearbySearch();
+    } catch (err) {
+      console.error('Geocoding error:', err);
+    }
   }
 
-  
-   // Get initials for avatar placeholder
-  getInitials(companyName: string): string {
-    if (!companyName) return 'N';
-    
-    return companyName
+  setRadius(km: number): void {
+    this.radiusKm.set(km);
+    if (this.lat() !== null && this.lng() !== null) {
+      this.dispatchNearbySearch();
+    }
+  }
+
+  private dispatchNearbySearch(): void {
+    const lat = this.lat();
+    const lng = this.lng();
+    if (lat === null || lng === null) return;
+    this.selectedCompanyId.set(null);
+    this.store.dispatch(
+      CompanyActions.loadNearbyCompanies({ lat, lng, radiusKm: this.radiusKm() })
+    );
+  }
+
+  // ── Map / List sync ──────────────────────────────────────────────────
+
+  onMarkerClick(company: Company): void {
+    this.selectedCompanyId.set(company.id);
+    if (isPlatformBrowser(this.platformId)) {
+      document
+        .getElementById(`company-${company.id}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  onCardClick(company: Company): void {
+    this.selectedCompanyId.set(company.id);
+    if (company.latitude != null && company.longitude != null) {
+      this.lat.set(company.latitude);
+      this.lng.set(company.longitude);
+      this.mapZoom.set(15);
+    }
+  }
+
+  onCardMouseEnter(company: Company): void {
+    this.hoveredCompanyId.set(company.id);
+  }
+
+  onCardMouseLeave(): void {
+    this.hoveredCompanyId.set(null);
+  }
+
+  getMarkerOptions(company: Company): { title: string; zIndex: number } {
+    const isActive =
+      this.selectedCompanyId() === company.id ||
+      this.hoveredCompanyId() === company.id;
+    return { title: company.name, zIndex: isActive ? 1000 : 1 };
+  }
+
+  // ── Filter ────────────────────────────────────────────────────────────
+
+  filterByService(name: string): void {
+    this.activeFilter = name;
+    this.viewCompanies$ = this.baseCompanies$.pipe(
+      map((companies) =>
+        companies.filter((c) => c.services?.some((s) => s.name === name))
+      )
+    );
+  }
+
+  clearFilter(): void {
+    this.activeFilter = null;
+    this.viewCompanies$ = this.baseCompanies$;
+  }
+
+  // ── Display helpers ──────────────────────────────────────────────────
+
+  formatDistance(km: number): string {
+    if (km < 1) return `${Math.round(km * 1000)} m`;
+    return `${km.toFixed(1)} km`;
+  }
+
+  getInitials(name: string): string {
+    return (name || 'N')
       .split(' ')
-      .map(word => word.charAt(0))
+      .filter((w) => w.length > 0)
+      .map((w) => w[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
   }
 
-  /**
-   * Clears active filter and resets to all companies
-   */
-  clearFilter(): void {
-    this.activeFilter = null;
-    this.companies$ = this.store.select(CompanySelectors.selectNearbyCompanies);
-
-    // If we have coordinates, refresh the data
-    if (this.lat() && this.lng()) {
-      this.store.dispatch(
-        CompanyActions.loadNearbyCompanies({
-          lat: this.lat()!,
-          lng: this.lng()!,
-          radiusKm: this.radiusKm(),
-        })
-      );
-    }
+  getServiceIcon(name: string): string {
+    const icons: Record<string, string> = {
+      Bureaux: 'fa-building',
+      Vitres: 'fa-window-restore',
+      Tapis: 'fa-rug',
+      'Entretien complet': 'fa-home',
+    };
+    return icons[name] ?? 'fa-tools';
   }
 
-  /**
-   * Opens booking modal for a company
-   */
+  // ── Booking ───────────────────────────────────────────────────────────
+
   bookCompany(company: Company): void {
     this.bookingCompany.set(company);
     this.selectedService.set(null);
     this.bookingSuccess.set('');
+    this.bookingAddress = '';
+    this.bookingEmail = '';
+    this.selectedDateTime = '';
   }
 
-
-  /**
-   * Handles service selection in booking modal
-   */
-  onServiceSelect(serviceName: string): void {
-    if (!serviceName) {
+  onServiceSelect(name: string): void {
+    if (!name) {
       this.selectedService.set(null);
       return;
     }
-
-    const company = this.bookingCompany();
-    if (company?.services) {
-      const selectedService = company.services.find(
-        (s) => s.name === serviceName
-      );
-      this.selectedService.set(selectedService || null);
-    }
+    const service = this.bookingCompany()?.services?.find((s) => s.name === name);
+    this.selectedService.set(service ?? null);
   }
 
-  /**
-   * Confirms booking
-   */
   confirmBooking(): void {
     if (!this.bookingCompany() || !this.selectedService()) return;
-
     const company = this.bookingCompany()!;
     const service = this.selectedService()!;
-
-    // Here you would typically dispatch an action to create the booking
     this.bookingSuccess.set(
       `Réservation confirmée pour ${company.name} (${service.name}) ! Un email de confirmation vous a été envoyé.`
     );
-
-    // Reset after success message
     setTimeout(() => {
-      if (this.bookingSuccess()) {
-        this.closeBooking();
-      }
+      if (this.bookingSuccess()) this.closeBooking();
     }, 3000);
   }
 
-  /**
-   * Closes booking modal
-   */
   closeBooking(): void {
     this.bookingCompany.set(null);
     this.selectedService.set(null);
     this.bookingSuccess.set('');
-  }
-
-  /**
-   * Gets the number of companies for display
-   */
-  getCompaniesCount(companies: Company[] | null): number {
-    return companies?.length || 0;
-  }
-
-  /**
-   * Formats distance for display (meters to kilometers)
-   */
-  formatDistance(meters: number): string {
-    if (meters < 1000) {
-      return `${Math.round(meters)} m`;
-    }
-    return `${(meters / 1000).toFixed(1)} km`;
-  }
-
-  /**
-   * Handles Enter key in search input
-   */
-  onSearchKeyPress(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      this.searchNearby();
-    }
   }
 }

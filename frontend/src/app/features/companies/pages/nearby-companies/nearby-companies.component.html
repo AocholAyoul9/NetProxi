@@ -1,304 +1,327 @@
-<div class="nearby-companies-page">
-  <!-- Hero / Search Section -->
+<div class="nearby-page">
+
+  <!-- ── HERO / SEARCH ─────────────────────────────────────────── -->
   <section class="hero-search">
     <div class="hero-content">
       <h1>Trouvez des services de nettoyage à proximité</h1>
-      <p>
-        Entrez votre adresse et découvrez les meilleures entreprises près de
-        chez vous.
-      </p>
+      <p>Entrez votre adresse et découvrez les meilleures entreprises près de chez vous.</p>
+
       <div class="search-bar">
         <div class="search-input-wrapper">
           <i class="fas fa-map-marker-alt"></i>
           <input
+            #searchInput
             type="text"
             [value]="address()"
-            (input)="onAddressChange($event)"
-            (keypress)="onSearchKeyPress($event)"
+            (input)="onAddressInput($event)"
+            (keydown)="onSearchKeyDown($event)"
             placeholder="Entrez votre adresse..."
             class="search-input"
+            autocomplete="off"
           />
         </div>
+
+        <button
+          class="btn-location"
+          (click)="useMyLocation()"
+          [disabled]="isLocating()"
+          title="Utiliser ma position"
+        >
+          <i
+            class="fas"
+            [class.fa-location-arrow]="!isLocating()"
+            [class.fa-spinner]="isLocating()"
+            [class.fa-spin]="isLocating()"
+          ></i>
+        </button>
+
         <button
           class="search-btn"
-          (click)="searchNearby()"
+          (click)="searchByAddress()"
           [disabled]="!address().trim()"
         >
           <i class="fas fa-search"></i>
           Rechercher
         </button>
       </div>
-    </div>
-  </section>
 
-  <!-- Quick Stats -->
-  <section class="stats-section">
-    <div class="stats-container">
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-icon">
-            <!--- <i class="fas fa-store"></i>-->
-          </div>
-          <strong>120+</strong>
-          <span>Entreprises locales</span>
-        </div>
-        <div class="stat">
-          <div class="stat-icon">
-            <!--<i class="fas fa-concierge-bell"></i>-->
-          </div>
-          <strong>350+</strong>
-          <span>Services proposés</span>
-        </div>
-        <div class="stat">
-          <div class="stat-icon">
-            <!--<i class="fas fa-smile"></i>-->
-          </div>
-          <strong>1,200+</strong>
-          <span>Clients satisfaits</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Filters Section -->
-  <section class="filters-section" *ngIf="popularServices.length">
-    <div class="filters-container">
-      <h3 class="filters-title">Filtrer par type de service</h3>
-      <div class="filter-buttons">
+      <!-- Radius filter -->
+      <div class="radius-filters">
+        <span class="radius-label">Rayon :</span>
         <button
-          *ngFor="let service of popularServices"
-          (click)="filterByService(service)"
-          [class.active]="activeFilter === service"
-          class="filter-btn"
+          *ngFor="let r of radiusOptions"
+          (click)="setRadius(r)"
+          [class.active]="radiusKm() === r"
+          class="radius-btn"
         >
-          <i class="fas {{ getServiceIcon(service) }}"></i>
-          {{ service }}
-        </button>
-        <button
-          *ngIf="activeFilter"
-          (click)="clearFilter()"
-          class="clear-filter"
-        >
-          <i class="fas fa-times"></i>
-          Réinitialiser
+          {{ r }} km
         </button>
       </div>
     </div>
   </section>
 
-  <!-- Status Messages -->
-  <section class="status-section">
-    <div *ngIf="loading$ | async" class="loading-state">
-      <i class="fas fa-spinner fa-spin"></i>
-      <span>Recherche des entreprises à proximité...</span>
-    </div>
-  </section>
-
-  <!-- Companies Section -->
- <!-- Companies Section -->
-<section class="companies-section" *ngIf="companies$ | async as companies">
-  <div class="section-header">
-    <h2>Nos Entreprises Partenaires</h2>
-    <div class="results-count" *ngIf="companies.length > 0">
-      {{ companies.length }} entreprise(s) trouvée(s)
-    </div>
+  <!-- ── STATUS BANNERS ─────────────────────────────────────────── -->
+  <div class="loading-banner" *ngIf="loading$ | async">
+    <i class="fas fa-spinner fa-spin"></i>&nbsp;Recherche des entreprises à proximité…
+  </div>
+  <div class="error-banner" *ngIf="error$ | async as err">
+    <i class="fas fa-exclamation-triangle"></i>&nbsp;{{ err }}
   </div>
 
-  <div *ngIf="companies.length > 0" class="company-grid">
-    <div *ngFor="let company of companies" class="company-card">
-      
-      <!-- Company Header -->
-      <div class="company-header">
-        <div class="company-avatar">
-          <img *ngIf="company.logoUrl; else initials" [src]="company.logoUrl" [alt]="company.name" />
-          <ng-template #initials>{{ (company.name || "N").charAt(0) }}</ng-template>
-        </div>
-        <div class="company-title">
-          <h4>{{ company.name }}</h4>
-          <div class="rating-badge">
-            <i class="fas fa-star"></i> {{ company.rating || "4.5" }}
-            <span class="reviews-count">({{ company.reviewsCount || 10 }} avis)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Location & Distance -->
-      <div class="location-info">
-        <div class="location-item">
-          <i class="fas fa-map-marker-alt"></i>
-          <span class="address">{{ company.address || "Adresse non disponible" }}</span>
-        </div>
-        <div class="distance-badge" *ngIf="company.distance">
-          📍 À {{ company.distance | number : "1.1-1" }} km
-        </div>
-      </div>
-
-      <!-- Contact Info -->
-      <div class="contact-info">
-        <div class="contact-item">
-          <i class="fas fa-phone"></i>
-          <span>{{ company.phone || "Non renseigné" }}</span>
-        </div>
-      </div>
-
-      <!-- Services -->
-      <div class="services-section">
-        <h5>Services proposés :</h5>
-        <div class="service-tags">
-          <span
-            *ngFor="let service of (company.services | slice:0:3) || []"
-            class="service-tag"
-            [class.popular]="service.isPopular"
-          >
-            {{ service.name || "Service" }}
-          </span>
-          <span *ngIf="!company.services?.length" class="no-services">
-            Aucun service renseigné
-          </span>
-        </div>
-      </div>
-
-      <!-- Trust Badges -->
-      <div class="trust-badges">
-        <span *ngIf="company.isVerified" class="badge verified">
-          <i class="fas fa-shield-check"></i> Vérifié
-        </span>
-        <span *ngIf="company.yearsExperience" class="badge experience">
-          <i class="fas fa-trophy"></i> {{ company.yearsExperience }} ans
-        </span>
-      </div>
-
-      <!-- Card Actions -->
-      <div class="card-actions">
-        <button class="btn-primary" (click)="bookCompany(company)">
-          <i class="fas fa-calendar-check"></i> Réserver
-        </button>
-        <button class="btn-secondary" [routerLink]="['/company', company.id]">
-          <i class="fas fa-info-circle"></i> Détails
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Empty State -->
-  <div *ngIf="companies.length === 0" class="empty-state">
-    <div class="empty-content">
-      <i class="fas fa-building"></i>
-      <h3>Aucune entreprise trouvée à proximité</h3>
-      <p>Essayez de modifier votre adresse ou les critères de recherche</p>
-      <button class="btn-reset" (click)="clearFilter()">
-        <i class="fas fa-refresh"></i> Réinitialiser la recherche
+  <!-- ── SERVICE FILTERS ────────────────────────────────────────── -->
+  <section class="filters-section">
+    <div class="filter-pills">
+      <button
+        *ngFor="let s of popularServices"
+        (click)="filterByService(s)"
+        [class.active]="activeFilter === s"
+        class="pill"
+      >
+        <i class="fas {{ getServiceIcon(s) }}"></i>
+        {{ s }}
+      </button>
+      <button *ngIf="activeFilter" (click)="clearFilter()" class="pill pill-clear">
+        <i class="fas fa-times"></i> Réinitialiser
       </button>
     </div>
-  </div>
-</section>
+  </section>
 
-  <div *ngIf="bookingCompany()" class="modal-backdrop">
-    <div class="modal">
+  <!-- ── MAIN CONTENT ───────────────────────────────────────────── -->
+  <ng-container *ngIf="viewCompanies$ | async as companies">
+
+    <!-- Results header -->
+    <div class="results-header" *ngIf="companies.length > 0">
+      <span>{{ companies.length }} entreprise{{ companies.length > 1 ? 's' : '' }} trouvée{{ companies.length > 1 ? 's' : '' }}</span>
+      <span class="radius-info">dans un rayon de {{ radiusKm() }} km</span>
+    </div>
+
+    <!-- ── SPLIT LAYOUT ── -->
+    <div class="content-layout" *ngIf="companies.length > 0; else emptyState">
+
+      <!-- MAP PANEL -->
+      <div class="map-panel">
+        <google-map
+          [center]="mapCenter()"
+          [zoom]="mapZoom()"
+          [options]="mapOptions"
+          class="google-map"
+        >
+          <!-- User location marker -->
+          <map-marker
+            *ngIf="lat() !== null && lng() !== null"
+            [position]="{ lat: lat()!, lng: lng()! }"
+            [options]="{ title: 'Votre position', zIndex: 2000 }"
+          ></map-marker>
+
+          <!-- Company markers -->
+          <map-marker
+            *ngFor="let company of companies"
+            [position]="{ lat: company.latitude!, lng: company.longitude! }"
+            [options]="getMarkerOptions(company)"
+            (mapClick)="onMarkerClick(company)"
+          ></map-marker>
+        </google-map>
+      </div>
+
+      <!-- LIST PANEL -->
+      <div class="list-panel">
+        <!-- Skeleton while loading -->
+        <ng-container *ngIf="loading$ | async">
+          <div class="skeleton-card" *ngFor="let _ of [1,2,3,4,5]">
+            <div class="skel skel-header"></div>
+            <div class="skel skel-line"></div>
+            <div class="skel skel-line skel-short"></div>
+            <div class="skel skel-btn"></div>
+          </div>
+        </ng-container>
+
+        <!-- Actual company cards -->
+        <ng-container *ngIf="!(loading$ | async)">
+          <div
+            *ngFor="let company of companies; let i = index"
+            [id]="'company-' + company.id"
+            class="company-card"
+            [class.top-company]="i < 3"
+            [class.recommended]="i === 0"
+            [class.selected]="selectedCompanyId() === company.id"
+            [class.hovered]="hoveredCompanyId() === company.id"
+            (click)="onCardClick(company)"
+            (mouseenter)="onCardMouseEnter(company)"
+            (mouseleave)="onCardMouseLeave()"
+          >
+            <!-- Badge row -->
+            <div class="badge-row" *ngIf="i < 3">
+              <span *ngIf="i === 0" class="badge badge-recommended">⭐ Recommandé</span>
+              <span *ngIf="i === 1" class="badge badge-top">🥈 Top 2</span>
+              <span *ngIf="i === 2" class="badge badge-top">🥉 Top 3</span>
+            </div>
+
+            <!-- Company header -->
+            <div class="card-header">
+              <div class="avatar">
+                <img *ngIf="company.logoUrl; else initials" [src]="company.logoUrl" [alt]="company.name" />
+                <ng-template #initials>{{ getInitials(company.name) }}</ng-template>
+              </div>
+              <div class="card-title">
+                <h4>{{ company.name }}</h4>
+                <div class="rating" *ngIf="company.rating">
+                  <i class="fas fa-star"></i>
+                  {{ company.rating }}
+                  <span class="reviews" *ngIf="company.reviewsCount">({{ company.reviewsCount }})</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Distance -->
+            <div class="distance-row" *ngIf="company.distance != null">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ formatDistance(company.distance) }}</span>
+            </div>
+
+            <!-- First service -->
+            <div class="service-row" *ngIf="company.services?.length">
+              <i class="fas fa-tools"></i>
+              <span>{{ company.services![0].name }}</span>
+              <span class="price" *ngIf="company.services![0].basePrice">
+                — {{ company.services![0].basePrice }}€
+              </span>
+            </div>
+
+            <!-- Book button -->
+            <button
+              class="btn-book"
+              (click)="bookCompany(company); $event.stopPropagation()"
+            >
+              <i class="fas fa-calendar-check"></i> Réserver
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <ng-template #emptyState>
+      <div class="empty-state" *ngIf="!(loading$ | async)">
+        <i class="fas fa-building"></i>
+        <h3>Aucune entreprise trouvée dans ce périmètre</h3>
+        <p>Essayez de modifier votre adresse ou d'augmenter le rayon de recherche.</p>
+        <div class="radius-suggestion">
+          <button *ngFor="let r of radiusOptions" (click)="setRadius(r)" class="radius-btn">
+            {{ r }} km
+          </button>
+        </div>
+      </div>
+    </ng-template>
+
+  </ng-container>
+
+  <!-- Initial state (no search done yet) -->
+  <div class="initial-state" *ngIf="!(viewCompanies$ | async) && !(loading$ | async)">
+    <i class="fas fa-map-marked-alt"></i>
+    <p>Entrez une adresse pour découvrir les entreprises à proximité.</p>
+  </div>
+
+  <!-- ── BOOKING MODAL ──────────────────────────────────────────── -->
+  <div *ngIf="bookingCompany()" class="modal-backdrop" (click)="closeBooking()">
+    <div class="modal" (click)="$event.stopPropagation()">
+
       <div class="modal-header">
-        <h3>Réserver {{ bookingCompany()!.name }}</h3>
+        <h3>Réserver — {{ bookingCompany()!.name }}</h3>
         <button class="modal-close" (click)="closeBooking()">
           <i class="fas fa-times"></i>
         </button>
       </div>
 
-      <div class="modal-content">
+      <div class="modal-body">
+        <!-- Company info -->
         <div class="company-info">
-          <div class="company-avatar-small">
-            {{ getInitials(bookingCompany()!.name) }}
-          </div>
-          <div class="company-details">
+          <div class="avatar-sm">{{ getInitials(bookingCompany()!.name) }}</div>
+          <div>
             <strong>{{ bookingCompany()!.name }}</strong>
-            <div class="company-rating">
-              ⭐ {{ bookingCompany()!.rating || "4.5" }} ({{
-                bookingCompany()!.reviewsCount || 10
-              }}
-              avis)
-            </div>
+            <div class="rating" *ngIf="bookingCompany()!.rating">⭐ {{ bookingCompany()!.rating }}</div>
           </div>
         </div>
 
+        <!-- Service select -->
         <div class="form-group">
-          <label for="service-select">Sélectionnez le service :</label>
+          <label for="service-select">Service</label>
           <select
             id="service-select"
             [ngModel]="selectedService()?.name"
             (ngModelChange)="onServiceSelect($event)"
-            class="service-select"
+            class="form-control"
           >
             <option value="">Choisissez un service</option>
-            <option
-              *ngFor="let s of bookingCompany()!.services"
-              [ngValue]="s.name"
-            >
-              {{ s.name }} - {{ s.basePrice || "Prix sur demande" }} €
+            <option *ngFor="let s of bookingCompany()!.services" [ngValue]="s.name">
+              {{ s.name }}{{ s.basePrice ? ' — ' + s.basePrice + '€' : '' }}
             </option>
           </select>
         </div>
 
-        <div class="form-group" *ngIf="selectedService()">
-          <div class="service-summary">
-            <strong>Service sélectionné :</strong>
-            {{ selectedService()!.name }}
-            <span *ngIf="selectedService()!.basePrice" class="service-price">
-              - {{ selectedService()!.basePrice }} €
-            </span>
-          </div>
+        <!-- Service summary -->
+        <div class="service-summary" *ngIf="selectedService()">
+          <strong>{{ selectedService()!.name }}</strong>
+          <span *ngIf="selectedService()!.basePrice"> — {{ selectedService()!.basePrice }}€</span>
         </div>
-        <div class="form-group" *ngIf="selectedService()">
-        <label class="form-label">Date et heure</label>
-        <input
-          type="datetime-local"
-          class="service-select"
-          [(ngModel)]="selectedDateTime"
-        />
-      </div>
 
-      <div class="form-group" *ngIf="selectedService()">
-        <label class="form-label">Adresse du rendez-vous</label>
-        <input
-          type="text"
-          class="service-select"
-          placeholder="Entrez l'adresse..."
-          [(ngModel)]="bookingAddress"
-        />
-      </div>
-       <div class="form-group" *ngIf="selectedService()">
-        <label class="form-label">Adresse mail</label>
-        <input
-          type="text"
-          class="service-select"
-          placeholder="Entrez l'adresse mail..."
-          [(ngModel)]="bookingAddress"
-        />
-      </div>
+        <!-- Date/time -->
+        <div class="form-group" *ngIf="selectedService()">
+          <label for="booking-datetime">Date et heure</label>
+          <input
+            id="booking-datetime"
+            type="datetime-local"
+            class="form-control"
+            [(ngModel)]="selectedDateTime"
+          />
+        </div>
+
+        <!-- Address -->
+        <div class="form-group" *ngIf="selectedService()">
+          <label for="booking-address">Adresse d'intervention</label>
+          <input
+            id="booking-address"
+            type="text"
+            class="form-control"
+            placeholder="Entrez l'adresse…"
+            [(ngModel)]="bookingAddress"
+          />
+        </div>
+
+        <!-- Email -->
+        <div class="form-group" *ngIf="selectedService()">
+          <label for="booking-email">Email de confirmation</label>
+          <input
+            id="booking-email"
+            type="email"
+            class="form-control"
+            placeholder="votre@email.com"
+            [(ngModel)]="bookingEmail"
+          />
+        </div>
 
         <div class="booking-note">
           <i class="fas fa-info-circle"></i>
-          Vous recevrez un email de confirmation avec les détails de votre
-          réservation.
+          Vous recevrez un email de confirmation avec les détails de votre réservation.
         </div>
       </div>
 
-      <div class="modal-actions">
+      <div class="modal-footer">
         <button
           class="btn-confirm"
           (click)="confirmBooking()"
           [disabled]="!selectedService()"
         >
-          <i class="fas fa-check"></i>
-          Confirmer la réservation
+          <i class="fas fa-check"></i> Confirmer
         </button>
         <button class="btn-cancel" (click)="closeBooking()">
-          <i class="fas fa-times"></i>
-          Annuler
+          <i class="fas fa-times"></i> Annuler
         </button>
       </div>
 
       <div *ngIf="bookingSuccess()" class="booking-success">
-        <i class="fas fa-check-circle"></i>
-        {{ bookingSuccess() }}
+        <i class="fas fa-check-circle"></i> {{ bookingSuccess() }}
       </div>
     </div>
   </div>
+
 </div>
