@@ -164,10 +164,10 @@
               </div>
               <div class="card-title">
                 <h4>{{ company.name }}</h4>
-                <div class="rating">
+                <div class="rating" *ngIf="company.rating">
                   <i class="fas fa-star"></i>
-                  {{ company.rating || '4.5' }}
-                  <span class="reviews">({{ company.reviewsCount || 10 }})</span>
+                  {{ company.rating }}
+                  <span class="reviews" *ngIf="company.reviewsCount">({{ company.reviewsCount }})</span>
                 </div>
               </div>
             </div>
@@ -238,7 +238,7 @@
           <div class="avatar-sm">{{ getInitials(bookingCompany()!.name) }}</div>
           <div>
             <strong>{{ bookingCompany()!.name }}</strong>
-            <div class="rating">⭐ {{ bookingCompany()!.rating || '4.5' }}</div>
+            <div class="rating" *ngIf="bookingCompany()!.rating">⭐ {{ bookingCompany()!.rating }}</div>
           </div>
         </div>
 

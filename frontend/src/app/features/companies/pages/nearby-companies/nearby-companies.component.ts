@@ -102,9 +102,19 @@ export class NearbyCompaniesComponent implements OnDestroy {
   constructor() {
     afterNextRender(() => {
       this.triggerGeolocation();
-      // Defer autocomplete init to give Google Maps script time to load
-      setTimeout(() => this.initPlacesAutocomplete(), 500);
+      this.waitForGoogleMapsAndInit();
     });
+  }
+
+  /** Poll for google.maps.places availability (async script load) */
+  private waitForGoogleMapsAndInit(attempts = 0): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const win = window as any;
+    if (win.google?.maps?.places) {
+      this.initPlacesAutocomplete();
+    } else if (attempts < 20) {
+      setTimeout(() => this.waitForGoogleMapsAndInit(attempts + 1), 250);
+    }
   }
 
   ngOnDestroy(): void {
@@ -300,6 +310,7 @@ export class NearbyCompaniesComponent implements OnDestroy {
   getInitials(name: string): string {
     return (name || 'N')
       .split(' ')
+      .filter((w) => w.length > 0)
       .map((w) => w[0])
       .join('')
       .toUpperCase()
