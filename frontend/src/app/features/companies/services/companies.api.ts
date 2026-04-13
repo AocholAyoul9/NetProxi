@@ -165,4 +165,14 @@ export class CompaniesApiService {
   getCompanySubscription(companyId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/subscribes/${companyId}`);
   }
+
+  // ------------ Client Auth --------------
+  
+  registerClient(data: { name: string; email: string; password: string; phone: string; address: string }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/clients/register`, data);
+  }
+
+  loginClient(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/clients/login`, { email, password });
+  }
 }

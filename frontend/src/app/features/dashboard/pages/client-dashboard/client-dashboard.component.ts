@@ -388,7 +388,6 @@ dashboardStatsLocal$!: Observable<{
     const bookingRequest: CreateBookingRequest = {
       clientId: this.currentClient.id,
       serviceId: this.selectedService()!.id,
-      companyId: this.bookingCompany()!.id,
       startTime: this.selectedDateTime,
       address: this.bookingAddress,
     };

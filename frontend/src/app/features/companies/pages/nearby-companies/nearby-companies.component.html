@@ -12,6 +12,9 @@
         placeholder="Adresse, ville ou code postal..."
         [value]="searchQuery"
         (input)="onSearchInput($event)"
+        (focus)="onSearchFocus()"
+        (blur)="clearSuggestions()"
+        (keydown.escape)="clearSuggestions()"
       />
       <button
         class="location-btn"
@@ -24,6 +27,20 @@
           <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
         </svg>
         <span *ngIf="geolocationLoading()" class="spinner"></span>
+      </button>
+    </div>
+    <!-- ADDRESS SUGGESTIONS -->
+    <div class="suggestions-dropdown" *ngIf="addressSuggestions.length > 0">
+      <button
+        class="suggestion-item"
+        *ngFor="let suggestion of addressSuggestions"
+        (mousedown)="selectAddressSuggestion(suggestion)"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span>{{ suggestion.description }}</span>
       </button>
     </div>
   </div>
@@ -98,15 +115,7 @@
 
   <!-- MAP -->
   <main class="map">
-    <google-map
-      height="100%"
-      width="100%"
-      [center]="mapCenter()"
-      [zoom]="zoom"
-      (mapIdle)="handleMapIdle($event)"
-      (mapReady)="handleMapReady($event)"
-    >
-    </google-map>
+    <div #mapContainer class="map-container"></div>
 
     <!-- MOBILE SHEET TOGGLE -->
     <button class="sheet-toggle" (click)="toggleSheet()" *ngIf="sheetOpen() === false">
@@ -194,7 +203,7 @@
 
   <!-- BOOKING MODAL -->
   <div class="modal-backdrop" *ngIf="bookingModalOpen()" (click)="closeBookingModal()">
-    <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal booking-modal" (click)="$event.stopPropagation()">
       <button class="modal-close" (click)="closeBookingModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M18 6L6 18M6 6l12 12"/>
@@ -202,45 +211,148 @@
       </button>
 
       <div *ngIf="!bookingSuccess()">
-        <h2>Réserver {{ bookingCompany()?.name }}</h2>
-
-        <div class="form-group">
-          <label>Service</label>
-          <select [value]="selectedService()" (change)="selectedService.set($any($event.target).value)">
-            <option *ngFor="let service of getServices(bookingCompany()!)" [value]="service.id">
-              {{ service.name }}
-              <span *ngIf="service.basePrice"> - {{ service.basePrice }}€</span>
-            </option>
-          </select>
+        <h2>Réserver chez {{ bookingCompany()?.name }}</h2>
+        
+        <!-- Step indicator -->
+        <div class="booking-steps">
+          <span [class.active]="bookingStep() === 1" [class.done]="bookingStep() > 1">1</span>
+          <div class="step-line" [class.active]="bookingStep() > 1"></div>
+          <span [class.active]="bookingStep() === 2" [class.done]="bookingStep() > 2">2</span>
+          <div class="step-line" [class.active]="bookingStep() > 2"></div>
+          <span [class.active]="bookingStep() === 3">3</span>
         </div>
 
-        <div class="form-group">
-          <label>Date</label>
-          <input
-            type="date"
-            [value]="selectedDate()"
-            (change)="selectedDate.set($any($event.target).value)"
-            min="{{ todayDate }}"
-          />
+        <!-- Step 1: Contact Info -->
+        <div *ngIf="bookingStep() === 1" class="booking-step-content">
+          <h3>Vos coordonnées</h3>
+          
+          <div class="form-group">
+            <label>Nom complet *</label>
+            <input type="text" [ngModel]="bookingForm.fullName" (ngModelChange)="bookingForm.fullName = $event" placeholder="Jean Dupont" />
+          </div>
+          
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" [ngModel]="bookingForm.email" (ngModelChange)="bookingForm.email = $event" placeholder="jean@exemple.fr" />
+          </div>
+          
+          <div class="form-group">
+            <label>Téléphone *</label>
+            <input type="tel" [ngModel]="bookingForm.phone" (ngModelChange)="bookingForm.phone = $event" placeholder="06 12 34 56 78" />
+          </div>
+          
+          <button class="btn-primary full-width" (click)="nextBookingStep()"
+            [disabled]="!bookingForm.fullName || !bookingForm.email || !bookingForm.phone">
+            Suivant
+          </button>
         </div>
 
-        <div class="form-group">
-          <label>Heure</label>
-          <input
-            type="time"
-            [value]="selectedTime()"
-            (change)="selectedTime.set($any($event.target).value)"
-          />
+        <!-- Step 2: Service & Address -->
+        <div *ngIf="bookingStep() === 2" class="booking-step-content">
+          <h3>Service et adresse</h3>
+          
+          <div class="form-group">
+            <label>Service souhaité *</label>
+            <select [ngModel]="selectedService()" (ngModelChange)="selectedService.set($event)">
+              <option value="">Sélectionner un service</option>
+              <option *ngFor="let service of getServices(bookingCompany()!)" [value]="service.id">
+                {{ service.name }}
+                <span *ngIf="service.basePrice"> - {{ service.basePrice }}€</span>
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Adresse du service *</label>
+            <input type="text" [ngModel]="bookingForm.address" (ngModelChange)="bookingForm.address = $event" placeholder="12 Rue de la République, 69002 Lyon" />
+          </div>
+          
+          <div class="form-group">
+            <label>Type de propriété</label>
+            <select [ngModel]="bookingForm.propertyType" (ngModelChange)="bookingForm.propertyType = $event">
+              <option value="apartment">Appartement</option>
+              <option value="house">Maison</option>
+              <option value="studio">Studio</option>
+              <option value="other">Autre</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Nombre de pièces</label>
+            <select [ngModel]="bookingForm.rooms" (ngModelChange)="bookingForm.rooms = $event">
+              <option value="1">1 pièce</option>
+              <option value="2">2 pièces</option>
+              <option value="3">3 pièces</option>
+              <option value="4">4 pièces</option>
+              <option value="5">5 pièces ou plus</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Surface (m²)</label>
+            <input type="number" [ngModel]="bookingForm.surface" (ngModelChange)="bookingForm.surface = $event" placeholder="50" min="10" />
+          </div>
+          
+          <div class="button-row">
+            <button class="btn-secondary" (click)="prevBookingStep()">Retour</button>
+            <button class="btn-primary" (click)="nextBookingStep()"
+              [disabled]="!selectedService() || !bookingForm.address">
+              Suivant
+            </button>
+          </div>
         </div>
 
-        <button
-          class="btn-primary full-width"
-          (click)="confirmBooking()"
-          [disabled]="bookingLoading() || !selectedService() || !selectedDate() || !selectedTime()"
-        >
-          <span *ngIf="bookingLoading()" class="spinner"></span>
-          <span *ngIf="!bookingLoading()">Confirmer la réservation</span>
-        </button>
+        <!-- Step 3: Date & Confirmation -->
+        <div *ngIf="bookingStep() === 3" class="booking-step-content">
+          <h3>Date et confirmation</h3>
+          
+          <div class="form-group">
+            <label>Date souhaitée *</label>
+            <input type="date" [ngModel]="selectedDate()" (ngModelChange)="selectedDate.set($event)" [min]="todayDate" />
+          </div>
+          
+          <div class="form-group">
+            <label>Créneau horaire *</label>
+            <select [ngModel]="selectedTime()" (ngModelChange)="selectedTime.set($event)">
+              <option value="">Sélectionner un créneau</option>
+              <option value="08:00">08:00 - 10:00</option>
+              <option value="10:00">10:00 - 12:00</option>
+              <option value="14:00">14:00 - 16:00</option>
+              <option value="16:00">16:00 - 18:00</option>
+              <option value="18:00">18:00 - 20:00</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Instructions spéciales</label>
+            <textarea [ngModel]="bookingForm.notes" (ngModelChange)="bookingForm.notes = $event" rows="3" placeholder="Informations supplémentaires pour le professionnel..."></textarea>
+          </div>
+          
+          <div class="booking-summary">
+            <h4>Récapitulatif</h4>
+            <div class="summary-item">
+              <span>Service:</span>
+              <strong>{{ getServiceName(selectedService()) }}</strong>
+            </div>
+            <div class="summary-item">
+              <span>Adresse:</span>
+              <strong>{{ bookingForm.address }}</strong>
+            </div>
+            <div class="summary-item">
+              <span>Date:</span>
+              <strong>{{ selectedDate() }} {{ selectedTime() }}</strong>
+            </div>
+          </div>
+          
+          <div class="button-row">
+            <button class="btn-secondary" (click)="prevBookingStep()">Retour</button>
+            <button class="btn-primary" (click)="confirmBooking()"
+              [disabled]="bookingLoading() || !selectedDate() || !selectedTime()">
+              <span *ngIf="bookingLoading()" class="spinner"></span>
+              <span *ngIf="!bookingLoading()">Confirmer</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div *ngIf="bookingSuccess()" class="success-message">
@@ -250,7 +362,14 @@
           </svg>
         </div>
         <h3>Réservation confirmée !</h3>
-        <p>Vous recevrez une confirmation par email.</p>
+        <p>Vous recevrez une confirmation par email avec les détails du rendez-vous.</p>
+        
+        <div class="booking-details">
+          <div><strong>{{ bookingCompany()?.name }}</strong></div>
+          <div>{{ bookingForm.address }}</div>
+          <div>{{ selectedDate() }} à {{ selectedTime() }}</div>
+        </div>
+        
         <button class="btn-primary" (click)="closeBookingModal()">Fermer</button>
       </div>
     </div>

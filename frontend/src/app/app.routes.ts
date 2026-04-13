@@ -1,9 +1,7 @@
 import { Routes } from '@angular/router';
 
-
-
 export const routes: Routes = [
-  { path: '', loadComponent: () => import('./features/companies/pages/nearby-companies/nearby-companies.component').then((m) => m.NearbyCompaniesComponent), pathMatch: 'full' },
+  { path: '', loadComponent: () => import('./features/home/components/landing/landing.component').then((m) => m.LandingComponent), pathMatch: 'full' },
   {
     path: 'companies',
     loadChildren: () =>
@@ -11,6 +9,7 @@ export const routes: Routes = [
         (m) => m.companiesRoutes
       ),
   },
+  { path: 'nearby', loadComponent: () => import('./features/companies/pages/nearby-companies/nearby-companies.component').then((m) => m.NearbyCompaniesComponent) },
 
   {
     path: 'company/:id',

@@ -28,6 +28,7 @@ public class CompanyService {
         private final PasswordEncoder passwordEncoder;
         private final JwtTokenProvider jwtProvider;
         private final UserRepository userRepository;
+        private final GeocodingService geocodingService;
 
         /**
          * Find companies near a point (lat, lng) within radius in km
@@ -113,6 +114,22 @@ public class CompanyService {
 
                 String token = jwtProvider.generateToken(dto.getName());
 
+                // Geocode address if lat/lng not provided
+                Double lat = dto.getLatitude();
+                Double lng = dto.getLongitude();
+                if ((lat == null || lng == null) && dto.getAddress() != null && !dto.getAddress().isEmpty()) {
+                        try {
+                                GeocodingResponse geo = geocodingService.geocodeAddress(dto.getAddress() + ", France");
+                                if (geo.getLat() != null && geo.getLng() != null) {
+                                        lat = geo.getLat();
+                                        lng = geo.getLng();
+                                        System.out.println("Geocoded address: " + dto.getAddress() + " -> lat=" + lat + ", lng=" + lng);
+                                }
+                        } catch (Exception e) {
+                                System.out.println("Geocoding failed: " + e.getMessage());
+                        }
+                }
+
                 // Build company from DTO
                 Company company = Company.builder()
                                 .name(dto.getName())
@@ -120,8 +137,8 @@ public class CompanyService {
                                 .email(dto.getEmail())
                                 .password(passwordEncoder.encode(dto.getPassword()))
                                 .phone(dto.getPhone())
-                                .latitude(dto.getLatitude())
-                                .longitude(dto.getLongitude())
+                                .latitude(lat)
+                                .longitude(lng)
                                 .logoUrl(dto.getLogoUrl())
                                 .website(dto.getWebsite())
                                 .description(dto.getDescription())
