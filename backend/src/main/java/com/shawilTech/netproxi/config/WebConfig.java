@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -17,6 +18,11 @@ public class WebConfig {
         "http://127.0.0.1:4200",
         "http://127.0.0.1"
     );
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
     /**
      * Shared CorsConfigurationSource used by both Spring MVC and the

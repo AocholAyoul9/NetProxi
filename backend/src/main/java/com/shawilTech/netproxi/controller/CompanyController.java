@@ -3,6 +3,7 @@ package com.shawilTech.netproxi.controller;
 import com.shawilTech.netproxi.dto.*;
 import com.shawilTech.netproxi.service.CompanyService;
 import com.shawilTech.netproxi.service.EmployeeService;
+import com.shawilTech.netproxi.service.GeocodingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +19,7 @@ public class CompanyController {
 
     private final CompanyService companyService;
     private final EmployeeService employeeService;
+    private final GeocodingService geocodingService;
 
 
     /**
@@ -31,6 +33,14 @@ public class CompanyController {
             @RequestParam double radiusKm
     ) {
         return companyService.findNearbyCompanies(lat, lng, radiusKm);
+    }
+
+    /**
+     * POST /api/companies/geocode - Geocode an address
+     */
+    @PostMapping("/geocode")
+    public GeocodingResponse geocodeAddress(@RequestBody GeocodingRequest request) {
+        return geocodingService.geocodeAddress(request.getAddress());
     }
 
     //  Register a new company
