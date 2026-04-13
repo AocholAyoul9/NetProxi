@@ -73,6 +73,7 @@ public class CompanyService {
                                                                                 .toList()
                                                                 : Collections.emptyList())
                                                 .build())
+                                .sorted(Comparator.comparingDouble(CompanyResponseDto::getDistance))
                                 .toList();
 
         }
