@@ -4,120 +4,86 @@
   <section class="hero">
     <div class="hero-content">
       <div class="hero-badge">
-        <span class="badge-icon">✨</span>
-        <span>Plateforme #1 pour le ménage professionnel</span>
+        <i class="fas fa-sparkle"></i>
+        <span>N°1 du ménage professionnel</span>
       </div>
-      
       <h1>
-        Votre appartement deserves <span class="highlight">d'être parfait</span>
+        Votre maison mérite <span class="highlight">d'être parfaite</span>
       </h1>
       <p class="hero-subtitle">
-        Réservez un professionnel qualifié en quelques minutes. 
-        Service qualité garantie avec avis clients vérifiés.
+        Trouvez un professionnel qualifié près de chez vous en quelques secondes.
+        Service garanti, avis vérifiés.
       </p>
-      
-      <!-- Search Box -->
+
+      <!-- Barre de recherche -->
       <div class="search-box">
         <div class="search-input-wrapper">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="M21 21l-4.35-4.35"/>
-          </svg>
-          <input 
-            type="text" 
+          <i class="fas fa-location-dot search-icon"></i>
+          <input
+            type="text"
             [(ngModel)]="searchQuery"
             (keyup.enter)="onSearch()"
-            placeholder="Entrez votre adresse (ex: 12 Rue de la République, Lyon)" 
+            placeholder="Votre adresse (ex: 12 Rue de la République, Lyon)"
             class="search-input"
           />
           <button class="search-btn" (click)="onSearch()" [disabled]="loading()">
             <span *ngIf="!loading()">Rechercher</span>
-            <span *ngIf="loading()" class="spinner"></span>
+            <i *ngIf="loading()" class="fas fa-circle-notch fa-spin"></i>
           </button>
         </div>
       </div>
-      
-      <!-- Quick Links -->
+
+      <!-- Liens rapides -->
       <div class="quick-links">
-        <span class="quick-label">Popular searches:</span>
+        <span class="quick-label">Villes populaires :</span>
         <button class="quick-btn" (click)="searchQuery = 'Lyon'; onSearch()">Lyon</button>
         <button class="quick-btn" (click)="searchQuery = 'Paris'; onSearch()">Paris</button>
         <button class="quick-btn" (click)="searchQuery = 'Marseille'; onSearch()">Marseille</button>
         <button class="quick-btn" (click)="searchQuery = 'Toulouse'; onSearch()">Toulouse</button>
       </div>
     </div>
-    
-    <!-- Hero Image -->
+
+    <!-- Illustration -->
     <div class="hero-visual">
-      <div class="cleaning-image">
-        <div class="image-card">
-          <div class="card-icon">🧹</div>
-          <div class="card-text">Service impeccable</div>
-        </div>
-        <div class="image-card card-2">
-          <div class="card-icon">⭐</div>
-          <div class="card-text">4.8/5 sur Google</div>
-        </div>
+      <div class="floating-card card-1">
+        <i class="fas fa-broom"></i>
+        <span>Service 5⭐</span>
       </div>
+      <div class="floating-card card-2">
+        <i class="fas fa-clock"></i>
+        <span>Arrive en 1h</span>
+      </div>
+      <div class="hero-circle"></div>
     </div>
   </section>
 
-  <!-- How It Works -->
+  <!-- Comment ça marche -->
   <section class="how-it-works">
     <h2>Comment ça marche ?</h2>
-    <p class="section-subtitle">Réservez votre ménage en 3 étapes simples</p>
-    
-    <div class="steps">
+    <p class="section-subtitle">Trois étapes simples</p>
+    <div class="steps-container">
       <div class="step">
-        <div class="step-number">1</div>
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="M21 21l-4.35-4.35"/>
-          </svg>
-        </div>
-        <h3>Recherchez</h3>
-        <p>Entrez votre adresse pour trouver les professionnels près de chez vous</p>
+        <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <h3>1. Indiquez votre adresse</h3>
+        <p>Nous trouvons les meilleurs pros près de chez vous.</p>
       </div>
-      
-      <div class="step-connector"></div>
-      
       <div class="step">
-        <div class="step-number">2</div>
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="18" rx="2"/>
-            <path d="M16 2v4M8 2v4M3 10h18"/>
-          </svg>
-        </div>
-        <h3>Réservez</h3>
-        <p>Choisissez votre créneau et le service qui vous convient</p>
+        <div class="step-icon"><i class="fas fa-calendar-week"></i></div>
+        <h3>2. Choisissez votre créneau</h3>
+        <p>Service et horaire qui vous arrangent.</p>
       </div>
-      
-      <div class="step-connector"></div>
-      
       <div class="step">
-        <div class="step-number">3</div>
-        <div class="step-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-        </div>
-        <h3>Relaxez</h3>
-        <p>Un professionnel arrive à l'heure dite. Détendez-vous !</p>
+        <div class="step-icon"><i class="fas fa-hand-sparkles"></i></div>
+        <h3>3. Profitez du résultat</h3>
+        <p>Un professionnel qualifié intervient chez vous.</p>
       </div>
     </div>
-    
     <button class="cta-btn" (click)="goToNearby()">
-      Réserver maintenant
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M5 12h14M12 5l7 7-7 7"/>
-      </svg>
+      Je réserve <i class="fas fa-arrow-right"></i>
     </button>
   </section>
 
-  <!-- Stats -->
+  <!-- Chiffres clés -->
   <section class="stats">
     <div class="stats-grid">
       <div class="stat" *ngFor="let stat of stats">
@@ -127,33 +93,28 @@
     </div>
   </section>
 
-  <!-- Features -->
+  <!-- Pourquoi nous -->
   <section class="features">
     <h2>Pourquoi choisir NetProxi ?</h2>
-    <p class="section-subtitle">Une solution pensée pour votre tranquillité</p>
-    
+    <p class="section-subtitle">Une solution pensée pour vous</p>
     <div class="features-grid">
       <div class="feature" *ngFor="let feature of features">
-        <div class="feature-icon">
-          <i class="fas" [class]="feature.icon"></i>
-        </div>
+        <div class="feature-icon"><i [class]="feature.icon"></i></div>
         <h3>{{ feature.title }}</h3>
         <p>{{ feature.description }}</p>
       </div>
     </div>
   </section>
 
-  <!-- Testimonials -->
+  <!-- Avis clients -->
   <section class="testimonials">
-    <h2>Ce que disent nos clients</h2>
-    <p class="section-subtitle">Des milliers de ménages nous font confiance</p>
-    
+    <h2>Ils nous font confiance</h2>
     <div class="testimonials-grid">
       <div class="testimonial" *ngFor="let t of testimonials">
         <div class="testimonial-rating">
-          <span *ngFor="let star of [1,2,3,4,5]" class="star">★</span>
+          <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]"></i>
         </div>
-        <p class="testimonial-text">"{{ t.text }}"</p>
+        <p class="testimonial-text">“{{ t.text }}”</p>
         <div class="testimonial-author">
           <div class="author-avatar">{{ t.name.charAt(0) }}</div>
           <div class="author-info">
@@ -165,18 +126,14 @@
     </div>
   </section>
 
-  <!-- CTA Section -->
+  <!-- Appel à l'action final -->
   <section class="cta-section">
     <div class="cta-content">
-      <h2>Prêt à retrouver un appartement impeccable ?</h2>
+      <h2>Prêt à retrouver une maison impeccable ?</h2>
       <p>Rejoignez +15 000 ménages satisfaits</p>
       <button class="cta-btn-large" (click)="goToNearby()">
-        Trouver un professionnel
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
+        Trouver un professionnel <i class="fas fa-chevron-right"></i>
       </button>
     </div>
   </section>
-
 </div>

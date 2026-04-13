@@ -107,16 +107,41 @@
                 {{ service.description }}
               </p>
               
+              <!-- Service Details -->
+              <div class="service-details">
+                <div class="detail-item" *ngIf="service.durationInMinutes">
+                  <i class="fas fa-clock"></i>
+                  <span>{{ service.durationInMinutes }} min</span>
+                </div>
+                <div class="detail-item" *ngIf="service.areaSize">
+                  <i class="fas fa-ruler-combined"></i>
+                  <span>{{ service.areaSize }}</span>
+                </div>
+              </div>
+              
+              <!-- What's Included -->
+              <div class="included-section" *ngIf="service.includedItems && service.includedItems.length > 0">
+                <h4>Inclus dans le service :</h4>
+                <ul class="included-list">
+                  <li *ngFor="let item of service.includedItems">
+                    <i class="fas fa-check"></i> {{ item }}
+                  </li>
+                </ul>
+              </div>
+              
               <div class="service-footer">
-                <span class="service-price" *ngIf="service.basePrice; else priceOnRequest">
-                  {{ service.basePrice }} €
-                </span>
-                <ng-template #priceOnRequest>
-                  <span class="price-on-request">Prix sur demande</span>
-                </ng-template>
+                <div class="price-section">
+                  <span class="service-price" *ngIf="service.basePrice; else priceOnRequest">
+                    <strong>{{ service.basePrice }}€</strong>
+                  </span>
+                  <ng-template #priceOnRequest>
+                    <span class="price-on-request">Prix sur demande</span>
+                  </ng-template>
+                  <span class="price-note" *ngIf="service.basePrice">TTC</span>
+                </div>
                 
                 <button class="btn-service" (click)="selectService(service)">
-                  Choisir
+                  Réserver
                 </button>
               </div>
             </div>

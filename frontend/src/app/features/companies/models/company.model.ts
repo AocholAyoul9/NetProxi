@@ -3,7 +3,12 @@ export interface ServiceResponseDto {
   name: string;
   description?: string;
   isPopular?: boolean;
-  basePrice?: number; 
+  basePrice?: number;
+  durationInMinutes?: number;
+  includedItems?: string[];
+  beforeImage?: string;
+  afterImage?: string;
+  areaSize?: string;
 }
 
 export interface Company {
