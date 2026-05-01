@@ -18,35 +18,61 @@ export class LandingComponent {
 
   onSearch(): void {
     if (!this.searchQuery.trim()) return;
+
     this.loading.set(true);
-    // Redirige vers la page des entreprises proches avec le paramètre de recherche
-    this.router.navigate(['/nearby'], { queryParams: { q: this.searchQuery } });
+
+    setTimeout(() => {
+      this.loading.set(false);
+      this.router.navigate(['/nearby'], {
+        queryParams: { q: this.searchQuery }
+      });
+    }, 500);
   }
 
   goToNearby(): void {
     this.router.navigate(['/nearby']);
   }
 
-  // Données pour la section "Pourquoi choisir NetProxi ?"
+  goToProSignup(): void {
+    this.router.navigate(['/pro/signup']);
+  }
+
+  steps = [
+    {
+      icon: 'fas fa-search',
+      title: '1. Recherchez',
+      description: 'Trouvez une entreprise de nettoyage proche de vous'
+    },
+    {
+      icon: 'fas fa-calendar-check',
+      title: '2. Réservez',
+      description: 'Choisissez un service et un créneau'
+    },
+    {
+      icon: 'fas fa-user-check',
+      title: '3. Intervention',
+      description: 'Un agent est automatiquement assigné'
+    }
+  ];
+
   features = [
     {
       icon: 'fas fa-magnifying-glass',
       title: 'Recherche rapide',
-      description: 'Trouvez un professionnel près de chez vous en quelques secondes.'
+      description: 'Trouvez un professionnel en quelques secondes'
     },
     {
       icon: 'fas fa-calendar-check',
       title: 'Réservation instantanée',
-      description: 'Choisissez votre créneau et payez en ligne en toute sécurité.'
+      description: 'Choisissez votre créneau facilement'
     },
     {
       icon: 'fas fa-shield-alt',
       title: 'Service garanti',
-      description: 'Professionnels vérifiés et satisfaction remboursée.'
+      description: 'Professionnels vérifiés'
     }
   ];
 
-  // Chiffres clés
   stats = [
     { value: '15 000+', label: 'ménages nettoyés' },
     { value: '250+', label: 'professionnels' },
@@ -54,25 +80,27 @@ export class LandingComponent {
     { value: '98%', label: 'clients satisfaits' }
   ];
 
-  // Témoignages clients
   testimonials = [
     {
       name: 'Marie L.',
-      text: 'Service impeccable ! J’ai réservé en 5 minutes et le professionnel était très efficace. Je recommande !',
-      rating: 5,
-      service: 'Nettoyage profond'
+      city: 'Lyon',
+      text: 'Service impeccable et rapide'
     },
     {
       name: 'Thomas B.',
-      text: 'Excellent rapport qualité/prix. Mon appartement n’a jamais été aussi propre.',
-      rating: 5,
-      service: 'Ménage mensuel'
+      city: 'Paris',
+      text: 'Très bon rapport qualité/prix'
     },
     {
       name: 'Sophie M.',
-      text: 'Très professionnel et ponctuel. Je renouvelle régulièrement. Parfait pour les propriétaires.',
-      rating: 5,
-      service: 'Entretien courant'
+      city: 'Marseille',
+      text: 'Professionnel et ponctuel'
     }
+  ];
+
+  proBenefits = [
+    'Nouvelles missions automatiques',
+    'Gestion des employés simplifiée',
+    'Planning optimisé'
   ];
 }

@@ -1,89 +1,107 @@
-<!-- Landing Page -->
 <div class="landing">
-  <!-- Hero Section -->
+
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-content">
+
       <div class="hero-badge">
-        <i class="fas fa-sparkle"></i>
-        <span>N°1 du ménage professionnel</span>
+        <i class="fas fa-sparkles"></i>
+        <span>Service de ménage professionnel vérifié</span>
       </div>
+
       <h1>
-        Votre maison mérite <span class="highlight">d'être parfaite</span>
+        Réservez un ménage <span class="highlight">fiable et sans stress</span>
       </h1>
+
       <p class="hero-subtitle">
-        Trouvez un professionnel qualifié près de chez vous en quelques secondes.
-        Service garanti, avis vérifiés.
+        Trouvez une entreprise de nettoyage près de chez vous, réservez en ligne,
+        et laissez des professionnels gérer l’intervention de A à Z.
       </p>
 
-      <!-- Barre de recherche -->
       <div class="search-box">
         <div class="search-input-wrapper">
           <i class="fas fa-location-dot search-icon"></i>
+
           <input
             type="text"
             [(ngModel)]="searchQuery"
             (keyup.enter)="onSearch()"
-            placeholder="Votre adresse (ex: 12 Rue de la République, Lyon)"
+            placeholder="Entrez votre adresse"
             class="search-input"
           />
-          <button class="search-btn" (click)="onSearch()" [disabled]="loading()">
-            <span *ngIf="!loading()">Rechercher</span>
+
+          <button
+            class="search-btn"
+            (click)="onSearch()"
+            [disabled]="loading()"
+          >
+            <span *ngIf="!loading()">Trouver un service</span>
             <i *ngIf="loading()" class="fas fa-circle-notch fa-spin"></i>
           </button>
         </div>
       </div>
 
-      <!-- Liens rapides -->
-      <div class="quick-links">
-        <span class="quick-label">Villes populaires :</span>
-        <button class="quick-btn" (click)="searchQuery = 'Lyon'; onSearch()">Lyon</button>
-        <button class="quick-btn" (click)="searchQuery = 'Paris'; onSearch()">Paris</button>
-        <button class="quick-btn" (click)="searchQuery = 'Marseille'; onSearch()">Marseille</button>
-        <button class="quick-btn" (click)="searchQuery = 'Toulouse'; onSearch()">Toulouse</button>
+      <div class="hero-trust">
+        <span>✔ Entreprises vérifiées</span>
+        <span>✔ Personnel qualifié</span>
+        <span>✔ Satisfaction garantie</span>
       </div>
-    </div>
 
-    <!-- Illustration -->
-    <div class="hero-visual">
-      <div class="floating-card card-1">
-        <i class="fas fa-broom"></i>
-        <span>Service 5⭐</span>
-      </div>
-      <div class="floating-card card-2">
-        <i class="fas fa-clock"></i>
-        <span>Arrive en 1h</span>
-      </div>
-      <div class="hero-circle"></div>
     </div>
   </section>
 
-  <!-- Comment ça marche -->
+  <!-- HOW IT WORKS -->
   <section class="how-it-works">
     <h2>Comment ça marche ?</h2>
-    <p class="section-subtitle">Trois étapes simples</p>
+    <p class="section-subtitle">Simple, rapide, efficace</p>
+
     <div class="steps-container">
-      <div class="step">
-        <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
-        <h3>1. Indiquez votre adresse</h3>
-        <p>Nous trouvons les meilleurs pros près de chez vous.</p>
-      </div>
-      <div class="step">
-        <div class="step-icon"><i class="fas fa-calendar-week"></i></div>
-        <h3>2. Choisissez votre créneau</h3>
-        <p>Service et horaire qui vous arrangent.</p>
-      </div>
-      <div class="step">
-        <div class="step-icon"><i class="fas fa-hand-sparkles"></i></div>
-        <h3>3. Profitez du résultat</h3>
-        <p>Un professionnel qualifié intervient chez vous.</p>
+      <div class="step" *ngFor="let step of steps">
+        <div class="step-icon">
+          <i [class]="step.icon"></i>
+        </div>
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.description }}</p>
       </div>
     </div>
+
     <button class="cta-btn" (click)="goToNearby()">
-      Je réserve <i class="fas fa-arrow-right"></i>
+      Réserver maintenant
     </button>
   </section>
 
-  <!-- Chiffres clés -->
+  <!-- FEATURES -->
+  <section class="features">
+    <h2>Pourquoi choisir NetProxi ?</h2>
+    <p class="section-subtitle">Une expérience pensée pour votre tranquillité</p>
+
+    <div class="features-grid">
+      <div class="feature" *ngFor="let feature of features">
+        <i [class]="feature.icon"></i>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIFFERENCE -->
+  <section class="difference">
+    <h2>Ce qui nous rend différents</h2>
+
+    <div class="difference-grid">
+      <div class="diff-item">
+        <h3> Plateformes classiques</h3>
+        <p>Freelances non vérifiés, organisation à votre charge</p>
+      </div>
+
+      <div class="diff-item highlight">
+        <h3>NetProxi</h3>
+        <p>Entreprises structurées + gestion complète des interventions</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
   <section class="stats">
     <div class="stats-grid">
       <div class="stat" *ngFor="let stat of stats">
@@ -93,47 +111,50 @@
     </div>
   </section>
 
-  <!-- Pourquoi nous -->
-  <section class="features">
-    <h2>Pourquoi choisir NetProxi ?</h2>
-    <p class="section-subtitle">Une solution pensée pour vous</p>
-    <div class="features-grid">
-      <div class="feature" *ngFor="let feature of features">
-        <div class="feature-icon"><i [class]="feature.icon"></i></div>
-        <h3>{{ feature.title }}</h3>
-        <p>{{ feature.description }}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Avis clients -->
+  <!-- TESTIMONIALS -->
   <section class="testimonials">
     <h2>Ils nous font confiance</h2>
+
     <div class="testimonials-grid">
       <div class="testimonial" *ngFor="let t of testimonials">
         <div class="testimonial-rating">
-          <i class="fas fa-star" *ngFor="let star of [1,2,3,4,5]"></i>
+          <i class="fas fa-star" *ngFor="let s of [1,2,3,4,5]"></i>
         </div>
-        <p class="testimonial-text">“{{ t.text }}”</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">{{ t.name.charAt(0) }}</div>
-          <div class="author-info">
-            <div class="author-name">{{ t.name }}</div>
-            <div class="author-service">{{ t.service }}</div>
-          </div>
-        </div>
+        <p>“{{ t.text }}”</p>
+        <span>— {{ t.name }}, {{ t.city }}</span>
       </div>
     </div>
   </section>
 
-  <!-- Appel à l'action final -->
-  <section class="cta-section">
-    <div class="cta-content">
-      <h2>Prêt à retrouver une maison impeccable ?</h2>
-      <p>Rejoignez +15 000 ménages satisfaits</p>
-      <button class="cta-btn-large" (click)="goToNearby()">
-        Trouver un professionnel <i class="fas fa-chevron-right"></i>
+  <!-- PRO SECTION -->
+  <section class="pro-section">
+    <div class="pro-content">
+      <h2>Vous êtes une entreprise de nettoyage ?</h2>
+
+      <p>
+        Recevez de nouveaux clients, optimisez votre planning et gérez vos équipes facilement.
+      </p>
+
+      <ul>
+        <li *ngFor="let b of proBenefits">✔ {{ b }}</li>
+      </ul>
+
+      <button class="cta-btn-secondary" (click)="goToProSignup()">
+        Rejoindre NetProxi
       </button>
     </div>
   </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Prêt à retrouver une maison impeccable ?</h2>
+      <p>Réservez votre service en quelques secondes</p>
+
+      <button class="cta-btn-large" (click)="goToNearby()">
+        Trouver un professionnel
+      </button>
+    </div>
+  </section>
+
 </div>
