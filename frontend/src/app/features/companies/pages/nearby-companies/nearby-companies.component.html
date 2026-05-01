@@ -1,30 +1,36 @@
 <div class="layout">
-  <!-- BARRE DE RECHERCHE -->
+
+  <!-- ===== SEARCH BAR ===== -->
   <div class="search-bar">
-    <div class="search-input-wrapper">
+    <div class="search-input-wrapper" [class.focused]="searchFocused">
       <i class="fas fa-search search-icon"></i>
+
       <input
         type="text"
         class="search-input"
         placeholder="Adresse, ville ou code postal..."
         [value]="searchQuery"
         (input)="onSearchInput($event)"
-        (focus)="onSearchFocus()"
-        (blur)="clearSuggestions()"
+        (focus)="onSearchFocus(); searchFocused = true"
+        (blur)="clearSuggestions(); searchFocused = false"
         (keydown.escape)="clearSuggestions()"
+        (keydown.enter)="onSearchEnter()"
+        inputmode="search"
+        autocomplete="off"
       />
+
       <button
-        class="location-btn"
+        class="geo-btn"
         (click)="useMyLocation()"
         [disabled]="geolocationLoading()"
         title="Utiliser ma position"
       >
-        <i *ngIf="!geolocationLoading()" class="fas fa-location-dot"></i>
-        <span *ngIf="geolocationLoading()" class="spinner"></span>
+        <i class="fas fa-location-crosshairs" *ngIf="!geolocationLoading()"></i>
+        <span class="spinner" *ngIf="geolocationLoading()"></span>
       </button>
     </div>
 
-    <!-- Suggestions d'adresses -->
+    <!-- Address suggestions -->
     <div class="suggestions-dropdown" *ngIf="addressSuggestions.length > 0">
       <button
         class="suggestion-item"
@@ -32,27 +38,87 @@
         (mousedown)="selectAddressSuggestion(suggestion)"
       >
         <i class="fas fa-location-dot"></i>
-        <span>{{ suggestion.description }}</span>
+        <div class="suggestion-text">
+          <span class="suggestion-main">{{ suggestion.structured_formatting?.main_text || suggestion.description }}</span>
+          <span class="suggestion-secondary">{{ suggestion.structured_formatting?.secondary_text || '' }}</span>
+        </div>
       </button>
+    </div>
+
+    <!-- Active filters chips -->
+    <div class="filter-chips" *ngIf="activeFilter">
+      <span class="chip">
+        {{ activeFilter }}
+        <button (click)="clearFilter()"><i class="fas fa-times"></i></button>
+      </span>
     </div>
   </div>
 
-  <!-- SIDEBAR LISTE (DESKTOP) -->
-  <aside class="list" [class.mobile-hidden]="!sheetOpen()">
+  <!-- ===== SIDEBAR LIST (DESKTOP) ===== -->
+  <aside class="list">
     <div class="list-header">
-      <h3> Entreprises proches</h3>
-      <span class="count">{{ currentCompanies.length }} résultats</span>
+      <div class="list-header-top">
+        <h3>Entreprises proches</h3>
+        <span class="count-badge">{{ currentCompanies.length }}</span>
+      </div>
+      <p class="list-subtitle" *ngIf="searchQuery">
+        <i class="fas fa-location-dot"></i> {{ searchQuery }}
+      </p>
+
+      <!-- Sort options -->
+      <div class="sort-row">
+        <button
+          class="sort-btn"
+          [class.active]="sortBy === 'distance'"
+          (click)="setSortBy('distance')"
+        >
+          <i class="fas fa-map-pin"></i> Distance
+        </button>
+        <button
+          class="sort-btn"
+          [class.active]="sortBy === 'rating'"
+          (click)="setSortBy('rating')"
+        >
+          <i class="fas fa-star"></i> Note
+        </button>
+        <button
+          class="sort-btn"
+          [class.active]="sortBy === 'available'"
+          (click)="setSortBy('available')"
+        >
+          <i class="fas fa-circle-check"></i> Disponibles
+        </button>
+      </div>
     </div>
 
     <div class="cards-container">
-      <div *ngIf="loading()" class="loading-state">
-        <div class="spinner"></div>
-        <span>Recherche des entreprises...</span>
+
+      <!-- Loading skeleton -->
+      <div *ngIf="loading()" class="skeleton-list">
+        <div class="skeleton-card" *ngFor="let i of [1,2,3]">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-lines">
+            <div class="skeleton-line w-60"></div>
+            <div class="skeleton-line w-40"></div>
+            <div class="skeleton-line w-80"></div>
+          </div>
+        </div>
       </div>
 
+      <!-- Empty state -->
+      <div *ngIf="!loading() && currentCompanies.length === 0" class="empty-state">
+        <i class="fas fa-magnifying-glass-location"></i>
+        <h4>Aucune entreprise trouvée</h4>
+        <p>Essayez d'élargir votre zone de recherche ou de modifier l'adresse.</p>
+        <button class="btn-primary" (click)="useMyLocation()">
+          <i class="fas fa-location-crosshairs"></i> Utiliser ma position
+        </button>
+      </div>
+
+      <!-- Company cards -->
       <div
         #cardRef
-        *ngFor="let company of currentCompanies; trackBy: trackByCompanyId; let i = index"
+        *ngFor="let company of sortedCompanies; trackBy: trackByCompanyId; let i = index"
         class="card"
         [class.active]="selectedCompany()?.id === company.id"
         [class.hovered]="hoveredCompany()?.id === company.id"
@@ -60,9 +126,117 @@
         (mouseleave)="clearHighlight()"
         (click)="selectCompany(company, i)"
       >
+        <!-- Availability badge -->
+        <div class="availability-badge" [class.available]="company.isAvailableNow !== false">
+          <span class="dot"></span>
+          {{ company.isAvailableNow !== false ? 'Disponible' : 'Indisponible' }}
+        </div>
+
         <div class="card-header">
           <div class="avatar">
-            <img *ngIf="company.logoUrl" [src]="company.logoUrl" alt="" />
+            <img *ngIf="company.logoUrl" [src]="company.logoUrl" [alt]="company.name" />
+            <span *ngIf="!company.logoUrl" class="initials">{{ getInitials(company.name) }}</span>
+          </div>
+          <div class="info">
+            <h4>{{ company.name }}</h4>
+            <div class="meta">
+              <span class="rating">
+                <i class="fas fa-star"></i>
+                {{ company.rating?.toFixed(1) || '4.5' }}
+                <span class="review-count">({{ company.reviewsCount || 42 }})</span>
+              </span>
+              <span class="distance" *ngIf="company.distance">
+                <i class="fas fa-map-pin"></i> {{ formatDistance(company.distance) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Services tags -->
+        <div class="services" *ngIf="company.services?.length">
+          <span class="service-tag">{{ getFirstService(company) }}</span>
+          <span class="service-tag more" *ngIf="getExtraServicesCount(company) > 0">
+            +{{ getExtraServicesCount(company) }} autres
+          </span>
+        </div>
+
+        <!-- Price hint -->
+        <div class="price-hint" *ngIf="company.services?.[0]?.basePrice">
+          À partir de <strong>{{ company.services?.[0]?.basePrice }}€</strong>
+        </div>
+
+        <div class="actions">
+          <button
+            class="btn-primary"
+            (click)="bookCompany(company); $event.stopPropagation()"
+            [disabled]="company.isAvailableNow === false"
+          >
+            <i class="fas fa-calendar-check"></i> Réserver
+          </button>
+          <button
+            class="btn-secondary"
+            [routerLink]="['/company', company.id]"
+            (click)="$event.stopPropagation()"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAP ===== -->
+  <main class="map">
+    <div #mapContainer class="map-container"></div>
+
+    <!-- Floating result count (mobile) -->
+    <button
+      class="sheet-toggle"
+      (click)="toggleSheet()"
+      *ngIf="!sheetOpen()"
+    >
+      <i class="fas fa-list"></i>
+      <span>{{ currentCompanies.length }} entreprises</span>
+      <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Radius selector -->
+    <div class="radius-control">
+      <label>Rayon</label>
+      <select [(ngModel)]="currentRadius" (change)="onRadiusChange()">
+        <option [value]="5">5 km</option>
+        <option [value]="10">10 km</option>
+        <option [value]="20">20 km</option>
+        <option [value]="50">50 km</option>
+      </select>
+    </div>
+  </main>
+
+  <!-- ===== BOTTOM SHEET (MOBILE) ===== -->
+  <div class="bottom-sheet" [class.open]="sheetOpen()">
+    <div class="sheet-handle-bar" (click)="toggleSheet()">
+      <div class="handle"></div>
+      <div class="sheet-header-row">
+        <span class="sheet-title">{{ currentCompanies.length }} entreprises à proximité</span>
+        <button class="sheet-close" (click)="closeSheet()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="sheet-content">
+      <div
+        *ngFor="let company of sortedCompanies; trackBy: trackByCompanyId; let i = index"
+        class="card mobile-card"
+        (click)="selectCompany(company, i); closeSheet()"
+      >
+        <div class="availability-badge" [class.available]="company.isAvailableNow !== false">
+          <span class="dot"></span>
+          {{ company.isAvailableNow !== false ? 'Disponible' : 'Indisponible' }}
+        </div>
+        <div class="card-header">
+          <div class="avatar">
+            <img *ngIf="company.logoUrl" [src]="company.logoUrl" [alt]="company.name" />
             <span *ngIf="!company.logoUrl" class="initials">{{ getInitials(company.name) }}</span>
           </div>
           <div class="info">
@@ -75,194 +249,244 @@
             </div>
           </div>
         </div>
-
-        <div class="services" *ngIf="company.services?.length">
-          <span class="service-tag"><i class="fas fa-tools"></i> {{ getFirstService(company) }}</span>
-          <span class="more-services" *ngIf="getExtraServicesCount(company) > 0">
-            +{{ getExtraServicesCount(company) }}
-          </span>
-        </div>
-
         <div class="actions">
           <button class="btn-primary" (click)="bookCompany(company); $event.stopPropagation()">
             <i class="fas fa-calendar-check"></i> Réserver
           </button>
           <button class="btn-secondary" [routerLink]="['/company', company.id]" (click)="$event.stopPropagation()">
-            <i class="fas fa-info-circle"></i> Détails
+            Détails
           </button>
         </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- CARTE -->
-  <main class="map">
-    <div #mapContainer class="map-container"></div>
-
-    <!-- Bouton toggle sheet (mobile) -->
-    <button class="sheet-toggle" (click)="toggleSheet()" *ngIf="sheetOpen() === false">
-      <i class="fas fa-chevron-up"></i>
-      <span>{{ currentCompanies.length }} entreprises</span>
-    </button>
-  </main>
-
-  <!-- BOTTOM SHEET (MOBILE) -->
-  <div class="bottom-sheet" [class.open]="sheetOpen()" [class.collapsed]="!sheetOpen()">
-    <div class="sheet-header" (click)="toggleSheet()">
-      <i class="fas fa-grip-lines sheet-handle"></i>
-      <span class="sheet-title">{{ currentCompanies.length }} entreprises à proximité</span>
-      <i class="fas" [class.fa-chevron-down]="!sheetOpen()" [class.fa-chevron-up]="sheetOpen()"></i>
-    </div>
-    <div class="sheet-content" [class.collapsed]="!sheetOpen()">
-      <!-- mêmes cartes qu'au-dessus, mais version mobile -->
-      <div *ngFor="let company of currentCompanies; trackBy: trackByCompanyId; let i = index"
-           class="card mobile-card"
-           (click)="selectCompany(company, i); closeSheet()">
-        <!-- contenu identique à la carte desktop -->
-        <div class="card-header">...</div>
-        <div class="services">...</div>
-        <div class="actions">...</div>
       </div>
     </div>
   </div>
 
-  <!-- BACKDROP MOBILE -->
+  <!-- Sheet backdrop -->
   <div class="sheet-backdrop" *ngIf="sheetOpen()" (click)="closeSheet()"></div>
 
-  <!-- MODAL DE RÉSERVATION (amélioré avec icônes) -->
+  <!-- ===== BOOKING MODAL ===== -->
   <div class="modal-backdrop" *ngIf="bookingModalOpen()" (click)="closeBookingModal()">
     <div class="modal booking-modal" (click)="$event.stopPropagation()">
-      <button class="modal-close" (click)="closeBookingModal()"><i class="fas fa-times"></i></button>
+      <button class="modal-close" (click)="closeBookingModal()">
+        <i class="fas fa-times"></i>
+      </button>
 
+      <!-- ── SUCCESS ── -->
+      <div *ngIf="bookingSuccess()" class="success-view">
+        <div class="success-icon">
+          <i class="fas fa-check"></i>
+        </div>
+        <h3>Réservation confirmée !</h3>
+        <p>Un email de confirmation a été envoyé à <strong>{{ bookingForm.email }}</strong>.</p>
+        <div class="booking-details-card">
+          <div class="detail-row"><i class="fas fa-store"></i> {{ bookingCompany()?.name }}</div>
+          <div class="detail-row"><i class="fas fa-location-dot"></i> {{ bookingForm.address }}</div>
+          <div class="detail-row"><i class="fas fa-calendar"></i> {{ selectedDate() }} à {{ selectedTime() }}</div>
+          <div class="detail-row"><i class="fas fa-tools"></i> {{ getServiceName(selectedService()) }}</div>
+        </div>
+        <button class="btn-primary full-width" (click)="closeBookingModal()">Fermer</button>
+      </div>
+
+      <!-- ── FORM ── -->
       <div *ngIf="!bookingSuccess()">
-        <h2><i class="fas fa-calendar-plus"></i> Réserver chez {{ bookingCompany()?.name }}</h2>
-
-        <!-- Indicateur d'étapes -->
-        <div class="booking-steps">
-          <span [class.active]="bookingStep() === 1" [class.done]="bookingStep() > 1">1</span>
-          <div class="step-line" [class.active]="bookingStep() > 1"></div>
-          <span [class.active]="bookingStep() === 2" [class.done]="bookingStep() > 2">2</span>
-          <div class="step-line" [class.active]="bookingStep() > 2"></div>
-          <span [class.active]="bookingStep() === 3">3</span>
+        <div class="modal-header">
+          <div class="modal-company">
+            <div class="modal-avatar">{{ getInitials(bookingCompany()?.name) }}</div>
+            <div>
+              <h2>{{ bookingCompany()?.name }}</h2>
+              <span class="modal-subtitle">Nouvelle réservation</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Étape 1 : Coordonnées -->
+        <!-- Step indicator -->
+        <div class="booking-steps">
+          <div class="step-item" *ngFor="let s of [1,2,3]" [class.active]="bookingStep() === s" [class.done]="bookingStep() > s">
+            <div class="step-circle">
+              <i class="fas fa-check" *ngIf="bookingStep() > s"></i>
+              <span *ngIf="bookingStep() <= s">{{ s }}</span>
+            </div>
+            <span class="step-label">{{ ['Coordonnées','Service','Créneau'][s-1] }}</span>
+          </div>
+          <div class="step-track">
+            <div class="step-progress" [style.width.%]="((bookingStep()-1)/2)*100"></div>
+          </div>
+        </div>
+
+        <!-- STEP 1: Contact -->
         <div *ngIf="bookingStep() === 1" class="booking-step-content">
-          <h3><i class="fas fa-user"></i> Vos coordonnées</h3>
+          <h3 class="step-title"><i class="fas fa-user"></i> Vos coordonnées</h3>
+
           <div class="form-group">
-            <label><i class="fas fa-user-circle"></i> Nom complet *</label>
-            <input type="text" [ngModel]="bookingForm.fullName" (ngModelChange)="bookingForm.fullName = $event" placeholder="Jean Dupont" />
+            <label>Nom complet <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i class="fas fa-user"></i>
+              <input type="text" [ngModel]="bookingForm.fullName" (ngModelChange)="bookingForm.fullName = $event" placeholder="Jean Dupont" />
+            </div>
           </div>
+
           <div class="form-group">
-            <label><i class="fas fa-envelope"></i> Email *</label>
-            <input type="email" [ngModel]="bookingForm.email" (ngModelChange)="bookingForm.email = $event" placeholder="jean@exemple.fr" />
+            <label>Email <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i class="fas fa-envelope"></i>
+              <input type="email" [ngModel]="bookingForm.email" (ngModelChange)="bookingForm.email = $event" placeholder="jean@exemple.fr" />
+            </div>
           </div>
+
           <div class="form-group">
-            <label><i class="fas fa-phone"></i> Téléphone *</label>
-            <input type="tel" [ngModel]="bookingForm.phone" (ngModelChange)="bookingForm.phone = $event" placeholder="06 12 34 56 78" />
+            <label>Téléphone <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i class="fas fa-phone"></i>
+              <input type="tel" [ngModel]="bookingForm.phone" (ngModelChange)="bookingForm.phone = $event" placeholder="06 12 34 56 78" />
+            </div>
           </div>
-          <button class="btn-primary full-width" (click)="nextBookingStep()"
-                  [disabled]="!bookingForm.fullName || !bookingForm.email || !bookingForm.phone">
-            Suivant <i class="fas fa-arrow-right"></i>
+
+          <button
+            class="btn-primary full-width step-next"
+            (click)="nextBookingStep()"
+            [disabled]="!bookingForm.fullName || !bookingForm.email || !bookingForm.phone"
+          >
+            Continuer <i class="fas fa-arrow-right"></i>
           </button>
         </div>
 
-        <!-- Étape 2 : Service + adresse -->
+        <!-- STEP 2: Service + address -->
         <div *ngIf="bookingStep() === 2" class="booking-step-content">
-          <h3><i class="fas fa-tools"></i> Service et adresse</h3>
+          <h3 class="step-title"><i class="fas fa-tools"></i> Service et logement</h3>
+
           <div class="form-group">
-            <label>Service *</label>
-            <select [ngModel]="selectedService()" (ngModelChange)="selectedService.set($event)">
-              <option value="">Sélectionner</option>
-              <option *ngFor="let service of getServices(bookingCompany()!)" [value]="service.id">
-                {{ service.name }} - {{ service.basePrice }}€
-              </option>
-            </select>
+            <label>Prestation <span class="required">*</span></label>
+            <div class="service-picker">
+              <button
+                class="service-option"
+                *ngFor="let service of getServices(bookingCompany()!)"
+                [class.selected]="selectedService() === service.id"
+                (click)="selectedService.set(service.id ?? '')"
+              >
+                <span class="service-name">{{ service.name }}</span>
+                <span class="service-price">{{ service.basePrice }}€</span>
+              </button>
+            </div>
           </div>
+
           <div class="form-group">
-            <label><i class="fas fa-location-dot"></i> Adresse du service *</label>
-            <input type="text" [ngModel]="bookingForm.address" (ngModelChange)="bookingForm.address = $event" placeholder="12 Rue de la République, 69002 Lyon" />
+            <label>Adresse du service <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i class="fas fa-location-dot"></i>
+              <input type="text" [ngModel]="bookingForm.address" (ngModelChange)="bookingForm.address = $event" placeholder="12 Rue de la République, 69002 Lyon" />
+            </div>
           </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Type de bien</label>
+              <select [ngModel]="bookingForm.propertyType" (ngModelChange)="bookingForm.propertyType = $event">
+                <option value="apartment">Appartement</option>
+                <option value="house">Maison</option>
+                <option value="studio">Studio</option>
+                <option value="office">Bureau</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Pièces</label>
+              <select [ngModel]="bookingForm.rooms" (ngModelChange)="bookingForm.rooms = $event">
+                <option value="1">1 pièce</option>
+                <option value="2">2 pièces</option>
+                <option value="3">3 pièces</option>
+                <option value="4">4 pièces</option>
+                <option value="5">5+ pièces</option>
+              </select>
+            </div>
+          </div>
+
           <div class="form-group">
-            <label><i class="fas fa-building"></i> Type de propriété</label>
-            <select [ngModel]="bookingForm.propertyType" (ngModelChange)="bookingForm.propertyType = $event">
-              <option value="apartment">Appartement</option>
-              <option value="house">Maison</option>
-              <option value="studio">Studio</option>
-            </select>
+            <label>Surface (m²)</label>
+            <div class="input-wrapper">
+              <i class="fas fa-ruler-combined"></i>
+              <input type="number" [ngModel]="bookingForm.surface" (ngModelChange)="bookingForm.surface = $event" placeholder="50" min="10" />
+            </div>
           </div>
-          <div class="form-group">
-            <label><i class="fas fa-door-open"></i> Nombre de pièces</label>
-            <select [ngModel]="bookingForm.rooms" (ngModelChange)="bookingForm.rooms = $event">
-              <option value="1">1 pièce</option>
-              <option value="2">2 pièces</option>
-              <option value="3">3 pièces</option>
-              <option value="4">4 pièces</option>
-              <option value="5">5+ pièces</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-ruler-combined"></i> Surface (m²)</label>
-            <input type="number" [ngModel]="bookingForm.surface" (ngModelChange)="bookingForm.surface = $event" placeholder="50" />
-          </div>
+
           <div class="button-row">
             <button class="btn-secondary" (click)="prevBookingStep()"><i class="fas fa-arrow-left"></i> Retour</button>
             <button class="btn-primary" (click)="nextBookingStep()" [disabled]="!selectedService() || !bookingForm.address">
-              Suivant <i class="fas fa-arrow-right"></i>
+              Continuer <i class="fas fa-arrow-right"></i>
             </button>
           </div>
         </div>
 
-        <!-- Étape 3 : Date et confirmation -->
+        <!-- STEP 3: Date + summary -->
         <div *ngIf="bookingStep() === 3" class="booking-step-content">
-          <h3><i class="fas fa-calendar-alt"></i> Date et confirmation</h3>
+          <h3 class="step-title"><i class="fas fa-calendar-alt"></i> Choisir un créneau</h3>
+
           <div class="form-group">
-            <label>Date *</label>
-            <input type="date" [ngModel]="selectedDate()" (ngModelChange)="selectedDate.set($event)" [min]="todayDate" />
+            <label>Date <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i class="fas fa-calendar"></i>
+              <input type="date" [ngModel]="selectedDate()" (ngModelChange)="selectedDate.set($event)" [min]="todayDate" />
+            </div>
           </div>
+
           <div class="form-group">
-            <label>Créneau horaire *</label>
-            <select [ngModel]="selectedTime()" (ngModelChange)="selectedTime.set($event)">
-              <option value="">Sélectionner</option>
-              <option value="08:00">08:00 - 10:00</option>
-              <option value="10:00">10:00 - 12:00</option>
-              <option value="14:00">14:00 - 16:00</option>
-              <option value="16:00">16:00 - 18:00</option>
-              <option value="18:00">18:00 - 20:00</option>
-            </select>
+            <label>Heure <span class="required">*</span></label>
+            <div class="time-picker">
+              <button
+                class="time-option"
+                *ngFor="let slot of timeSlots"
+                [class.selected]="selectedTime() === slot.value"
+                (click)="selectedTime.set(slot.value)"
+              >
+                {{ slot.label }}
+              </button>
+            </div>
           </div>
+
           <div class="form-group">
-            <label><i class="fas fa-pen"></i> Instructions spéciales</label>
-            <textarea [ngModel]="bookingForm.notes" (ngModelChange)="bookingForm.notes = $event" rows="3" placeholder="Code d'accès, étage, etc."></textarea>
+            <label>Instructions spéciales</label>
+            <div class="textarea-wrapper">
+              <textarea
+                [ngModel]="bookingForm.notes"
+                (ngModelChange)="bookingForm.notes = $event"
+                rows="2"
+                placeholder="Code d'accès, étage, animaux, allergie aux produits..."
+              ></textarea>
+            </div>
           </div>
+
+          <!-- Summary card -->
           <div class="booking-summary">
-            <h4>Récapitulatif</h4>
-            <div class="summary-item"><span>Service :</span> <strong>{{ getServiceName(selectedService()) }}</strong></div>
-            <div class="summary-item"><span>Adresse :</span> <strong>{{ bookingForm.address }}</strong></div>
-            <div class="summary-item"><span>Date :</span> <strong>{{ selectedDate() }} {{ selectedTime() }}</strong></div>
+            <div class="summary-title">Récapitulatif</div>
+            <div class="summary-row"><i class="fas fa-tools"></i><span>{{ getServiceName(selectedService()) }}</span></div>
+            <div class="summary-row"><i class="fas fa-location-dot"></i><span>{{ bookingForm.address }}</span></div>
+            <div class="summary-row" *ngIf="selectedDate()">
+              <i class="fas fa-calendar"></i>
+              <span>{{ selectedDate() | date:'EEEE d MMMM':'':'fr' }} · {{ selectedTime() }}</span>
+            </div>
+            <div class="summary-row" *ngIf="bookingCompany()?.services?.[0]?.basePrice">
+              <i class="fas fa-tag"></i>
+              <span>À partir de <strong>{{ bookingCompany()?.services?.[0]?.basePrice }}€</strong></span>
+            </div>
           </div>
+
           <div class="button-row">
             <button class="btn-secondary" (click)="prevBookingStep()"><i class="fas fa-arrow-left"></i> Retour</button>
-            <button class="btn-primary" (click)="confirmBooking()" [disabled]="bookingLoading() || !selectedDate() || !selectedTime()">
-              <span *ngIf="bookingLoading()" class="spinner"></span>
-              <span *ngIf="!bookingLoading()">Confirmer <i class="fas fa-check-circle"></i></span>
+            <button
+              class="btn-primary btn-confirm"
+              (click)="confirmBooking()"
+              [disabled]="bookingLoading() || !selectedDate() || !selectedTime()"
+            >
+              <span class="spinner" *ngIf="bookingLoading()"></span>
+              <span *ngIf="!bookingLoading()"><i class="fas fa-check-circle"></i> Confirmer</span>
             </button>
           </div>
-        </div>
-      </div>
 
-      <!-- Succès -->
-      <div *ngIf="bookingSuccess()" class="success-message">
-        <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-        <h3>Réservation confirmée !</h3>
-        <p>Un email de confirmation vous a été envoyé.</p>
-        <div class="booking-details">
-          <div><i class="fas fa-store"></i> {{ bookingCompany()?.name }}</div>
-          <div><i class="fas fa-location-dot"></i> {{ bookingForm.address }}</div>
-          <div><i class="fas fa-calendar"></i> {{ selectedDate() }} à {{ selectedTime() }}</div>
+          <p class="booking-disclaimer">
+            <i class="fas fa-lock"></i>
+            Paiement sécurisé · Annulation gratuite 24h avant
+          </p>
         </div>
-        <button class="btn-primary" (click)="closeBookingModal()">Fermer</button>
       </div>
     </div>
   </div>
+
 </div>

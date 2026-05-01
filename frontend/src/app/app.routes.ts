@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ProSignupComponent } from './pages/pro-signup/pro-signup.component';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./features/home/components/landing/landing.component').then((m) => m.LandingComponent), pathMatch: 'full' },
@@ -9,6 +10,7 @@ export const routes: Routes = [
         (m) => m.companiesRoutes
       ),
   },
+
   { path: 'nearby', loadComponent: () => import('./features/companies/pages/nearby-companies/nearby-companies.component').then((m) => m.NearbyCompaniesComponent) },
 
   {
@@ -18,6 +20,9 @@ export const routes: Routes = [
         (m) => m.CompanyDetailComponent
       ),
   },
+  
+      { path: 'pro', component: ProSignupComponent },
+  
   { path: 'client-signup', loadComponent: () => import('./features/auth/pages/register/register.component').then((m) => m.RegisterPageComponent) },
   { path: '', loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes) },
   { path: '', loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes) },

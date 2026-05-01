@@ -1,62 +1,120 @@
 <div class="landing">
 
-  <!-- HERO -->
-  <section class="hero">
+  <!-- ===== STICKY HEADER ===== -->
+  <header class="sticky-header" [class.visible]="isHeaderVisible">
+    <a class="header-logo" href="/">NetProxi</a>
+
+    <form class="header-search" (submit)="onSearch($event)">
+      <i class="fas fa-location-dot search-icon"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        name="search"
+        placeholder="Votre adresse..."
+        class="search-input"
+        autocomplete="street-address"
+        aria-label="Rechercher par adresse"
+      />
+      <button type="submit" class="search-btn" [disabled]="loading()">
+        <span *ngIf="!loading()">Rechercher</span>
+        <i *ngIf="loading()" class="fas fa-circle-notch fa-spin"></i>
+      </button>
+    </form>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
     <div class="hero-content">
 
       <div class="hero-badge">
-        <i class="fas fa-sparkles"></i>
-        <span>Service de ménage professionnel vérifié</span>
+        <i class="fas fa-shield-check"></i>
+        <span>Entreprises certifiées · Assurance RC Pro incluse</span>
       </div>
 
       <h1>
-        Réservez un ménage <span class="highlight">fiable et sans stress</span>
+        Un ménage <span class="highlight">fiable</span>,<br>
+        réservé en <span class="highlight">60 secondes</span>
       </h1>
 
       <p class="hero-subtitle">
-        Trouvez une entreprise de nettoyage près de chez vous, réservez en ligne,
-        et laissez des professionnels gérer l’intervention de A à Z.
+        Trouvez une entreprise de nettoyage certifiée près de chez vous,
+        comparez les avis et réservez en ligne — sans appel, sans attente.
       </p>
 
-      <div class="search-box">
+      <!-- Search -->
+      <form class="search-box" (submit)="onSearch($event)">
         <div class="search-input-wrapper">
           <i class="fas fa-location-dot search-icon"></i>
-
           <input
             type="text"
             [(ngModel)]="searchQuery"
-            (keyup.enter)="onSearch()"
-            placeholder="Entrez votre adresse"
+            name="search"
+            (keyup.enter)="onSearch($event)"
+            placeholder="Ex : 12 rue de la Paix, Lyon"
             class="search-input"
+            inputmode="search"
+            autocomplete="street-address"
+            aria-label="Adresse de l’intervention"
           />
-
           <button
-            class="search-btn"
-            (click)="onSearch()"
-            [disabled]="loading()"
+            type="button"
+            class="geo-btn"
+            (click)="useMyLocation()"
+            [disabled]="geoLoading()"
+            aria-label="Utiliser ma position actuelle"
           >
+            <i class="fas fa-location-crosshairs" *ngIf="!geoLoading()"></i>
+            <i class="fas fa-circle-notch fa-spin" *ngIf="geoLoading()"></i>
+          </button>
+          <button type="submit" class="search-btn" [disabled]="loading()">
             <span *ngIf="!loading()">Trouver un service</span>
             <i *ngIf="loading()" class="fas fa-circle-notch fa-spin"></i>
           </button>
         </div>
-      </div>
+        <p class="search-hint">
+          <i class="fas fa-info-circle"></i>
+          Données non conservées. <a href="#">Politique de confidentialité</a>
+        </p>
+      </form>
 
+      <!-- Trust & rating inline -->
       <div class="hero-trust">
-        <span>✔ Entreprises vérifiées</span>
-        <span>✔ Personnel qualifié</span>
-        <span>✔ Satisfaction garantie</span>
+        <span><i class="fas fa-star"></i> 4,8 / 5 · 2 300+ avis</span>
+        <span><i class="fas fa-check-circle"></i> Sans engagement</span>
+        <span><i class="fas fa-check-circle"></i> Annulation gratuite 24h</span>
+        <span><i class="fas fa-check-circle"></i> Paiement après intervention</span>
       </div>
+    </div>
 
+    <!-- Hero visual (unchanged) -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-circle"></div>
+      <div class="floating-card card-1">
+        <i class="fas fa-star"></i><span>4,8 / 5 · 2 300+ avis</span>
+      </div>
+      <div class="floating-card card-2">
+        <i class="fas fa-calendar-check"></i><span>Disponible demain</span>
+      </div>
+      <div class="floating-card card-3">
+        <i class="fas fa-shield-check"></i><span>RC Pro assurée</span>
+      </div>
+      <div class="hero-illustration">
+        <i class="fas fa-broom hero-icon"></i>
+      </div>
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
+  <!-- ===== HOW IT WORKS ===== -->
   <section class="how-it-works">
-    <h2>Comment ça marche ?</h2>
-    <p class="section-subtitle">Simple, rapide, efficace</p>
+    <div class="section-header">
+      <span class="section-tag">Simple & Rapide</span>
+      <h2>Comment ça marche ?</h2>
+      <p class="section-subtitle">De la recherche à l’intervention en quelques clics</p>
+    </div>
 
     <div class="steps-container">
-      <div class="step" *ngFor="let step of steps">
+      <div class="step" *ngFor="let step of steps; let i = index">
+        <div class="step-number">{{ i + 1 }}</div>
         <div class="step-icon">
           <i [class]="step.icon"></i>
         </div>
@@ -64,44 +122,10 @@
         <p>{{ step.description }}</p>
       </div>
     </div>
-
-    <button class="cta-btn" (click)="goToNearby()">
-      Réserver maintenant
-    </button>
+    <!-- No CTA button here – the sticky header handles it -->
   </section>
 
-  <!-- FEATURES -->
-  <section class="features">
-    <h2>Pourquoi choisir NetProxi ?</h2>
-    <p class="section-subtitle">Une expérience pensée pour votre tranquillité</p>
-
-    <div class="features-grid">
-      <div class="feature" *ngFor="let feature of features">
-        <i [class]="feature.icon"></i>
-        <h3>{{ feature.title }}</h3>
-        <p>{{ feature.description }}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- DIFFERENCE -->
-  <section class="difference">
-    <h2>Ce qui nous rend différents</h2>
-
-    <div class="difference-grid">
-      <div class="diff-item">
-        <h3> Plateformes classiques</h3>
-        <p>Freelances non vérifiés, organisation à votre charge</p>
-      </div>
-
-      <div class="diff-item highlight">
-        <h3>NetProxi</h3>
-        <p>Entreprises structurées + gestion complète des interventions</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- STATS -->
+  <!-- ===== STATS ===== -->
   <section class="stats">
     <div class="stats-grid">
       <div class="stat" *ngFor="let stat of stats">
@@ -111,50 +135,89 @@
     </div>
   </section>
 
-  <!-- TESTIMONIALS -->
-  <section class="testimonials">
-    <h2>Ils nous font confiance</h2>
+  <!-- ===== WHY NETPROXI (features + comparison merged) ===== -->
+  <section class="why-us">
+    <div class="section-header">
+      <span class="section-tag">Nos engagements</span>
+      <h2>Pourquoi choisir NetProxi ?</h2>
+      <p class="section-subtitle">L’essentiel pour un ménage sans stress</p>
+    </div>
 
-    <div class="testimonials-grid">
-      <div class="testimonial" *ngFor="let t of testimonials">
-        <div class="testimonial-rating">
-          <i class="fas fa-star" *ngFor="let s of [1,2,3,4,5]"></i>
+    <!-- Core advantages (4 items) -->
+    <div class="why-grid">
+      <div class="why-card" *ngFor="let f of coreFeatures">
+        <div class="why-icon">
+          <i [class]="f.icon"></i>
         </div>
-        <p>“{{ t.text }}”</p>
-        <span>— {{ t.name }}, {{ t.city }}</span>
+        <h3>{{ f.title }}</h3>
+        <p>{{ f.description }}</p>
+      </div>
+    </div>
+
+    <!-- Inline comparison – clean two‑column card -->
+    <div class="comparison-card">
+      <div class="comp-col">
+        <h4 class="comp-title">Plateformes classiques</h4>
+        <ul>
+          <li><i class="fas fa-times-circle icon-no"></i> Profils peu vérifiés</li>
+          <li><i class="fas fa-times-circle icon-no"></i> Assurance à votre charge</li>
+          <li><i class="fas fa-times-circle icon-no"></i> Support limité</li>
+        </ul>
+      </div>
+      <div class="comp-col comp-net">
+        <h4 class="comp-title">NetProxi</h4>
+        <ul>
+          <li><i class="fas fa-check-circle icon-yes"></i> Entreprises certifiées & assurées</li>
+          <li><i class="fas fa-check-circle icon-yes"></i> RC Pro incluse</li>
+          <li><i class="fas fa-check-circle icon-yes"></i> Support dédié 7j/7</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- PRO SECTION -->
-  <section class="pro-section">
-    <div class="pro-content">
-      <h2>Vous êtes une entreprise de nettoyage ?</h2>
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="testimonials">
+    <div class="section-header">
+      <span class="section-tag">Avis clients</span>
+      <h2>Ils nous font confiance</h2>
+      <p class="section-subtitle">Note globale 4,8 / 5 · Plus de 2 300 avis vérifiés</p>
+    </div>
 
-      <p>
-        Recevez de nouveaux clients, optimisez votre planning et gérez vos équipes facilement.
-      </p>
-
-      <ul>
-        <li *ngFor="let b of proBenefits">✔ {{ b }}</li>
-      </ul>
-
-      <button class="cta-btn-secondary" (click)="goToProSignup()">
-        Rejoindre NetProxi
-      </button>
+    <div class="testimonials-grid">
+      <div class="testimonial" *ngFor="let t of testimonials">
+        <div class="testimonial-rating">
+          <i class="fas fa-star" *ngFor="let s of stars(t.rating)"></i>
+        </div>
+        <p class="testimonial-text">« {{ t.text }} »</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">{{ t.initials }}</div>
+          <div>
+            <div class="author-name">{{ t.name }}, {{ t.city }}</div>
+            <div class="author-service">{{ t.service }}</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- FINAL CTA -->
-  <section class="cta-section">
-    <div class="cta-content">
-      <h2>Prêt à retrouver une maison impeccable ?</h2>
-      <p>Réservez votre service en quelques secondes</p>
-
-      <button class="cta-btn-large" (click)="goToNearby()">
-        Trouver un professionnel
-      </button>
-    </div>
+  <!-- ===== PRO BANNER (slim) ===== -->
+  <section class="pro-banner">
+    <p>
+      <i class="fas fa-building"></i>
+      Entreprise de nettoyage ?
+      <a routerLink="/pro">Rejoignez NetProxi</a>
+      <span class="pro-banner-note">— inscription gratuite, 30 jours sans commission</span>
+    </p>
   </section>
+
+  <!-- ===== FOOTER (trust seals only) ===== -->
+  <footer class="main-footer">
+    <div class="footer-trust">
+      <span><i class="fas fa-lock"></i> Paiement sécurisé</span>
+      <span><i class="fas fa-undo"></i> Remboursement garanti</span>
+      <span><i class="fas fa-headset"></i> Support 7j/7</span>
+    </div>
+    <p class="footer-copy">© NetProxi · <a href="#">Confidentialité</a> · <a href="#">CGU</a></p>
+  </footer>
 
 </div>

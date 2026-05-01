@@ -11,25 +11,12 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { FormsModule } from '@angular/forms';
-import {
-  Observable,
-  Subject,
-  debounceTime,
-  takeUntil,
-  forkJoin,
-  of,
-  from,
-  mergeMap,
-  toArray,
-} from 'rxjs';
-import { GoogleMapsModule } from '@angular/google-maps';
+import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule as NgFormsModule } from '@angular/forms';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 
-import * as CompanyActions from '../../state/company.actions';
-import * as CompanySelectors from '../../state/company.selectors';
 import { Company } from '../../models/company.model';
 import { CompaniesApiService } from '../../services/companies.api';
 
@@ -39,35 +26,48 @@ interface CompanyWithCoords extends Company {
   calculatedDistance?: number;
 }
 
+type SortMode = 'distance' | 'rating' | 'available';
+
 @Component({
   selector: 'app-nearby-companies',
   standalone: true,
-  imports: [CommonModule, GoogleMapsModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, NgFormsModule],
   templateUrl: './nearby-companies.component.html',
   styleUrls: ['./nearby-companies.component.scss'],
 })
-export class NearbyCompaniesComponent implements OnInit, OnDestroy, AfterViewInit {
-  private store = inject(Store);
+export class NearbyCompaniesComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   private api = inject(CompaniesApiService);
   private destroy$ = new Subject<void>();
 
-  // État
+  // ── State ──────────────────────────────────────────────────
   searchQuery = '';
-  selectedCompany = signal<Company | null>(null);
-  hoveredCompany = signal<Company | null>(null);
-  mapCenter = signal<{ lat: number; lng: number }>({ lat: 45.764, lng: 4.8357 });
-  sheetOpen = signal<boolean>(false);
-  zoom = 12;
+  searchFocused = false;
+  sortBy: SortMode = 'distance';
+  activeFilter: string | null = null;
+  currentRadius = 10;
 
+  selectedCompany = signal<CompanyWithCoords | null>(null);
+  hoveredCompany = signal<CompanyWithCoords | null>(null);
+  mapCenter = signal<{ lat: number; lng: number }>({
+    lat: 45.764,
+    lng: 4.8357,
+  });
+  sheetOpen = signal<boolean>(false);
+  loading = signal<boolean>(false);
+  geolocationLoading = signal<boolean>(false);
+
+  // ── Booking modal ──────────────────────────────────────────
   bookingModalOpen = signal<boolean>(false);
-  bookingCompany = signal<Company | null>(null);
+  bookingCompany = signal<CompanyWithCoords | null>(null);
   selectedService = signal<string>('');
   selectedDate = signal<string>('');
   selectedTime = signal<string>('');
   bookingSuccess = signal<boolean>(false);
   bookingLoading = signal<boolean>(false);
   bookingStep = signal<number>(1);
-  
+
   bookingForm = {
     fullName: '',
     email: '',
@@ -79,121 +79,137 @@ export class NearbyCompaniesComponent implements OnInit, OnDestroy, AfterViewIni
     notes: '',
   };
 
-  // Carte et marqueurs
+  // ── Map / markers ──────────────────────────────────────────
   private map: google.maps.Map | null = null;
   private clusterer: MarkerClusterer | null = null;
-  private markers: Map<string, google.maps.Marker> = new Map();
-  private infoWindows: Map<string, google.maps.InfoWindow> = new Map();
+  private markers = new Map<string, google.maps.Marker>();
+  private infoWindows = new Map<string, google.maps.InfoWindow>();
   private userLocationMarker: google.maps.Marker | null = null;
+  private geocodeCache = new Map<string, { lat: number; lng: number }>();
 
-  // Données
+  // ── Data ───────────────────────────────────────────────────
   currentCompanies: CompanyWithCoords[] = [];
-  geolocationLoading = signal<boolean>(false);
-  loading = signal<boolean>(false);
-
-  // Autocomplete
   addressSuggestions: google.maps.places.AutocompletePrediction[] = [];
-  private autocompleteService: google.maps.places.AutocompleteService | null = null;
+  private autocompleteService: google.maps.places.AutocompleteService | null =
+    null;
   private searchSubject = new Subject<string>();
 
-  // Cache géocodage
-  private geocodeCache = new Map<string, { lat: number; lng: number }>();
-  
-  // Store companies until map is ready
-  private pendingCompanies: CompanyWithCoords[] = [];
-
-  // Rayon de recherche (km)
-  private currentRadius = 10;
+  // ── Time slots ─────────────────────────────────────────────
+  timeSlots = [
+    { label: '08h–10h', value: '08:00' },
+    { label: '10h–12h', value: '10:00' },
+    { label: '12h–14h', value: '12:00' },
+    { label: '14h–16h', value: '14:00' },
+    { label: '16h–18h', value: '16:00' },
+    { label: '18h–20h', value: '18:00' },
+  ];
 
   @ViewChildren('cardRef') cards!: QueryList<ElementRef>;
   @ViewChild('mapContainer') mapContainer!: ElementRef;
 
-  constructor() {}
+  // ── Computed ───────────────────────────────────────────────
+  get sortedCompanies(): CompanyWithCoords[] {
+    const list = [...this.currentCompanies];
+    switch (this.sortBy) {
+      case 'rating':
+        return list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+      case 'available':
+        return list.sort(
+          (a, b) => (b.isAvailableNow ? 1 : 0) - (a.isAvailableNow ? 1 : 0),
+        );
+      default:
+        return list.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+    }
+  }
+
+  get todayDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // LIFECYCLE
+  // ══════════════════════════════════════════════════════════
 
   ngOnInit() {
-    // Attendre que l'API Places soit disponible (chargée via index.html)
     this.initPlacesService();
     this.setupSearchSubscription();
-
-    // Chargement initial : géolocalisation ou centre par défaut
     this.loadInitialCompanies();
   }
 
   ngAfterViewInit() {
-    // Initialize map manually once DOM is ready
     this.initMapManually();
-    
-    // Listen for button clicks from InfoWindow
-    window.addEventListener('openBooking', ((e: CustomEvent) => {
-      const companyId = e.detail;
-      const company = this.currentCompanies.find(c => c.id === companyId);
-      if (company) {
-        this.bookCompany(company);
-      }
-    }) as EventListener);
-    
-    window.addEventListener('viewDetails', ((e: CustomEvent) => {
-      const companyId = e.detail;
-      // Navigate to company details (handled by router)
-    }) as EventListener);
-  }
 
-  private initMapManually() {
-    const checkGoogleMaps = setInterval(() => {
-      if (typeof google !== 'undefined' && google.maps && this.mapContainer) {
-        clearInterval(checkGoogleMaps);
-        
-        const mapEl = this.mapContainer.nativeElement;
-        if (mapEl && !this.map) {
-          console.log('Initializing map manually');
-          this.map = new google.maps.Map(mapEl, {
-            center: this.mapCenter(),
-            zoom: this.zoom,
-            mapTypeControl: false,
-            streetViewControl: false,
-            fullscreenControl: false,
-          });
-          
-          this.clusterer = new MarkerClusterer({
-            map: this.map,
-            algorithmOptions: { maxZoom: 15 },
-          });
-          
-          console.log('Map manually initialized');
-          
-          // Add markers if companies are already loaded
-          if (this.currentCompanies.length > 0) {
-            this.updateMarkers();
-          }
-        }
-      }
-    }, 100);
-    
-    setTimeout(() => clearInterval(checkGoogleMaps), 5000);
+    // Listen for InfoWindow booking button
+    window.addEventListener('openBooking', ((e: CustomEvent) => {
+      const company = this.currentCompanies.find((c) => c.id === e.detail);
+      if (company) this.bookCompany(company);
+    }) as EventListener);
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
     this.closeAllInfoWindows();
-    if (this.clusterer) {
-      this.clusterer.clearMarkers();
-    }
-    if (this.userLocationMarker) {
-      this.userLocationMarker.setMap(null);
-    }
+    this.clusterer?.clearMarkers();
+    this.userLocationMarker?.setMap(null);
   }
 
-  // ==================== INITIALISATION ====================
+  // ══════════════════════════════════════════════════════════
+  // MAP INIT
+  // ══════════════════════════════════════════════════════════
 
-  private initPlacesService() {
-    const checkInterval = setInterval(() => {
-      if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-        this.autocompleteService = new google.maps.places.AutocompleteService();
-        clearInterval(checkInterval);
+  private initMapManually() {
+    const interval = setInterval(() => {
+      if (
+        typeof google !== 'undefined' &&
+        google.maps &&
+        this.mapContainer?.nativeElement &&
+        !this.map
+      ) {
+        clearInterval(interval);
+
+        this.map = new google.maps.Map(this.mapContainer.nativeElement, {
+          center: this.mapCenter(),
+          zoom: 12,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+          zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER,
+          },
+          styles: [
+            {
+              featureType: 'poi',
+              elementType: 'labels',
+              stylers: [{ visibility: 'off' }],
+            },
+          ],
+        });
+
+        this.clusterer = new MarkerClusterer({
+          map: this.map,
+          algorithmOptions: { maxZoom: 15 },
+        });
+
+        if (this.currentCompanies.length > 0) this.updateMarkers();
       }
     }, 100);
-    setTimeout(() => clearInterval(checkInterval), 5000);
+
+    setTimeout(() => clearInterval(interval), 8000);
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // PLACES / SEARCH
+  // ══════════════════════════════════════════════════════════
+
+  private initPlacesService() {
+    const interval = setInterval(() => {
+      if (typeof google !== 'undefined' && google.maps?.places) {
+        this.autocompleteService = new google.maps.places.AutocompleteService();
+        clearInterval(interval);
+      }
+    }, 100);
+    setTimeout(() => clearInterval(interval), 8000);
   }
 
   private setupSearchSubscription() {
@@ -202,17 +218,14 @@ export class NearbyCompaniesComponent implements OnInit, OnDestroy, AfterViewIni
       .subscribe((query) => {
         if (query.length >= 3 && this.autocompleteService) {
           this.autocompleteService.getPlacePredictions(
-            {
-              input: query,
-              componentRestrictions: { country: 'fr' },
-            },
+            { input: query, componentRestrictions: { country: 'fr' } },
             (predictions, status) => {
-              if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-                this.addressSuggestions = predictions;
-              } else {
-                this.addressSuggestions = [];
-              }
-            }
+              this.addressSuggestions =
+                status === google.maps.places.PlacesServiceStatus.OK &&
+                predictions
+                  ? predictions
+                  : [];
+            },
           );
         } else {
           this.addressSuggestions = [];
@@ -220,344 +233,98 @@ export class NearbyCompaniesComponent implements OnInit, OnDestroy, AfterViewIni
       });
   }
 
-  private loadInitialCompanies() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          this.mapCenter.set({ lat: latitude, lng: longitude });
-          this.loadCompaniesWithGeocoding(latitude, longitude, this.currentRadius);
-          this.reverseGeocodeAndSetQuery(latitude, longitude);
-        },
-        () => {
-          // Échec : centre par défaut (Lyon)
-          this.loadCompaniesWithGeocoding(45.764, 4.8357, this.currentRadius);
-        }
-      );
-    } else {
-      this.loadCompaniesWithGeocoding(45.764, 4.8357, this.currentRadius);
+  onSearchInput(event: Event) {
+    const query = (event.target as HTMLInputElement).value;
+    this.searchQuery = query;
+    this.searchSubject.next(query);
+  }
+
+  onSearchFocus() {
+    if (this.searchQuery.length >= 3) this.searchSubject.next(this.searchQuery);
+  }
+
+  onSearchEnter() {
+    if (this.addressSuggestions.length > 0) {
+      this.selectAddressSuggestion(this.addressSuggestions[0]);
     }
   }
 
-  // ==================== GÉOCODAGE DIRECT ====================
-
-  private geocodeAddressDirect(address: string): Observable<{ lat: number; lng: number } | null> {
-    // Vérifier le cache
-    if (this.geocodeCache.has(address)) {
-      return of(this.geocodeCache.get(address)!);
-    }
-
-    return new Observable((subscriber) => {
-      if (typeof google === 'undefined' || !google.maps || !google.maps.Geocoder) {
-        console.error('Google Maps Geocoder non disponible');
-        subscriber.next(null);
-        subscriber.complete();
-        return;
-      }
-
-      const geocoder = new google.maps.Geocoder();
-      const fullAddress = address.includes('France') ? address : `${address}, France`;
-
-      geocoder.geocode({ address: fullAddress }, (results, status) => {
-        if (status === 'OK' && results && results[0] && results[0].geometry) {
-          const location = results[0].geometry.location;
-          const coords = { lat: location.lat(), lng: location.lng() };
-          this.geocodeCache.set(address, coords);
-          subscriber.next(coords);
-        } else {
-          console.warn(`Géocodage échoué pour "${address}" : ${status}`);
-          subscriber.next(null);
-        }
-        subscriber.complete();
-      });
-    });
+  clearSuggestions() {
+    setTimeout(() => {
+      this.addressSuggestions = [];
+    }, 200);
   }
 
-  private reverseGeocodeAndSetQuery(lat: number, lng: number) {
-    if (typeof google === 'undefined' || !google.maps) return;
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-      if (status === 'OK' && results && results[0]) {
-        this.searchQuery = results[0].formatted_address;
-      } else {
-        this.searchQuery = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  selectAddressSuggestion(
+    suggestion: google.maps.places.AutocompletePrediction,
+  ) {
+    const service = new google.maps.places.PlacesService(
+      document.createElement('div'),
+    );
+    service.getDetails({ placeId: suggestion.place_id }, (place, status) => {
+      if (
+        status === google.maps.places.PlacesServiceStatus.OK &&
+        place?.geometry?.location
+      ) {
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+        this.mapCenter.set({ lat, lng });
+        this.searchQuery = suggestion.description;
+        this.addressSuggestions = [];
+        this.loadCompaniesAround(lat, lng, this.currentRadius);
       }
     });
   }
 
-  // ==================== CHARGEMENT DES ENTREPRISES ====================
+  // ══════════════════════════════════════════════════════════
+  // GEOLOCATION
+  // ══════════════════════════════════════════════════════════
 
-  private loadCompaniesWithGeocoding(lat: number, lng: number, radiusKm: number) {
-    this.loading.set(true);
-    console.log('Loading companies around', lat, lng, 'radius:', radiusKm, 'km');
+  useMyLocation() {
+    if (!navigator.geolocation) return;
+    this.geolocationLoading.set(true);
 
-    this.api.getNearByCompanies(lat, lng, radiusKm).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (companies) => {
-        console.log('API returned', companies.length, 'nearby companies');
-        
-        const companiesWithCoords: CompanyWithCoords[] = companies
-          .filter(c => c.latitude && c.longitude)
-          .map(company => ({
-            ...company,
-            lat: company.latitude,
-            lng: company.longitude,
-            calculatedDistance: company.distance || 0,
-            distance: company.distance,
-          }));
-
-        console.log('Companies with coords:', companiesWithCoords.length);
-        companiesWithCoords.forEach(c => {
-          console.log(`  ${c.name}: (${c.lat}, ${c.lng}) distance: ${c.distance}m`);
-        });
-
-        this.currentCompanies = companiesWithCoords.sort((a, b) => (a.distance || 0) - (b.distance || 0));
-        this.loading.set(false);
-        this.updateMarkers();
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        this.mapCenter.set({ lat, lng });
+        this.loadCompaniesAround(lat, lng, this.currentRadius);
+        this.addUserLocationMarker(lat, lng);
+        this.reverseGeocode(lat, lng);
+        this.geolocationLoading.set(false);
       },
-      error: (err) => {
-        console.error('Error loading companies:', err);
-        this.loading.set(false);
+      (err) => {
+        console.error(err);
+        this.geolocationLoading.set(false);
+        alert(
+          "Impossible d'obtenir votre position. Veuillez saisir votre adresse manuellement.",
+        );
       },
-    });
+      { timeout: 8000 },
+    );
   }
 
-  private calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
-    const R = 6371e3;
-    const φ1 = (lat1 * Math.PI) / 180;
-    const φ2 = (lat2 * Math.PI) / 180;
-    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-    const Δλ = ((lng2 - lng1) * Math.PI) / 180;
-
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c;
-  }
-
-  // ==================== CARTE ET MARQUEURS ====================
-
-  onMapReady(map: google.maps.Map | undefined) {
-    if (!map) {
-      console.warn('onMapReady called with undefined map');
-      return;
-    }
-    this.map = map;
-    this.clusterer = new MarkerClusterer({
-      map,
-      algorithmOptions: { maxZoom: 15 },
-    });
-    console.log('✅ onMapReady executed, map:', map.getCenter?.(), 'companies:', this.currentCompanies.length);
-    
-    // Add user location marker
-    const center = map.getCenter();
-    if (center) {
-      this.addUserLocationMarker(center.lat(), center.lng());
-    }
-    
-    // Force update markers when map becomes ready
-    if (this.currentCompanies.length > 0) {
-      this.updateMarkers();
-    }
-  }
-
-  onMapIdle(map: google.maps.Map | undefined) {
-    if (!map) return;
-    this.map = map;
-    
-    // Also try to update markers when map becomes idle (backup if mapReady didn't fire properly)
-    if (this.currentCompanies.length > 0 && this.markers.size === 0) {
-      console.log('Map idle, trying to add markers');
-      this.updateMarkers();
-    }
-  }
-
-  handleMapReady(event: any) {
-    console.log('handleMapReady called', event, typeof event);
-    // The event might be the map object directly or wrapped
-    if (event && typeof event === 'object') {
-      if (event.getCenter) {
-        // It's a Google Maps object
-        this.onMapReady(event as google.maps.Map);
-      } else if (event.map) {
-        // It's wrapped in an object
-        this.onMapReady(event.map as google.maps.Map);
-      }
-    }
-  }
-
-  handleMapIdle(event: any) {
-    console.log('handleMapIdle called', event);
-    if (event && typeof event === 'object' && event.getCenter) {
-      this.onMapIdle(event as google.maps.Map);
-    } else if (event && event.map) {
-      this.onMapIdle(event.map as google.maps.Map);
-    }
-  }
-
-private updateMarkers() {
-    console.log('updateMarkers called', { 
-      companiesCount: this.currentCompanies.length, 
-      mapReady: !!this.map, 
-      clustererReady: !!this.clusterer 
-    });
-
-    if (!this.map) {
-      console.warn('updateMarkers: map not ready yet, storing companies for later');
-      this.pendingCompanies = [...this.currentCompanies];
-      return;
-    }
-    
-    // Check if we have pending companies to add
-    if (this.pendingCompanies.length > 0 && this.currentCompanies.length === 0) {
-      console.log('Restoring pending companies to map');
-      this.currentCompanies = this.pendingCompanies;
-      this.pendingCompanies = [];
-    }
-
-    this.markers.forEach(m => m.setMap(null));
-    this.markers.clear();
-
-    if (this.clusterer) {
-      this.clusterer.clearMarkers();
-    }
-
-    const googleMarkers: google.maps.Marker[] = [];
-
-    for (const company of this.currentCompanies) {
-      const lat = company.lat ?? company.latitude;
-      const lng = company.lng ?? company.longitude;
-
-      if (!lat || !lng) {
-        console.warn(`Coordinates missing for ${company.name}`, company);
-        continue;
-      }
-
-      const isSelected = this.selectedCompany()?.id === company.id;
-      const isHovered = this.hoveredCompany()?.id === company.id;
-
-      const marker = new google.maps.Marker({
-        position: { lat: lat, lng: lng },
-        map: this.map,
-        title: company.name || 'Company',
-        icon: this.createMarkerIcon(company, isSelected, isHovered),
-        zIndex: isSelected ? 1000 : 1,
-      });
-
-      // Create InfoWindow content with company info
-      const infoContent = this.createInfoWindowContent(company);
-      const infoWindow = new google.maps.InfoWindow({
-        content: infoContent,
-        pixelOffset: new google.maps.Size(0, -40),
-      });
-
-      marker.addListener('click', () => {
-        // Close any other open info windows
-        this.closeAllInfoWindows();
-        infoWindow.open(this.map, marker);
-        this.selectFromMarker(company);
-      });
-      
-      marker.addListener('mouseover', () => this.hoveredCompany.set(company));
-      marker.addListener('mouseout', () => this.hoveredCompany.set(null));
-
-      // Store the info window for later
-      this.infoWindows.set(company.id, infoWindow);
-      
-      this.markers.set(company.id, marker);
-      googleMarkers.push(marker);
-      
-      // Also add marker directly to map (backup if clusterer fails)
-      marker.setMap(this.map);
-    }
-
-    if (this.clusterer && googleMarkers.length > 0) {
-      this.clusterer.addMarkers(googleMarkers);
-    }
-    
-    console.log(`Added ${googleMarkers.length} markers to map`);
-
-    if (googleMarkers.length > 0 && this.map) {
-      const bounds = new google.maps.LatLngBounds();
-      googleMarkers.forEach(m => {
-        const pos = m.getPosition();
-        if (pos) bounds.extend(pos);
-      });
-      this.map.fitBounds(bounds);
-    }
-  }
-
-  private createMarkerIcon(company: CompanyWithCoords, isSelected: boolean, isHovered: boolean): google.maps.Icon {
-    const isAvailable = company.isAvailableNow ?? true;
-    const rating = company.rating?.toFixed(1) || '4.5';
-
-    let bgColor: string;
-    if (isSelected) bgColor = '#2563eb';
-    else if (!isAvailable) bgColor = '#ef4444';
-    else if (isHovered) bgColor = '#7c3aed';
-    else bgColor = '#22c55e';
-
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-        <circle cx="20" cy="20" r="18" fill="${bgColor}" stroke="white" stroke-width="2"/>
-        <text x="20" y="25" text-anchor="middle" fill="white" font-size="10" font-family="system-ui" font-weight="600">
-          ${rating}
-        </text>
-      </svg>
-    `;
-
-    return {
-      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
-      scaledSize: new google.maps.Size(40, 40),
-      anchor: new google.maps.Point(20, 20),
-    };
-  }
-
-  private createInfoWindowContent(company: CompanyWithCoords): string {
-    const rating = company.rating?.toFixed(1) || '4.5';
-    const distance = company.distance ? 
-      (company.distance < 1000 ? `${Math.round(company.distance)}m` : `${(company.distance / 1000).toFixed(1)}km`) : '';
-    
-    // Store company ID in global object for button handlers
-    (window as any).__companyActions = (window as any).__companyActions || {};
-    (window as any).__companyActions[company.id] = { book: () => this.bookCompany(company), company };
-    
-    return `
-      <div class="marker-info-window" style="min-width: 180px; padding: 6px 8px;">
-        <div style="font-weight: 600; font-size: 13px; color: #1e293b; margin-bottom: 2px;">
-          ${company.name}
-        </div>
-        <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">
-          ${rating} ⭐ ${distance ? ' • ' + distance : ''}
-        </div>
-        <div style="display: flex; gap: 6px;">
-          <button 
-            onclick="(window.__companyActions['${company.id}']||{}).book()"
-            style="flex: 1; padding: 6px 10px; background: #2563eb; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
-            Réserver
-          </button>
-          <button 
-            onclick="window.location.href='/company/${company.id}'"
-            style="padding: 6px 10px; background: #f1f5f9; color: #475569; border: none; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
-            Détails
-          </button>
-        </div>
-      </div>
-    `;
-  }
-
-  private closeAllInfoWindows() {
-    this.infoWindows.forEach(iw => iw.close());
+  private reverseGeocode(lat: number, lng: number) {
+    if (typeof google === 'undefined') return;
+    new google.maps.Geocoder().geocode(
+      { location: { lat, lng } },
+      (results, status) => {
+        if (status === 'OK' && results?.[0]) {
+          this.searchQuery = results[0].formatted_address;
+        }
+      },
+    );
   }
 
   private addUserLocationMarker(lat: number, lng: number) {
     if (!this.map) return;
-    if (this.userLocationMarker) this.userLocationMarker.setMap(null);
+    this.userLocationMarker?.setMap(null);
     this.userLocationMarker = new google.maps.Marker({
       position: { lat, lng },
       map: this.map,
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: 12,
+        scale: 11,
         fillColor: '#4285F4',
         fillOpacity: 1,
         strokeColor: '#FFFFFF',
@@ -568,70 +335,232 @@ private updateMarkers() {
     });
   }
 
-  // ==================== INTERACTIONS UTILISATEUR ====================
+  // ══════════════════════════════════════════════════════════
+  // LOADING COMPANIES
+  // ══════════════════════════════════════════════════════════
 
-  onSearchInput(event: Event) {
-    const query = (event.target as HTMLInputElement).value;
-    this.searchQuery = query;
-    this.searchSubject.next(query);
-  }
-
-  onSearchFocus() {
-    if (this.searchQuery.length >= 3 && this.addressSuggestions.length === 0 && this.autocompleteService) {
-      this.searchSubject.next(this.searchQuery);
+  private loadInitialCompanies() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude: lat, longitude: lng } = pos.coords;
+          this.mapCenter.set({ lat, lng });
+          this.loadCompaniesAround(lat, lng, this.currentRadius);
+          this.reverseGeocode(lat, lng);
+        },
+        () => this.loadCompaniesAround(45.764, 4.8357, this.currentRadius),
+      );
+    } else {
+      this.loadCompaniesAround(45.764, 4.8357, this.currentRadius);
     }
   }
 
-  clearSuggestions() {
-    setTimeout(() => {
-      this.addressSuggestions = [];
-    }, 200);
+  private loadCompaniesAround(lat: number, lng: number, radiusKm: number) {
+    this.loading.set(true);
+
+    this.api
+      .getNearByCompanies(lat, lng, radiusKm)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (companies) => {
+          this.currentCompanies = companies
+            .filter((c) => c.latitude && c.longitude)
+            .map((c) => ({
+              ...c,
+              lat: c.latitude,
+              lng: c.longitude,
+              calculatedDistance: c.distance ?? 0,
+            }))
+            .sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+
+          this.loading.set(false);
+          this.updateMarkers();
+        },
+        error: (err) => {
+          console.error('Error loading companies:', err);
+          this.loading.set(false);
+        },
+      });
   }
 
-  selectAddressSuggestion(suggestion: google.maps.places.AutocompletePrediction) {
-    const service = new google.maps.places.PlacesService(document.createElement('div'));
-    service.getDetails({ placeId: suggestion.place_id }, (place, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
-        const lat = place.geometry.location.lat();
-        const lng = place.geometry.location.lng();
-        this.mapCenter.set({ lat, lng });
-        this.loadCompaniesWithGeocoding(lat, lng, this.currentRadius);
-        this.searchQuery = suggestion.description;
-        this.addressSuggestions = [];
-      }
-    });
+  onRadiusChange() {
+    const center = this.mapCenter();
+    this.loadCompaniesAround(center.lat, center.lng, this.currentRadius);
   }
 
-  useMyLocation() {
-    if (!navigator.geolocation) return;
-    this.geolocationLoading.set(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        this.mapCenter.set({ lat: latitude, lng: longitude });
-        this.loadCompaniesWithGeocoding(latitude, longitude, this.currentRadius);
-        this.addUserLocationMarker(latitude, longitude);
-        this.reverseGeocodeAndSetQuery(latitude, longitude);
-        this.geolocationLoading.set(false);
-      },
-      (error) => {
-        console.error(error);
-        this.geolocationLoading.set(false);
-      }
-    );
+  // ══════════════════════════════════════════════════════════
+  // MARKERS
+  // ══════════════════════════════════════════════════════════
+
+  private updateMarkers() {
+    if (!this.map) return;
+
+    this.markers.forEach((m) => m.setMap(null));
+    this.markers.clear();
+    this.clusterer?.clearMarkers();
+
+    const googleMarkers: google.maps.Marker[] = [];
+
+    for (const company of this.currentCompanies) {
+      const lat = company.lat ?? company.latitude;
+      const lng = company.lng ?? company.longitude;
+      if (!lat || !lng) continue;
+
+      const isSelected = this.selectedCompany()?.id === company.id;
+      const marker = new google.maps.Marker({
+        position: { lat, lng },
+        map: this.map,
+        title: company.name,
+        icon: this.buildMarkerIcon(company, isSelected),
+        zIndex: isSelected ? 1000 : 1,
+      });
+      marker.setIcon(this.buildMarkerIcon(company, isSelected));
+      const infoWindow = new google.maps.InfoWindow({
+        content: this.buildInfoWindowContent(company),
+        pixelOffset: new google.maps.Size(0, -42),
+      });
+
+      marker.addListener('click', () => {
+        this.closeAllInfoWindows();
+        infoWindow.open(this.map, marker);
+        this.selectFromMarker(company);
+      });
+      marker.addListener('mouseover', () => this.hoveredCompany.set(company));
+      marker.addListener('mouseout', () => this.hoveredCompany.set(null));
+
+      this.infoWindows.set(company.id, infoWindow);
+      this.markers.set(company.id, marker);
+      googleMarkers.push(marker);
+    }
+
+    if (googleMarkers.length > 0) {
+      this.clusterer?.addMarkers(googleMarkers);
+      const bounds = new google.maps.LatLngBounds();
+      googleMarkers.forEach((m) => {
+        const p = m.getPosition();
+        if (p) bounds.extend(p);
+      });
+      this.map.fitBounds(bounds);
+    }
   }
 
-  highlightCompany(company: Company) {
+  private buildMarkerIcon(
+    company: CompanyWithCoords,
+    isSelected: boolean,
+  ): google.maps.Icon {
+    const available = company.isAvailableNow !== false;
+    const rating = company.rating?.toFixed(1) ?? '4.5';
+    const bg = isSelected ? '#2563eb' : available ? '#10b981' : '#ef4444';
+    const size = isSelected ? 48 : 40;
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size + 6}" viewBox="0 0 ${size} ${size + 6}">
+      <ellipse cx="${size / 2}" cy="${size + 3}" rx="${size / 2 - 4}" ry="3" fill="rgba(0,0,0,.2)"/>
+      <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" fill="${bg}" stroke="white" stroke-width="2.5"/>
+      <text x="${size / 2}" y="${size / 2 + 4}" text-anchor="middle" fill="white" font-size="${isSelected ? 12 : 10}"
+        font-family="system-ui" font-weight="700">${rating}</text>
+    </svg>`;
+
+    return {
+      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+      scaledSize: new google.maps.Size(size, size + 6),
+      anchor: new google.maps.Point(size / 2, size + 6),
+    };
+  }
+
+  private buildInfoWindowContent(company: CompanyWithCoords): string {
+    const rating = company.rating?.toFixed(1) ?? '4.5';
+    const dist = company.distance
+      ? company.distance < 1000
+        ? `${Math.round(company.distance)} m`
+        : `${(company.distance / 1000).toFixed(1)} km`
+      : '';
+    const avail = company.isAvailableNow !== false;
+
+    // Store reference for button click
+    (window as any).__cpActions = (window as any).__cpActions ?? {};
+    (window as any).__cpActions[company.id] = () => this.bookCompany(company);
+
+    return `<div style="font-family:'DM Sans',system-ui,sans-serif;min-width:190px;padding:4px 2px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="width:36px;height:36px;border-radius:8px;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-weight:700;color:#2563eb;font-size:13px">
+          ${this.getInitials(company.name)}
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:13px;color:#1e293b">${company.name}</div>
+          <div style="font-size:11px;color:#64748b">⭐ ${rating}${dist ? ' · 📍 ' + dist : ''}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px">
+        <span style="width:6px;height:6px;border-radius:50%;background:${avail ? '#10b981' : '#ef4444'};display:inline-block"></span>
+        <span style="font-size:11px;font-weight:600;color:${avail ? '#10b981' : '#ef4444'}">${avail ? 'Disponible' : 'Indisponible'}</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="(window.__cpActions['${company.id}'])()"
+          style="flex:1;padding:7px 0;background:#2563eb;color:white;border:none;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer">
+          Réserver
+        </button>
+        <button onclick="window.location.href='/company/${company.id}'"
+          style="padding:7px 12px;background:#f1f5f9;color:#475569;border:none;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer">
+          Détails
+        </button>
+      </div>
+    </div>`;
+  }
+
+  private closeAllInfoWindows() {
+    this.infoWindows.forEach((iw) => iw.close());
+  }
+
+ 
+  // ══════════════════════════════════════════════════════════
+  // INTERACTIONS
+  // ══════════════════════════════════════════════════════════
+
+  setSortBy(mode: SortMode) {
+    this.sortBy = mode;
+  }
+
+  clearFilter() {
+    this.activeFilter = null;
+  }
+
+  highlightCompany(company: CompanyWithCoords) {
     this.hoveredCompany.set(company);
+    const marker = this.markers.get(company.id);
+    if (marker) {
+      marker.setIcon(this.buildMarkerIcon(company, false));
+      marker.setZIndex(900);
+    }
   }
 
   clearHighlight() {
+    const prev = this.hoveredCompany();
     this.hoveredCompany.set(null);
+    if (prev) {
+      const marker = this.markers.get(prev.id);
+      if (marker) {
+        marker.setIcon(
+          this.buildMarkerIcon(prev, this.selectedCompany()?.id === prev.id),
+        );
+        marker.setZIndex(1);
+      }
+    }
   }
 
   selectCompany(company: CompanyWithCoords, index: number) {
+    const prev = this.selectedCompany();
     this.selectedCompany.set(company);
-    this.mapCenter.set({
+
+    // Update marker icons
+    if (prev) {
+      const m = this.markers.get(prev.id);
+      m?.setIcon(this.buildMarkerIcon(prev, false));
+    }
+    const m = this.markers.get(company.id);
+    m?.setIcon(this.buildMarkerIcon(company, true));
+    m?.setZIndex(1000);
+
+    this.map?.panTo({
       lat: company.lat ?? company.latitude ?? 0,
       lng: company.lng ?? company.longitude ?? 0,
     });
@@ -639,68 +568,43 @@ private updateMarkers() {
   }
 
   selectFromMarker(company: CompanyWithCoords) {
-    const index = this.currentCompanies.findIndex((c) => c.id === company.id);
-    if (index !== -1) {
-      this.selectCompany(company, index);
-    }
+    const idx = this.currentCompanies.findIndex((c) => c.id === company.id);
+    if (idx !== -1) this.selectCompany(company, idx);
   }
 
   private scrollTo(index: number) {
     setTimeout(() => {
       const el = this.cards.get(index);
-      el?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el?.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
     }, 100);
   }
 
   toggleSheet() {
     this.sheetOpen.update((v) => !v);
   }
-
   closeSheet() {
     this.sheetOpen.set(false);
   }
 
-  // ==================== UTILITAIRES ====================
+  // ══════════════════════════════════════════════════════════
+  // BOOKING
+  // ══════════════════════════════════════════════════════════
 
-  getInitials(name: string | null | undefined): string {
-    if (!name) return '??';
-    return name
-      .split(' ')
-      .map((w) => w[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }
-
-  formatDistance(m: number | undefined): string {
-    if (!m) return '';
-    return m < 1000 ? `${Math.round(m)} m` : `${(m / 1000).toFixed(1)} km`;
-  }
-
-  getFirstService(company: Company): string | null {
-    return company.services?.length ? company.services[0].name : null;
-  }
-
-  getExtraServicesCount(company: Company): number {
-    return company.services ? Math.max(0, company.services.length - 1) : 0;
-  }
-
-  trackByCompanyId(index: number, company: Company): string {
-    return company.id;
-  }
-
-  // ==================== RÉSERVATION ====================
-
-  bookCompany(company: Company) {
+  bookCompany(company: CompanyWithCoords) {
     this.bookingCompany.set(company);
-    this.selectedService.set(company.services?.[0]?.id || '');
+    this.selectedService.set(company.services?.[0]?.id ?? '');
+    this.selectedDate.set('');
+    this.selectedTime.set('');
     this.bookingSuccess.set(false);
     this.bookingStep.set(1);
     this.bookingForm = {
       fullName: '',
       email: '',
       phone: '',
-      address: '',
+      address: this.searchQuery || '',
       propertyType: 'apartment',
       rooms: '2',
       surface: 0,
@@ -718,119 +622,129 @@ private updateMarkers() {
     this.bookingSuccess.set(false);
   }
 
-  confirmBooking() {
-    const company = this.bookingCompany();
-    const serviceId = this.selectedService();
-    if (!company || !serviceId || !this.selectedDate() || !this.selectedTime()) return;
-
-    this.bookingLoading.set(true);
-    
-    // Get or create client ID
-    let clientId: string | null = localStorage.getItem('clientId');
-    
-    const createBooking = (cid: string) => {
-      // Format date and time for backend (LocalDateTime)
-      const dateStr = this.selectedDate(); // "2026-04-15"
-      const timeStr = this.selectedTime(); // "14:00"
-      const dateTimeStr = `${dateStr}T${timeStr}:00`;
-      
-      const bookingRequest = {
-        clientId: cid,
-        serviceId: serviceId,
-        address: this.bookingForm.address,
-        startTime: dateTimeStr,
-        price: 0, // Will be set by backend based on service
-      };
-      
-      console.log('Creating booking with:', bookingRequest);
-      
-      this.api.CreateBooking(company.id, bookingRequest).subscribe({
-        next: (booking) => {
-          console.log('Booking created:', booking);
-          this.bookingLoading.set(false);
-          this.bookingSuccess.set(true);
-        },
-        error: (err) => {
-          console.error('Booking error:', err);
-          this.bookingLoading.set(false);
-          alert('Erreur lors de la réservation. Veuillez réessayer.');
-        }
-      });
-    };
-    
-    if (clientId) {
-      createBooking(clientId);
-    } else {
-      // Register client first
-      const clientData = {
-        name: this.bookingForm.fullName,
-        email: this.bookingForm.email,
-        password: 'TempPass123!', // Temporary password
-        phone: this.bookingForm.phone,
-        address: this.bookingForm.address,
-      };
-      
-      this.api.registerClient(clientData).subscribe({
-        next: (response) => {
-          console.log('Client registered:', response);
-          const newClientId = response.id;
-          if (newClientId) {
-            localStorage.setItem('clientId', newClientId);
-            createBooking(newClientId);
-          } else {
-            this.bookingLoading.set(false);
-            alert('Erreur lors de l\'inscription.');
-          }
-        },
-        error: (err) => {
-          console.error('Client registration error:', err);
-          // Try to login instead
-          this.api.loginClient(this.bookingForm.email, 'TempPass123!').subscribe({
-            next: (loginRes) => {
-              const loginClientId = loginRes.id;
-              if (loginClientId) {
-                localStorage.setItem('clientId', loginClientId);
-                createBooking(loginClientId);
-              } else {
-                this.bookingLoading.set(false);
-                alert('Erreur lors de la connexion.');
-              }
-            },
-            error: (loginErr) => {
-              console.error('Login error:', loginErr);
-              this.bookingLoading.set(false);
-              alert('Erreur. Veuillez réessayer.');
-            }
-          });
-        }
-      });
-    }
-  }
-
   nextBookingStep() {
-    if (this.bookingStep() < 3) {
-      this.bookingStep.update(s => s + 1);
-    }
+    if (this.bookingStep() < 3) this.bookingStep.update((s) => s + 1);
   }
 
   prevBookingStep() {
-    if (this.bookingStep() > 1) {
-      this.bookingStep.update(s => s - 1);
+    if (this.bookingStep() > 1) this.bookingStep.update((s) => s - 1);
+  }
+
+  confirmBooking() {
+    const company = this.bookingCompany();
+    const serviceId = this.selectedService();
+    if (!company || !serviceId || !this.selectedDate() || !this.selectedTime())
+      return;
+
+    this.bookingLoading.set(true);
+
+    const dateTimeStr = `${this.selectedDate()}T${this.selectedTime()}:00`;
+    const bookingRequest = {
+      clientId: localStorage.getItem('clientId') ?? '',
+      serviceId,
+      address: this.bookingForm.address,
+      startTime: dateTimeStr,
+      price: 0,
+    };
+
+    const doBook = (clientId: string) => {
+      this.api
+        .CreateBooking(company.id, { ...bookingRequest, clientId })
+        .subscribe({
+          next: () => {
+            this.bookingLoading.set(false);
+            this.bookingSuccess.set(true);
+          },
+          error: (err) => {
+            console.error(err);
+            this.bookingLoading.set(false);
+            alert('Erreur lors de la réservation. Veuillez réessayer.');
+          },
+        });
+    };
+
+    const existingId = localStorage.getItem('clientId');
+    if (existingId) {
+      doBook(existingId);
+      return;
     }
+
+    this.api
+      .registerClient({
+        name: this.bookingForm.fullName,
+        email: this.bookingForm.email,
+        password: 'TempPass123!',
+        phone: this.bookingForm.phone,
+        address: this.bookingForm.address,
+      })
+      .subscribe({
+        next: (res) => {
+          if (res.id) {
+            localStorage.setItem('clientId', res.id);
+            doBook(res.id);
+          } else {
+            this.bookingLoading.set(false);
+          }
+        },
+        error: () => {
+          // Try login fallback
+          this.api
+            .loginClient(this.bookingForm.email, 'TempPass123!')
+            .subscribe({
+              next: (res) => {
+                if (res.id) {
+                  localStorage.setItem('clientId', res.id);
+                  doBook(res.id);
+                } else {
+                  this.bookingLoading.set(false);
+                }
+              },
+              error: () => {
+                this.bookingLoading.set(false);
+                alert("Erreur d'authentification. Veuillez réessayer.");
+              },
+            });
+        },
+      });
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // UTILITIES
+  // ══════════════════════════════════════════════════════════
+
+  getInitials(name: string | null | undefined): string {
+    if (!name) return '??';
+    return name
+      .split(' ')
+      .map((w) => w[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  formatDistance(m: number | undefined): string {
+    if (!m && m !== 0) return '';
+    return m < 1000 ? `${Math.round(m)} m` : `${(m / 1000).toFixed(1)} km`;
+  }
+
+  getFirstService(company: Company): string | null {
+    return company.services?.[0]?.name ?? null;
+  }
+
+  getExtraServicesCount(company: Company): number {
+    return Math.max(0, (company.services?.length ?? 0) - 1);
+  }
+
+  getServices(company: Company) {
+    return company.services ?? [];
   }
 
   getServiceName(serviceId: string): string {
     const company = this.bookingCompany();
-    if (!company || !company.services) return '';
-    const service = company.services.find(s => s.id === serviceId);
-    return service ? service.name : '';
+    return company?.services?.find((s) => s.id === serviceId)?.name ?? '';
   }
 
-  getServices(company: Company) {
-    return company.services || [];
-  }
-
-  get todayDate(): string {
-    return new Date().toISOString().split('T')[0];
+  trackByCompanyId(_: number, company: Company): string {
+    return company.id;
   }
 }

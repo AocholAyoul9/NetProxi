@@ -1,0 +1,396 @@
+// Reuse tokens from landing (you can import shared variables)
+$brand: #2563eb;
+$brand-dark: #1d4ed8;
+$brand-light: #eff6ff;
+$accent: #10b981;
+$dark: #0f172a;
+$text: #1e293b;
+$muted: #64748b;
+$border: #e2e8f0;
+$surface: #f8fafc;
+$white: #ffffff;
+$radius-card: 1.5rem;
+$radius-pill: 3rem;
+$shadow-sm: 0 4px 12px rgba(0,0,0,.06);
+$shadow-md: 0 8px 24px rgba(0,0,0,.1);
+
+.pro-page {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: $text;
+  background: $white;
+  overflow-x: hidden;
+
+  *, *::before, *::after { box-sizing: border-box; }
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-tag {
+  display: inline-block;
+  background: $brand-light;
+  color: $brand;
+  font-family: 'Sora', sans-serif;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .3rem .9rem;
+  border-radius: $radius-pill;
+  margin-bottom: .75rem;
+}
+
+h2 {
+  font-family: 'Sora', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 .5rem;
+}
+
+.section-subtitle {
+  color: $muted;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+// ---------- HERO ----------
+.pro-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  padding: 5rem 7%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pro-hero-content {
+  h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    margin-bottom: 1.25rem;
+    .highlight { color: $brand; }
+  }
+  .pro-hero-subtitle {
+    font-size: 1.05rem;
+    color: $muted;
+    margin-bottom: 2rem;
+  }
+}
+
+.pro-hero-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .75rem;
+}
+
+.cta-btn {
+  background: $brand;
+  color: $white;
+  border: none;
+  border-radius: $radius-pill;
+  padding: .9rem 2rem;
+  font-size: .95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+  transition: background .2s;
+
+  i { margin-left: .5rem; }
+  &:hover { background: $brand-dark; }
+}
+
+.pro-hero-note {
+  font-size: .78rem;
+  color: $muted;
+}
+
+.pro-hero-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.pro-hero-circle {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle at 40% 40%, #bfdbfe, #818cf8 70%);
+  border-radius: 50%;
+  opacity: .8;
+}
+
+.pro-hero-icon {
+  position: absolute;
+  font-size: 4rem;
+  color: $white;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,.2));
+}
+
+// ---------- STATS ----------
+.pro-stats {
+  background: $dark;
+  padding: 3.5rem 7%;
+  text-align: center;
+  .stats-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .stat-value {
+    font-family: 'Sora', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: $white;
+  }
+  .stat-label { color: #94a3b8; font-size: .9rem; }
+}
+
+// ---------- HOW IT WORKS ----------
+.pro-how {
+  padding: 5rem 7%;
+  text-align: center;
+  background: $surface;
+}
+
+.steps-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.step {
+  background: $white;
+  border-radius: $radius-card;
+  padding: 2rem 1.5rem;
+  position: relative;
+  border: 1px solid $border;
+  transition: transform .2s, box-shadow .2s;
+  &:hover { transform: translateY(-5px); box-shadow: $shadow-md; }
+
+  .step-number {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    font-family: 'Sora', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: $brand-light;
+  }
+  .step-icon {
+    background: $brand-light;
+    width: 55px;
+    height: 55px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    i { font-size: 1.5rem; color: $brand; }
+  }
+  h3 { font-family: 'Sora', sans-serif; font-size: 1rem; margin-bottom: .5rem; }
+  p { font-size: .875rem; color: $muted; line-height: 1.5; }
+}
+
+// ---------- BENEFITS ----------
+.pro-benefits {
+  padding: 5rem 7%;
+  text-align: center;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.benefit-card {
+  background: $white;
+  border-radius: $radius-card;
+  padding: 2rem;
+  border: 1px solid $border;
+  text-align: left;
+  transition: transform .2s, box-shadow .2s;
+  &:hover { transform: translateY(-5px); box-shadow: $shadow-md; }
+
+  .benefit-icon {
+    background: $brand-light;
+    width: 48px;
+    height: 48px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    i { font-size: 1.3rem; color: $brand; }
+  }
+  h3 { font-family: 'Sora', sans-serif; font-size: 1rem; margin-bottom: .5rem; }
+  p { font-size: .875rem; color: $muted; line-height: 1.5; }
+}
+
+// ---------- TESTIMONIALS ----------
+.pro-testimonials {
+  padding: 5rem 7%;
+  text-align: center;
+  background: $surface;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.testimonial {
+  background: $white;
+  border-radius: $radius-card;
+  padding: 1.75rem;
+  border: 1px solid $border;
+  text-align: left;
+  .testimonial-rating { margin-bottom: .75rem; i { color: #f59e0b; } }
+  .testimonial-text { font-style: italic; color: #334155; margin-bottom: 1rem; }
+  .testimonial-author { display: flex; align-items: center; gap: .75rem;
+    .author-avatar { background: $brand; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .author-name { font-weight: 700; font-size: .875rem; }
+    .author-company { font-size: .75rem; color: $muted; }
+  }
+}
+
+// ---------- PRICING ----------
+.pro-pricing {
+  padding: 5rem 7%;
+  text-align: center;
+}
+
+.pricing-card {
+  background: $white;
+  border: 2px solid $brand;
+  border-radius: $radius-card;
+  padding: 2.5rem;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: $shadow-md;
+
+  .price {
+    font-family: 'Sora', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: $brand;
+    line-height: 1;
+  }
+  .price-label { color: $muted; margin-bottom: 1.5rem; }
+  .price-details {
+    list-style: none; padding: 0; margin: 0 0 1.5rem;
+    li { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-bottom: .5rem; }
+    i { color: $accent; }
+  }
+  .price-note {
+    background: $brand-light;
+    color: $brand-dark;
+    font-weight: 700;
+    border-radius: $radius-pill;
+    padding: .4rem 1rem;
+    display: inline-block;
+    font-size: .85rem;
+  }
+}
+
+// ---------- SIGNUP FORM ----------
+.pro-signup {
+  padding: 5rem 7%;
+  text-align: center;
+  background: $surface;
+}
+
+.signup-form {
+  max-width: 650px;
+  margin: 0 auto;
+  background: $white;
+  border-radius: $radius-card;
+  padding: 2.5rem;
+  border: 1px solid $border;
+  box-shadow: $shadow-sm;
+  text-align: left;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  &.full-width { flex: 1 1 100%; }
+
+  label {
+    font-weight: 600;
+    margin-bottom: .35rem;
+    font-size: .87rem;
+  }
+
+  input, textarea {
+    border: 1px solid $border;
+    border-radius: .75rem;
+    padding: .75rem 1rem;
+    font-family: inherit;
+    font-size: .9rem;
+    transition: border-color .2s;
+    &:focus { outline: none; border-color: $brand; box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+  }
+
+  textarea { resize: vertical; }
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 1.5rem;
+
+  .cta-btn {
+    width: 100%;
+    padding: .9rem;
+  }
+  .form-note {
+    margin-top: .75rem;
+    font-size: .78rem;
+    color: $muted;
+    i { color: $accent; }
+  }
+}
+
+// ---------- FOOTER ----------
+.main-footer {
+  padding: 2rem 7%;
+  text-align: center;
+  border-top: 1px solid $border;
+  .footer-trust { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; span { font-size: .85rem; color: $muted; } }
+  .footer-copy { font-size: .8rem; color: $muted; a { color: $muted; } }
+}
+
+// ---------- RESPONSIVE ----------
+@media (max-width: 768px) {
+  .pro-hero { grid-template-columns: 1fr; text-align: center; padding: 3rem 5%; }
+  .pro-hero-cta { align-items: center; }
+  .pro-hero-visual { display: none; }
+  .steps-container { grid-template-columns: 1fr; }
+  .form-row { flex-direction: column; }
+}

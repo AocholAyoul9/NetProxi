@@ -65,8 +65,12 @@
     <ng-template #publicHeader>
       <nav class="nav" [class.active]="menuOpen()">
         <a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a>
-        <a routerLink="/nearby" routerLinkActive="active" class="nav-link">Entreprises proches</a>
-
+        <a routerLink="/nearby" routerLinkActive="active" class="nav-link"
+          >Entreprises proches</a
+        >
+        <a routerLink="/pro" class="pro-nav-link">
+          <i class="fas fa-building"></i> Espace Pro
+        </a>
         <div class="mobile-actions">
           <button class="btn-login" (click)="openLogin()">Connexion</button>
           <button class="btn-signup" (click)="openSignup()">Inscription</button>
