@@ -3,22 +3,18 @@
   <!-- ===== HERO ===== -->
   <section class="pro-hero">
     <div class="pro-hero-content">
-      <span class="section-tag">Pour les professionnels</span>
-      <h1>Développez votre activité<br>avec <span class="highlight">NetProxi</span></h1>
+      <h1>Soyez trouvé par des clients <span class="highlight">près de chez vous</span></h1>
       <p class="pro-hero-subtitle">
-        Recevez des missions qualifiées automatiquement, gérez vos équipes,
-        votre planning et votre facturation depuis un seul tableau de bord.
+        Inscrivez votre entreprise de nettoyage sur NetProxi. Les clients de votre quartier vous réservent directement en ligne. Simple, rapide et sans démarchage.
       </p>
       <div class="pro-hero-cta">
-        <a href="#signup-form" class="cta-btn">
-          Commencer gratuitement <i class="fas fa-arrow-right"></i>
-        </a>
-        <span class="pro-hero-note">30 jours sans commission · Sans engagement</span>
+        <a href="#signup-form" class="cta-btn">Ajouter mon entreprise →</a>
+        <span class="pro-hero-note">Gratuit · Sans commission pendant 30 jours</span>
       </div>
     </div>
     <div class="pro-hero-visual" aria-hidden="true">
       <div class="pro-hero-circle"></div>
-      <i class="fas fa-chart-line pro-hero-icon"></i>
+      <i class="fas fa-map-marker-alt pro-hero-icon"></i>
     </div>
   </section>
 
@@ -27,11 +23,11 @@
     <div class="stats-grid">
       <div class="stat">
         <div class="stat-value">+250</div>
-        <div class="stat-label">entreprises partenaires</div>
+        <div class="stat-label">entreprises déjà référencées</div>
       </div>
       <div class="stat">
         <div class="stat-value">15 000+</div>
-        <div class="stat-label">missions pourvues</div>
+        <div class="stat-label">clients ont trouvé un pro</div>
       </div>
       <div class="stat">
         <div class="stat-value">98%</div>
@@ -40,195 +36,112 @@
     </div>
   </section>
 
-  <!-- ===== HOW IT WORKS (for pros) ===== -->
+  <!-- ===== HOW IT WORKS (client discovers pro) ===== -->
   <section class="pro-how">
     <div class="section-header">
-      <span class="section-tag">Simple & efficace</span>
-      <h2>Comment ça marche ?</h2>
-      <p class="section-subtitle">De l'inscription à la première intervention</p>
+      <h2>Comment être réservé par des clients ?</h2>
     </div>
-
     <div class="steps-container">
-      <div class="step" *ngFor="let step of proSteps; let i = index">
-        <div class="step-number">{{ i + 1 }}</div>
-        <div class="step-icon">
-          <i [class]="step.icon"></i>
-        </div>
-        <h3>{{ step.title }}</h3>
-        <p>{{ step.description }}</p>
+      <div class="step">
+        <div class="step-icon"><i class="fas fa-building"></i></div>
+        <h3>1. Créez votre fiche</h3>
+        <p>Inscription gratuite, sans CB. Ajoutez vos services, tarifs et disponibilités.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon"><i class="fas fa-search-location"></i></div>
+        <h3>2. Apparaissez dans les recherches</h3>
+        <p>Les clients près de chez vous vous trouvent et comparent les avis.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon"><i class="fas fa-calendar-alt"></i></div>
+        <h3>3. Recevez des réservations</h3>
+        <p>Le client réserve en ligne. Vous gérez votre planning et acceptez.</p>
       </div>
     </div>
   </section>
 
-  <!-- ===== FULL BENEFITS ===== -->
+  <!-- ===== BENEFITS (visibility & control) ===== -->
   <section class="pro-benefits">
     <div class="section-header">
-      <span class="section-tag">Vos avantages</span>
-      <h2>Un tableau de bord tout‑en‑un</h2>
-      <p class="section-subtitle">Moins de paperasse, plus de missions</p>
+      <h2>Ce que vous gagnez</h2>
     </div>
-
     <div class="benefits-grid">
-      <div class="benefit-card" *ngFor="let b of proBenefits">
-        <div class="benefit-icon">
-          <i [class]="b.icon"></i>
-        </div>
-        <h3>{{ b.title }}</h3>
-        <p>{{ b.description }}</p>
+      <div class="benefit-card">
+        <i class="fas fa-chart-line benefit-icon"></i>
+        <h3>Visibilité locale</h3>
+        <p>Apparaissez devant les clients qui cherchent un nettoyage dans votre secteur.</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-calendar-week benefit-icon"></i>
+        <h3>Planning maîtrisé</h3>
+        <p>Tableau de bord pour accepter ou refuser les demandes selon vos disponibilités.</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-file-invoice-dollar benefit-icon"></i>
+        <h3>Paiement intégré</h3>
+        <p>Plus de relances : le client paye en ligne, vous êtes viré sous 48h.</p>
+      </div>
+      <div class="benefit-card">
+        <i class="fas fa-star benefit-icon"></i>
+        <h3>Avis & réputation</h3>
+        <p>Valorisez votre travail avec les notes des clients – et gagnez en confiance.</p>
       </div>
     </div>
   </section>
 
-  <!-- ===== TESTIMONIALS FROM COMPANIES ===== -->
-  <section class="pro-testimonials">
-    <div class="section-header">
-      <span class="section-tag">Témoignages</span>
-      <h2>Ils nous font confiance</h2>
-    </div>
-
-    <div class="testimonials-grid">
-      <div class="testimonial" *ngFor="let t of proTestimonials">
-        <div class="testimonial-rating">
-          <i class="fas fa-star" *ngFor="let s of stars(t.rating)"></i>
-        </div>
-        <p class="testimonial-text">« {{ t.text }} »</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">{{ t.initials }}</div>
-          <div>
-            <div class="author-name">{{ t.name }}</div>
-            <div class="author-company">{{ t.company }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== PRICING / COMMISSION TRANSPARENCY ===== -->
+  <!-- ===== PRICING (transparent) ===== -->
   <section class="pro-pricing">
     <div class="section-header">
-      <span class="section-tag">Tarifs</span>
-      <h2>Une commission simple et transparente</h2>
-      <p class="section-subtitle">Vous êtes payé après chaque intervention, NetProxi prélève sa part.</p>
+      <h2>15% commission seulement</h2>
+      <p class="section-subtitle">Prélevée sur les réservations confirmées – pas d’abonnement.</p>
     </div>
     <div class="pricing-card">
       <div class="price">15%</div>
-      <div class="price-label">commission sur chaque mission</div>
+      <div class="price-label">sur chaque réservation</div>
       <ul class="price-details">
-        <li><i class="fas fa-check-circle"></i> Aucun frais d’inscription</li>
-        <li><i class="fas fa-check-circle"></i> Pas d’abonnement mensuel</li>
-        <li><i class="fas fa-check-circle"></i> Paiement sous 48h après validation</li>
+        <li><i class="fas fa-check-circle"></i> Zéro frais d’inscription</li>
+        <li><i class="fas fa-check-circle"></i> Zéro abonnement mensuel</li>
+        <li><i class="fas fa-check-circle"></i> Virement sous 48h</li>
       </ul>
-      <p class="price-note">30 premiers jours : 0% de commission</p>
+      <p class="price-note">30 premiers jours à 0% de commission</p>
     </div>
   </section>
 
   <!-- ===== SIGN-UP FORM ===== -->
   <section class="pro-signup" id="signup-form">
     <div class="section-header">
-      <span class="section-tag">Inscription</span>
-      <h2>Rejoignez NetProxi</h2>
-      <p class="section-subtitle">Remplissez ce formulaire et recevez votre première mission rapidement.</p>
+      <span class="section-tag">Inscription gratuite</span>
+      <h2>Prêt à développer votre activité ?</h2>
+      <p class="section-subtitle">Remplissez ce formulaire, votre fiche sera créée sous 48h.</p>
     </div>
 
     <form class="signup-form" #proForm="ngForm" (ngSubmit)="submitProForm(proForm)">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="companyName">Nom de l'entreprise *</label>
-          <input
-            type="text"
-            id="companyName"
-            name="companyName"
-            [(ngModel)]="proData.companyName"
-            required
-            placeholder="Ex : Clean Pro Services"
-          />
-        </div>
-        <div class="form-group">
-          <label for="siret">Numéro SIRET *</label>
-          <input
-            type="text"
-            id="siret"
-            name="siret"
-            [(ngModel)]="proData.siret"
-            required
-            placeholder="123 456 789 00012"
-          />
-        </div>
+      <div class="form-group">
+        <label for="companyName">Nom de l’entreprise *</label>
+        <input type="text" id="companyName" name="companyName" [(ngModel)]="proData.companyName" required placeholder="Ex: Clean Pro Services">
       </div>
-
       <div class="form-row">
         <div class="form-group">
-          <label for="contactName">Nom du responsable *</label>
-          <input
-            type="text"
-            id="contactName"
-            name="contactName"
-            [(ngModel)]="proData.contactName"
-            required
-            placeholder="Jean Dupont"
-          />
+          <label for="contactName">Votre nom *</label>
+          <input type="text" id="contactName" name="contactName" [(ngModel)]="proData.contactName" required placeholder="Jean Dupont">
         </div>
         <div class="form-group">
           <label for="email">Email professionnel *</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            [(ngModel)]="proData.email"
-            required
-            email
-            placeholder="contact@cleanpro.fr"
-          />
+          <input type="email" id="email" name="email" [(ngModel)]="proData.email" required email placeholder="contact@cleanpro.fr">
         </div>
       </div>
-
-      <div class="form-row">
-        <div class="form-group full-width">
-          <label for="phone">Téléphone</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            [(ngModel)]="proData.phone"
-            placeholder="06 12 34 56 78"
-          />
-        </div>
+      <div class="form-group">
+        <label for="phone">Téléphone (optionnel)</label>
+        <input type="tel" id="phone" name="phone" [(ngModel)]="proData.phone" placeholder="06 12 34 56 78">
       </div>
-
-      <div class="form-row">
-        <div class="form-group full-width">
-          <label for="message">Message (optionnel)</label>
-          <textarea
-            id="message"
-            name="message"
-            [(ngModel)]="proData.message"
-            rows="3"
-            placeholder="Dites‑nous en plus sur votre entreprise..."
-          ></textarea>
-        </div>
-      </div>
-
       <div class="form-actions">
         <button type="submit" class="cta-btn" [disabled]="proForm.invalid || submitting()">
-          <span *ngIf="!submitting()">Envoyer ma candidature</span>
+          <span *ngIf="!submitting()">Référencer mon entreprise →</span>
           <i *ngIf="submitting()" class="fas fa-circle-notch fa-spin"></i>
         </button>
-        <p class="form-note">
-          <i class="fas fa-shield-check"></i>
-          Vos données sont sécurisées. Aucun engagement.
-        </p>
+        <p class="form-note"><i class="fas fa-shield-alt"></i> Vos données sont sécurisées – aucun engagement.</p>
       </div>
     </form>
   </section>
-
-  <!-- ===== FOOTER (trust) ===== -->
-  <footer class="main-footer">
-    <div class="footer-trust">
-      <span><i class="fas fa-lock"></i> Paiement sécurisé</span>
-      <span><i class="fas fa-headset"></i> Support dédié pros</span>
-      <span><i class="fas fa-undo"></i> Facturation transparente</span>
-    </div>
-    <p class="footer-copy">© NetProxi · <a href="#">Confidentialité</a> · <a href="#">CGU</a></p>
-  </footer>
 
 </div>

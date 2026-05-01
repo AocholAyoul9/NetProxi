@@ -1,12 +1,12 @@
 import { Component, signal, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterModule],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
@@ -191,8 +191,8 @@ export class LandingComponent implements OnInit, OnDestroy {
   ];
 
   stats = [
-    { value: '15 000+', rawValue: 15000, suffix: '+', label: 'ménages nettoyés' },
-    { value: '250+',    rawValue: 250,   suffix: '+', label: 'entreprises partenaires' },
+    { value: '1000+', rawValue: 1000, suffix: '+', label: 'ménages nettoyés' },
+    { value: '200+',    rawValue: 200,   suffix: '+', label: 'entreprises partenaires' },
     { value: '4,8',     rawValue: 48,    suffix: '',  label: 'note moyenne / 5' },
     { value: '98%',     rawValue: 98,    suffix: '%', label: 'clients satisfaits' }
   ];

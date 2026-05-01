@@ -49,20 +49,6 @@ $shadow-lg:   0 20px 40px rgba(0,0,0,.14);
   margin-bottom: 3rem;
 }
 
-.section-tag {
-  display: inline-block;
-  background: $brand-light;
-  color: $brand;
-  font-family: 'Sora', sans-serif;
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  padding: .3rem .9rem;
-  border-radius: $radius-pill;
-  margin-bottom: .75rem;
-}
-
 h2 {
   font-family: 'Sora', sans-serif;
   font-size: 2.5rem;
@@ -77,29 +63,8 @@ h2 {
   margin: 0;
 }
 
-// =============================================
-// STICKY HEADER
-// =============================================
-.sticky-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.7rem 7%;
-  z-index: 100;
-  transform: translateY(-100%);
-  transition: transform 0.3s ease;
 
-  &.visible {
-    transform: translateY(0);
-  }
-}
+
 
 .header-logo {
   font-family: 'Sora', sans-serif;
@@ -154,6 +119,39 @@ h2 {
   }
 }
 
+
+.hero-pro-cta {
+  margin-top: 1.8rem;
+
+  .btn-pro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+    border: 2px solid $brand;
+    border-radius: $radius-pill;
+    padding: 0.75rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $brand;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: $shadow-sm;
+    cursor: pointer;
+    i { font-size: 1.2rem; }
+    strong { margin-left: 0.3rem; text-decoration: underline; }
+    
+    &:hover {
+      background: $brand;
+      color: white;
+      border-color: $brand-dark;
+      transform: translateY(-2px);
+      box-shadow: $shadow-md;
+      
+      i, strong { color: white; }
+    }
+  }
+}
 // =============================================
 // HERO
 // =============================================
@@ -162,7 +160,7 @@ h2 {
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
-  padding: 6rem 7% 5rem; // extra top for sticky header
+  padding: 6rem 7% 5rem;
   max-width: 1400px;
   margin: 0 auto;
   min-height: 88vh;
@@ -170,20 +168,6 @@ h2 {
 
 .hero-content {
   animation: fadeSlideUp .7s ease both;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  background: $brand-light;
-  color: $brand;
-  font-size: .8rem;
-  font-weight: 600;
-  padding: .4rem 1rem;
-  border-radius: $radius-pill;
-  margin-bottom: 1.5rem;
-  i { font-size: .9rem; }
 }
 
 h1 {
@@ -218,7 +202,7 @@ h1 {
   max-width: 520px;
 }
 
-// ---- Search (hero) ----
+// Search (hero)
 .search-box {
   margin-bottom: 1.5rem;
 }
@@ -297,35 +281,7 @@ h1 {
   &:disabled { opacity: .65; cursor: not-allowed; }
 }
 
-.search-hint {
-  font-size: .78rem;
-  color: $muted;
-  margin: .6rem 0 0 1rem;
-
-  i { margin-right: .3rem; }
-  a { color: $brand; text-decoration: none; &:hover { text-decoration: underline; } }
-}
-
-// ---- Trust chips (now with rating) ----
-.hero-trust {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 0.5rem;
-
-  span {
-    display: flex;
-    align-items: center;
-    gap: .35rem;
-    font-size: .82rem;
-    font-weight: 500;
-    color: $muted;
-
-    i { color: $accent; }
-  }
-}
-
-// ---- Hero visual (unchanged) ----
+// Hero visual
 .hero-visual {
   position: relative;
   display: flex;
@@ -469,7 +425,7 @@ h1 {
 }
 
 // =============================================
-// WHY US (merged features + comparison)
+// WHY US (features only, comparison removed)
 // =============================================
 .why-us {
   padding: 5rem 7%;
@@ -481,7 +437,7 @@ h1 {
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 1.5rem;
   max-width: 1000px;
-  margin: 0 auto 3rem;
+  margin: 0 auto;
 }
 
 .why-card {
@@ -515,57 +471,6 @@ h1 {
   }
 
   p { font-size: .875rem; color: $muted; line-height: 1.5; margin: 0; }
-}
-
-// Inline comparison card
-.comparison-card {
-  max-width: 700px;
-  margin: 0 auto;
-  display: flex;
-  border-radius: $radius-card;
-  overflow: hidden;
-  box-shadow: $shadow-sm;
-  border: 1px solid $border;
-  text-align: left;
-
-  .comp-col {
-    flex: 1;
-    padding: 2rem 1.5rem;
-    background: $white;
-
-    &.comp-net {
-      background: #f0f7ff;
-      border-left: 1px solid $border;
-    }
-  }
-
-  .comp-title {
-    font-family: 'Sora', sans-serif;
-    font-size: .95rem;
-    font-weight: 700;
-    margin: 0 0 1.25rem;
-    color: $text;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-
-    li {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-size: .875rem;
-      color: $text;
-    }
-  }
-
-  .icon-yes { color: $accent; font-size: 1.1rem; }
-  .icon-no  { color: #cbd5e1; font-size: 1.1rem; }
 }
 
 // =============================================
@@ -633,82 +538,9 @@ h1 {
   }
 }
 
-// =============================================
-// PRO BANNER (slim)
-// =============================================
-.pro-banner {
-  background: $dark;
-  color: #cbd5e1;
-  text-align: center;
-  padding: 1.2rem 5%;
-
-  p {
-    margin: 0;
-    font-size: .95rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: .5rem;
-  }
-
-  a {
-    color: $white;
-    font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    white-space: nowrap;
-    &:hover { color: $brand-light; }
-  }
-
-  .pro-banner-note {
-    font-size: .8rem;
-    color: #94a3b8;
-  }
-}
 
 // =============================================
-// FOOTER
-// =============================================
-.main-footer {
-  background: $white;
-  padding: 2rem 7%;
-  text-align: center;
-  border-top: 1px solid $border;
-
-  .footer-trust {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-
-    span {
-      font-size: .85rem;
-      color: $muted;
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-
-      i { color: $brand; }
-    }
-  }
-
-  .footer-copy {
-    font-size: .8rem;
-    color: $muted;
-
-    a {
-      color: $muted;
-      text-decoration: none;
-      margin: 0 .4rem;
-      &:hover { color: $text; text-decoration: underline; }
-    }
-  }
-}
-
-// =============================================
-// RESPONSIVE (trimmed to essentials)
+// RESPONSIVE (global)
 // =============================================
 @media (max-width: 1024px) {
   .hero {
@@ -719,18 +551,12 @@ h1 {
     text-align: center;
   }
   .hero-subtitle { max-width: 100%; margin-left: auto; margin-right: auto; }
-  .hero-trust { justify-content: center; }
   .hero-visual { height: 280px; }
   .hero-circle { width: 240px; height: 240px; }
   .hero-icon { font-size: 4rem; }
 
   .steps-container { grid-template-columns: repeat(2, 1fr); }
   .testimonials-grid { grid-template-columns: 1fr; max-width: 500px; }
-
-  .comparison-card {
-    flex-direction: column;
-    .comp-net { border-left: none; border-top: 1px solid $border; }
-  }
 
   .sticky-header {
     padding: 0.7rem 5%;
@@ -767,15 +593,31 @@ h1 {
       .search-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
     }
   }
+
+  // Professional space adjustments
+  .pro-space-section {
+    padding: 4rem 5%;
+
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 0.9rem;
+    }
+
+    .btn-join {
+      width: 100%;
+      padding: 0.8rem 1.5rem;
+    }
+
+    .free-note {
+      font-size: 0.8rem;
+      width: 100%;
+      text-align: center;
+    }
+  }
 }
 
 @media (max-width: 480px) {
   .hero { padding: 4rem 4% 3rem; }
   h1 { font-size: 1.9rem; }
   .floating-card { display: none; }
-
-  .pro-banner p {
-    flex-direction: column;
-    gap: 0.3rem;
-  }
 }

@@ -1,38 +1,9 @@
 <div class="landing">
-
-  <!-- ===== STICKY HEADER ===== -->
-  <header class="sticky-header" [class.visible]="isHeaderVisible">
-    <a class="header-logo" href="/">NetProxi</a>
-
-    <form class="header-search" (submit)="onSearch($event)">
-      <i class="fas fa-location-dot search-icon"></i>
-      <input
-        type="text"
-        [(ngModel)]="searchQuery"
-        name="search"
-        placeholder="Votre adresse..."
-        class="search-input"
-        autocomplete="street-address"
-        aria-label="Rechercher par adresse"
-      />
-      <button type="submit" class="search-btn" [disabled]="loading()">
-        <span *ngIf="!loading()">Rechercher</span>
-        <i *ngIf="loading()" class="fas fa-circle-notch fa-spin"></i>
-      </button>
-    </form>
-  </header>
-
   <!-- ===== HERO ===== -->
   <section class="hero" id="hero">
     <div class="hero-content">
-
-      <div class="hero-badge">
-        <i class="fas fa-shield-check"></i>
-        <span>Entreprises certifiées · Assurance RC Pro incluse</span>
-      </div>
-
       <h1>
-        Un ménage <span class="highlight">fiable</span>,<br>
+        Un ménage <span class="highlight">fiable</span>,<br />
         réservé en <span class="highlight">60 secondes</span>
       </h1>
 
@@ -71,18 +42,13 @@
             <i *ngIf="loading()" class="fas fa-circle-notch fa-spin"></i>
           </button>
         </div>
-        <p class="search-hint">
-          <i class="fas fa-info-circle"></i>
-          Données non conservées. <a href="#">Politique de confidentialité</a>
-        </p>
       </form>
 
-      <!-- Trust & rating inline -->
-      <div class="hero-trust">
-        <span><i class="fas fa-star"></i> 4,8 / 5 · 2 300+ avis</span>
-        <span><i class="fas fa-check-circle"></i> Sans engagement</span>
-        <span><i class="fas fa-check-circle"></i> Annulation gratuite 24h</span>
-        <span><i class="fas fa-check-circle"></i> Paiement après intervention</span>
+      <div class="hero-pro-cta">
+        <a routerLink="/pro" class="btn-pro">
+          <span>Vous êtes une entreprise de nettoyage ?</span>
+          <strong>Rejoindre l'espace pro →</strong>
+        </a>
       </div>
     </div>
 
@@ -107,9 +73,10 @@
   <!-- ===== HOW IT WORKS ===== -->
   <section class="how-it-works">
     <div class="section-header">
-      <span class="section-tag">Simple & Rapide</span>
       <h2>Comment ça marche ?</h2>
-      <p class="section-subtitle">De la recherche à l’intervention en quelques clics</p>
+      <p class="section-subtitle">
+        De la recherche à l’intervention en quelques clics
+      </p>
     </div>
 
     <div class="steps-container">
@@ -122,7 +89,6 @@
         <p>{{ step.description }}</p>
       </div>
     </div>
-    <!-- No CTA button here – the sticky header handles it -->
   </section>
 
   <!-- ===== STATS ===== -->
@@ -138,7 +104,6 @@
   <!-- ===== WHY NETPROXI (features + comparison merged) ===== -->
   <section class="why-us">
     <div class="section-header">
-      <span class="section-tag">Nos engagements</span>
       <h2>Pourquoi choisir NetProxi ?</h2>
       <p class="section-subtitle">L’essentiel pour un ménage sans stress</p>
     </div>
@@ -153,34 +118,15 @@
         <p>{{ f.description }}</p>
       </div>
     </div>
-
-    <!-- Inline comparison – clean two‑column card -->
-    <div class="comparison-card">
-      <div class="comp-col">
-        <h4 class="comp-title">Plateformes classiques</h4>
-        <ul>
-          <li><i class="fas fa-times-circle icon-no"></i> Profils peu vérifiés</li>
-          <li><i class="fas fa-times-circle icon-no"></i> Assurance à votre charge</li>
-          <li><i class="fas fa-times-circle icon-no"></i> Support limité</li>
-        </ul>
-      </div>
-      <div class="comp-col comp-net">
-        <h4 class="comp-title">NetProxi</h4>
-        <ul>
-          <li><i class="fas fa-check-circle icon-yes"></i> Entreprises certifiées & assurées</li>
-          <li><i class="fas fa-check-circle icon-yes"></i> RC Pro incluse</li>
-          <li><i class="fas fa-check-circle icon-yes"></i> Support dédié 7j/7</li>
-        </ul>
-      </div>
-    </div>
   </section>
 
   <!-- ===== TESTIMONIALS ===== -->
   <section class="testimonials">
     <div class="section-header">
-      <span class="section-tag">Avis clients</span>
       <h2>Ils nous font confiance</h2>
-      <p class="section-subtitle">Note globale 4,8 / 5 · Plus de 2 300 avis vérifiés</p>
+      <p class="section-subtitle">
+        Note globale 4,8 / 5 · Plus de 1 300 avis vérifiés
+      </p>
     </div>
 
     <div class="testimonials-grid">
@@ -199,25 +145,4 @@
       </div>
     </div>
   </section>
-
-  <!-- ===== PRO BANNER (slim) ===== -->
-  <section class="pro-banner">
-    <p>
-      <i class="fas fa-building"></i>
-      Entreprise de nettoyage ?
-      <a routerLink="/pro">Rejoignez NetProxi</a>
-      <span class="pro-banner-note">— inscription gratuite, 30 jours sans commission</span>
-    </p>
-  </section>
-
-  <!-- ===== FOOTER (trust seals only) ===== -->
-  <footer class="main-footer">
-    <div class="footer-trust">
-      <span><i class="fas fa-lock"></i> Paiement sécurisé</span>
-      <span><i class="fas fa-undo"></i> Remboursement garanti</span>
-      <span><i class="fas fa-headset"></i> Support 7j/7</span>
-    </div>
-    <p class="footer-copy">© NetProxi · <a href="#">Confidentialité</a> · <a href="#">CGU</a></p>
-  </footer>
-
 </div>

@@ -377,14 +377,7 @@ h2 {
   }
 }
 
-// ---------- FOOTER ----------
-.main-footer {
-  padding: 2rem 7%;
-  text-align: center;
-  border-top: 1px solid $border;
-  .footer-trust { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1rem; span { font-size: .85rem; color: $muted; } }
-  .footer-copy { font-size: .8rem; color: $muted; a { color: $muted; } }
-}
+
 
 // ---------- RESPONSIVE ----------
 @media (max-width: 768px) {
