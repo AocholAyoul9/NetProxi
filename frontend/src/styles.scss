@@ -7,14 +7,92 @@ $tokens-light: (
   color-surface: #f9fafb,
   color-text: #111827,
   color-text-muted: #6b7280,
-  color-border: #e5e7eb,
 
   color-primary: #1976d2,
   color-primary-hover: #1565c0,
   color-primary-light: #e3f2fd,
 
   color-danger: #ef4444,
-  color-danger-bg: #fee2e2
+  color-danger-bg: #fee2e2,
+  color-header-bg: #ffffff,
+  color-header-border: #e5e7eb,
+  
+  color-brand: #2563eb,
+  color-brand-dark: #1d4ed8,
+  color-brand-light: #eff6ff,
+  color-accent: #10b981,
+  color-stat-bg: #0f172a,
+  color-stat-label: #94a3b8,
+  shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06),
+  shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1),
+
+
+  shadow-lg: 0 20px 40px rgba(0,0,0,.14),
+  color-stat-value: #ffffff,
+  color-testimonial-text: #334155,
+
+
+   // Dashboard specific (from your light mode)
+  color-primary-start: #667eea,
+  color-primary-end: #764ba2,
+  color-white: #ffffff,
+  color-text-dark: #2d3748,
+  color-text-light: #4a5568,
+  color-border: #e2e8f0,
+  color-border-hover: #cbd5e0,
+  color-background-page: #f8f9fa,
+  color-background-tab-hover: #f7fafc,
+  color-background-service-detail: #f7fafc,
+  color-background-info: #e0f2fe,
+  color-success-bg: #d1fae5,
+  color-success-text: #065f46,
+  color-info-text: #0369a1,
+  color-cancel-btn: #f56565,
+  color-cancel-btn-hover: #e53e3e,
+  color-search-icon: #667eea,
+  color-btn-location-bg: #edf2f7,
+  color-btn-location-hover: #cbd5e0,
+  color-placeholder: #b0bec5,
+
+  // Shadows (needed for mixins)
+  shadow-light: 0 2px 6px rgba(0,0,0,0.1),
+  shadow-medium: 0 4px 12px rgba(0,0,0,0.1),
+  shadow-modal: 0 10px 40px rgba(0,0,0,0.2),
+
+  // Status badge colors (light mode)
+  status-pending-bg: #fef3c7,
+  status-pending-text: #d97706,
+  status-pending-border: #fbbf24,
+  status-confirmed-bg: #dbeafe,
+  status-confirmed-text: #1d4ed8,
+  status-confirmed-border: #93c5fd,
+  status-in-progress-bg: #e0e7ff,
+  status-in-progress-text: #4f46e5,
+  status-in-progress-border: #a5b4fc,
+  status-completed-bg: #d1fae5,
+  status-completed-text: #065f46,
+  status-completed-border: #6ee7b7,
+  status-cancelled-bg: #fee2e2,
+  status-cancelled-text: #dc2626,
+  status-cancelled-border: #fca5a5,
+  status-default-bg: #f7fafc,
+  status-default-text: #718096,
+  status-default-border: #e2e8f0,
+
+
+  color-accent-red: #ef4444,
+  shadow-brand: 0 8px 20px rgba(37,99,235,.30),
+  color-skeleton-bg: #e2e8f0,
+  color-avatar-gradient-start: #eff6ff,
+  color-avatar-gradient-end: #dbeafe,
+  color-avatar-initials: #2563eb,
+  color-empty-icon: #cbd5e0,
+  color-rating-star: #f59e0b,
+  color-hover-border: #c7d7f5,
+  color-active-card-bg: #f0f7ff,
+  color-hovered-card-bg: #fafbff,
+  color-map-bg: #e8edf2,
+
 );
 
 $tokens-dark: (
@@ -29,11 +107,88 @@ $tokens-dark: (
   color-primary-light: #1e3a5f,
 
   color-danger: #f87171,
-  color-danger-bg: #3f1d1d
+  color-danger-bg: #3f1d1d,
+  color-header-bg: #1e1e1e,
+  color-header-border: #2c2c2c,
+  color-brand: #90caf9,
+  color-brand-dark: #64b5f6,
+  color-brand-light: #1e3a5f,
+  color-accent: #34d399,
+  color-stat-bg: #0a0a0a,
+  color-stat-label: #9ca3af,
+  
+  shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3),
+  shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4),
+
+  shadow-lg: 0 20px 40px rgba(0,0,0,.4),
+  color-stat-value: #ffffff,
+  color-testimonial-text: #e2e8f0,
+
+
+  // Dark mode dashboard counterparts
+  color-primary-start: #818cf8,
+  color-primary-end: #a855f7,
+  color-white: #1e1e2f,
+  color-text-dark: #f1f5f9,
+  color-text-light: #cbd5e1,
+  color-border-hover: #475569,
+  color-background-page: #0f172a,
+  color-background-tab-hover: #1e293b,
+  color-background-service-detail: #1e293b,
+  color-background-info: #0c4a6e,
+  color-success-bg: #064e3b,
+  color-success-text: #86efac,
+  color-info-text: #7dd3fc,
+  color-cancel-btn: #ef4444,
+  color-cancel-btn-hover: #dc2626,
+  color-search-icon: #818cf8,
+  color-btn-location-bg: #334155,
+  color-btn-location-hover: #475569,
+  color-placeholder: #64748b,
+
+  // Dark shadows (darker, more depth)
+  shadow-light: 0 2px 6px rgba(0,0,0,0.4),
+  shadow-medium: 0 4px 12px rgba(0,0,0,0.5),
+  shadow-modal: 0 10px 40px rgba(0,0,0,0.6),
+
+  // Status badge colors (dark mode)
+  status-pending-bg: #451a03,
+  status-pending-text: #fcd34d,
+  status-pending-border: #b45309,
+  status-confirmed-bg: #1e3a8a,
+  status-confirmed-text: #93c5fd,
+  status-confirmed-border: #3b82f6,
+  status-in-progress-bg: #312e81,
+  status-in-progress-text: #c7d2fe,
+  status-in-progress-border: #6366f1,
+  status-completed-bg: #064e3b,
+  status-completed-text: #6ee7b7,
+  status-completed-border: #10b981,
+  status-cancelled-bg: #450a0a,
+  status-cancelled-text: #fca5a5,
+  status-cancelled-border: #ef4444,
+  status-default-bg: #1e293b,
+  status-default-text: #94a3b8,
+  status-default-border: #334155,
+
+
+  color-accent-red: #f87171,
+  shadow-brand: 0 8px 20px rgba(144,202,249,.30),
+  color-skeleton-bg: #2c2c2c,
+  color-avatar-gradient-start: #1e3a5f,
+  color-avatar-gradient-end: #1e293b,
+  color-avatar-initials: #90caf9,
+  color-empty-icon: #475569,
+  color-rating-star: #fbbf24,
+  color-hover-border: #4f46e5,
+  color-active-card-bg: #1e293b,
+  color-hovered-card-bg: #1e293b,
+  color-map-bg: #0f172a,
 );
 
 /* ─── Theme Mixin ─────────────────────────── */
 @mixin theme($tokens) {
+  
   --bg: #{map.get($tokens, color-bg)};
   --surface: #{map.get($tokens, color-surface)};
   --text: #{map.get($tokens, color-text)};
@@ -46,6 +201,88 @@ $tokens-dark: (
 
   --danger: #{map.get($tokens, color-danger)};
   --danger-bg: #{map.get($tokens, color-danger-bg)};
+
+  --header-border: var(--border);
+  --header-scrolled-bg: #{map.get($tokens, color-bg)};
+ --header-bg: #{map.get($tokens, color-header-bg)};
+
+  --brand: #{map.get($tokens, color-brand)};
+  --brand-dark: #{map.get($tokens, color-brand-dark)};
+  --brand-light: #{map.get($tokens, color-brand-light)};
+  --accent: #{map.get($tokens, color-accent)};
+  --stat-bg: #{map.get($tokens, color-stat-bg)};
+  --stat-label: #{map.get($tokens, color-stat-label)};
+  --testimonial-text: #{map.get($tokens, color-testimonial-text)};
+  --shadow-sm: #{map.get($tokens, shadow-sm)};
+  --shadow-md: #{map.get($tokens, shadow-md)};
+
+    --shadow-lg: #{map.get($tokens, shadow-lg)};
+  --stat-value: #{map.get($tokens, color-stat-value)};
+  --testimonial-text: #{map.get($tokens, color-testimonial-text)};
+
+
+
+   // Dashboard specific (new)
+  --primary-start: #{map.get($tokens, color-primary-start)};
+  --primary-end: #{map.get($tokens, color-primary-end)};
+  --primary-gradient: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+  --white: #{map.get($tokens, color-white)};
+  --text-dark: #{map.get($tokens, color-text-dark)};
+  --text-light: #{map.get($tokens, color-text-light)};
+  --border-hover: #{map.get($tokens, color-border-hover)};
+  --bg-page: #{map.get($tokens, color-background-page)};
+  --bg-tab-hover: #{map.get($tokens, color-background-tab-hover)};
+  --bg-service-detail: #{map.get($tokens, color-background-service-detail)};
+  --bg-info: #{map.get($tokens, color-background-info)};
+  --success-bg: #{map.get($tokens, color-success-bg)};
+  --success-text: #{map.get($tokens, color-success-text)};
+  --info-text: #{map.get($tokens, color-info-text)};
+  --rating-star: #{map.get($tokens, color-rating-star)};
+  --cancel-btn: #{map.get($tokens, color-cancel-btn)};
+  --cancel-btn-hover: #{map.get($tokens, color-cancel-btn-hover)};
+  --search-icon: #{map.get($tokens, color-search-icon)};
+  --btn-location-bg: #{map.get($tokens, color-btn-location-bg)};
+  --btn-location-hover: #{map.get($tokens, color-btn-location-hover)};
+  --placeholder: #{map.get($tokens, color-placeholder)};
+
+  // Shadows
+  --shadow-light: #{map.get($tokens, shadow-light)};
+  --shadow-medium: #{map.get($tokens, shadow-medium)};
+  --shadow-modal: #{map.get($tokens, shadow-modal)};
+
+  // Status badges
+  --status-pending-bg: #{map.get($tokens, status-pending-bg)};
+  --status-pending-text: #{map.get($tokens, status-pending-text)};
+  --status-pending-border: #{map.get($tokens, status-pending-border)};
+  --status-confirmed-bg: #{map.get($tokens, status-confirmed-bg)};
+  --status-confirmed-text: #{map.get($tokens, status-confirmed-text)};
+  --status-confirmed-border: #{map.get($tokens, status-confirmed-border)};
+  --status-in-progress-bg: #{map.get($tokens, status-in-progress-bg)};
+  --status-in-progress-text: #{map.get($tokens, status-in-progress-text)};
+  --status-in-progress-border: #{map.get($tokens, status-in-progress-border)};
+  --status-completed-bg: #{map.get($tokens, status-completed-bg)};
+  --status-completed-text: #{map.get($tokens, status-completed-text)};
+  --status-completed-border: #{map.get($tokens, status-completed-border)};
+  --status-cancelled-bg: #{map.get($tokens, status-cancelled-bg)};
+  --status-cancelled-text: #{map.get($tokens, status-cancelled-text)};
+  --status-cancelled-border: #{map.get($tokens, status-cancelled-border)};
+  --status-default-bg: #{map.get($tokens, status-default-bg)};
+  --status-default-text: #{map.get($tokens, status-default-text)};
+  --status-default-border: #{map.get($tokens, status-default-border)};
+
+  --accent-red: #{map.get($tokens, color-accent-red)};
+  --shadow-brand: #{map.get($tokens, shadow-brand)};
+  --skeleton-bg: #{map.get($tokens, color-skeleton-bg)};
+  --avatar-gradient-start: #{map.get($tokens, color-avatar-gradient-start)};
+  --avatar-gradient-end: #{map.get($tokens, color-avatar-gradient-end)};
+  --avatar-initials: #{map.get($tokens, color-avatar-initials)};
+  --empty-icon: #{map.get($tokens, color-empty-icon)};
+  --rating-star: #{map.get($tokens, color-rating-star)};
+  --hover-border: #{map.get($tokens, color-hover-border)};
+  --active-card-bg: #{map.get($tokens, color-active-card-bg)};
+  --hovered-card-bg: #{map.get($tokens, color-hovered-card-bg)};
+  --map-bg: #{map.get($tokens, color-map-bg)};
+
 }
 
 /* ─── Apply Themes ───────────────────────── */
@@ -53,7 +290,9 @@ body {
   @include theme($tokens-light);
   background: var(--bg);
   color: var(--text);
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
 
 body.dark-theme {
@@ -63,7 +302,7 @@ body.dark-theme {
 /* ─── Global Page Styles ───────────────────────── */
 .page-container {
   padding: 2rem;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);

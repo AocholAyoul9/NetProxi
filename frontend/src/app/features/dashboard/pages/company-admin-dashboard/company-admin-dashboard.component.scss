@@ -7,8 +7,8 @@
 
 // Header
 .dashboard-header {
-  background: blue;
-  color: white;
+  background: var(--primary-gradient);
+  color:var(--text);
   padding: 1.5rem 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 

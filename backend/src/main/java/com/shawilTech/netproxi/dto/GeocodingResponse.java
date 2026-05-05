@@ -1,23 +1,23 @@
 package com.shawilTech.netproxi.dto;
 
 public class GeocodingResponse {
-    private double lat;
-    private double lng;
+    private Double lat;
+    private Double lng;
     private String displayName;
 
     public GeocodingResponse() {}
 
-    public GeocodingResponse(double lat, double lng, String displayName) {
+    public GeocodingResponse(Double lat, Double lng, String displayName) {
         this.lat = lat;
         this.lng = lng;
         this.displayName = displayName;
     }
 
-    public double getLat() { return lat; }
-    public void setLat(double lat) { this.lat = lat; }
+    public Double getLat() { return lat; }
+    public void setLat(Double lat) { this.lat = lat; }
 
-    public double getLng() { return lng; }
-    public void setLng(double lng) { this.lng = lng; }
+    public Double getLng() { return lng; }
+    public void setLng(Double lng) { this.lng = lng; }
 
     public String getDisplayName() { return displayName; }
     public void setDisplayName(String displayName) { this.displayName = displayName; }
@@ -27,16 +27,16 @@ public class GeocodingResponse {
     }
 
     public static class GeocodingResponseBuilder {
-        private double lat;
-        private double lng;
+        private Double lat;
+        private Double lng;
         private String displayName;
 
-        public GeocodingResponseBuilder lat(double lat) {
+        public GeocodingResponseBuilder lat(Double lat) {
             this.lat = lat;
             return this;
         }
 
-        public GeocodingResponseBuilder lng(double lng) {
+        public GeocodingResponseBuilder lng(Double lng) {
             this.lng = lng;
             return this;
         }

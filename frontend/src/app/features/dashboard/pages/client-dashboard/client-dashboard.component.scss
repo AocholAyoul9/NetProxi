@@ -1,13 +1,4 @@
-// Variables réutilisables
-$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-$white: white;
-$text-dark: #2d3748;
-$text-muted: #718096;
-$text-light: #4a5568;
-$border-color: #e2e8f0;
-$border-hover: #cbd5e0;
-$shadow-light: 0 2px 6px rgba(0, 0, 0, 0.1);
-$shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
+// Variables réutilisables (only those that are not color‑dependent)
 $radius-sm: 6px;
 $radius-md: 10px;
 $radius-lg: 12px;
@@ -15,17 +6,17 @@ $radius-xl: 16px;
 $transition: all 0.3s ease;
 
 @mixin card-base {
-  background: $white;
+  background: var(--white);
   border-radius: $radius-lg;
-  box-shadow: $shadow-light;
-  border: 1px solid $border-color;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border);
   transition: $transition;
 }
 
 @mixin hover-lift {
   &:hover {
     transform: translateY(-2px);
-    box-shadow: $shadow-medium;
+    box-shadow: var(--shadow-medium);
   }
 }
 
@@ -50,25 +41,25 @@ $transition: all 0.3s ease;
 @mixin empty-state {
   text-align: center;
   padding: 3rem 2rem;
-  background: $white;
+  background: var(--white);
   border-radius: $radius-lg;
 
   .empty-icon {
     font-size: 3rem;
-    color: #cbd5e0;
+    color: #cbd5e0;  // This is a neutral gray, fine to keep hardcoded for both themes
     margin-bottom: 1rem;
   }
 
   p {
-    color: $text-muted;
+    color: var(--text-muted);
     font-size: 1.125rem;
     margin-bottom: 1.5rem;
   }
 
   .btn-primary {
     padding: 0.75rem 1.5rem;
-    background: $primary-gradient;
-    color: $white;
+    background: var(--primary-gradient);
+    color: var(--white);
     border: none;
     border-radius: 8px;
     font-weight: 600;
@@ -85,11 +76,11 @@ $transition: all 0.3s ease;
 // Styles principaux
 .client-dashboard {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: var(--bg-page);
 
   .dashboard-header {
-    background: $primary-gradient;
-    color: $white;
+    background: var(--primary-gradient);
+    color: var(--white);
     padding: 1.5rem 0;
 
     .header-content {
@@ -107,7 +98,7 @@ $transition: all 0.3s ease;
         margin: 0 0 0.5rem;
 
         .client-name {
-          color: rgba($white, 0.9);
+          color: rgba(var(--white), 0.9);
         }
       }
 
@@ -121,54 +112,56 @@ $transition: all 0.3s ease;
     .search-container {
       @include card-base;
       padding: 1rem;
-      box-shadow: $shadow-medium;
+      box-shadow: var(--shadow-medium);
 
       .search-input-group {
         @include flex-center;
         gap: 0.5rem;
 
         .search-icon {
-          color: #667eea;
+          color: var(--search-icon);
           font-size: 1.1rem;
         }
 
         .address-search-input {
           flex: 1;
           padding: 0.625rem;
-          border: 1px solid $border-color;
+          border: 1px solid var(--border);
           border-radius: $radius-sm;
           font-size: 0.9rem;
+          background: var(--white);
+          color: var(--text-dark);
 
           &:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary-start);
           }
         }
 
         .btn-location {
           padding: 0.625rem;
-          background: #edf2f7;
+          background: var(--btn-location-bg);
           border: none;
           border-radius: $radius-sm;
-          color: $text-light;
+          color: var(--text-light);
           cursor: pointer;
 
           &:hover {
-            background: $border-color;
+            background: var(--btn-location-hover);
           }
         }
 
         .btn-search {
           padding: 0.625rem 1.25rem;
-          background: #667eea;
-          color: $white;
+          background: var(--primary-start);
+          color: var(--white);
           border: none;
           border-radius: $radius-sm;
           font-weight: 500;
           cursor: pointer;
 
           &:hover:not(:disabled) {
-            background: #5a67d8;
+            background: var(--primary-hover);
           }
 
           &:disabled {
@@ -189,10 +182,10 @@ $transition: all 0.3s ease;
       display: flex;
       gap: 0.5rem;
       margin-bottom: 1.5rem;
-      background: $white;
+      background: var(--white);
       border-radius: $radius-md;
       padding: 0.5rem;
-      box-shadow: $shadow-light;
+      box-shadow: var(--shadow-light);
 
       .tab-button {
         flex: 1;
@@ -202,17 +195,17 @@ $transition: all 0.3s ease;
         background: none;
         border: none;
         border-radius: $radius-sm;
-        color: $text-muted;
+        color: var(--text-muted);
         font-size: 0.875rem;
         cursor: pointer;
 
         &:hover {
-          background: #f7fafc;
+          background: var(--bg-tab-hover);
         }
 
         &.active {
-          background: #667eea;
-          color: $white;
+          background: var(--primary-start);
+          color: var(--white);
         }
       }
     }
@@ -225,15 +218,15 @@ $transition: all 0.3s ease;
       .loading-spinner {
         width: 40px;
         height: 40px;
-        border: 3px solid $border-color;
-        border-top-color: #667eea;
+        border: 3px solid var(--border);
+        border-top-color: var(--primary-start);
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }
 
       p {
         margin-top: 0.75rem;
-        color: $text-muted;
+        color: var(--text-muted);
       }
     }
 
@@ -250,7 +243,7 @@ $transition: all 0.3s ease;
 
           h2 {
             margin: 0;
-            color: $text-dark;
+            color: var(--text-dark);
             font-size: 1.5rem;
             font-weight: 700;
           }
@@ -280,7 +273,7 @@ $transition: all 0.3s ease;
                 border-radius: 50%;
                 @include flex-center;
                 font-size: 1.25rem;
-                color: $white;
+                color: var(--white);
                 display: inline-flex !important;
                 align-items: center;
                 justify-content: center;
@@ -295,23 +288,19 @@ $transition: all 0.3s ease;
                   margin: 0 0 0.25rem;
                   font-size: 1.75rem;
                   font-weight: 700;
-                  color: $white;
+                  color: var(--white);
                 }
 
                 p {
                   margin: 0;
-                  color: $white;
+                  color: var(--white);
                   font-size: 0.875rem;
                 }
               }
             }
             &.upcoming {
               display: inline-flex;
-              background: linear-gradient(
-                135deg,
-                #f6ad55 0%,
-                #ed8936 100%
-              ) !important;
+              background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%) !important;
             }
 
             &.completed {
@@ -319,7 +308,7 @@ $transition: all 0.3s ease;
             }
 
             &.total {
-              background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+              background: linear-gradient(135deg, var(--primary-start) 0%, var(--primary-end) 100%);
             }
 
             &.revenue {
@@ -356,8 +345,8 @@ $transition: all 0.3s ease;
                       width: 40px;
                       height: 40px;
                       @include flex-center;
-                      background: $primary-gradient;
-                      color: $white;
+                      background: var(--primary-gradient);
+                      color: var(--white);
                       border-radius: 8px;
                       font-weight: 600;
                     }
@@ -366,33 +355,33 @@ $transition: all 0.3s ease;
                   .booking-meta {
                     display: flex;
                     gap: 1rem;
-                    color: $text-muted;
+                    color: var(--text-muted);
                     font-size: 0.875rem;
                   }
                 }
 
                 .booking-status {
                   .status-badge {
-                    @include status-badge(#f7fafc, $text-muted, $border-color);
+                    @include status-badge(var(--status-default-bg), var(--status-default-text), var(--status-default-border));
 
                     &.pending {
-                      @include status-badge(#fef3c7, #d97706, #fbbf24);
+                      @include status-badge(var(--status-pending-bg), var(--status-pending-text), var(--status-pending-border));
                     }
 
                     &.confirmed {
-                      @include status-badge(#dbeafe, #1d4ed8, #93c5fd);
+                      @include status-badge(var(--status-confirmed-bg), var(--status-confirmed-text), var(--status-confirmed-border));
                     }
 
                     &.in_progress {
-                      @include status-badge(#e0e7ff, #4f46e5, #a5b4fc);
+                      @include status-badge(var(--status-in-progress-bg), var(--status-in-progress-text), var(--status-in-progress-border));
                     }
 
                     &.completed {
-                      @include status-badge(#d1fae5, #065f46, #6ee7b7);
+                      @include status-badge(var(--status-completed-bg), var(--status-completed-text), var(--status-completed-border));
                     }
 
                     &.cancelled {
-                      @include status-badge(#fee2e2, #dc2626, #fca5a5);
+                      @include status-badge(var(--status-cancelled-bg), var(--status-cancelled-text), var(--status-cancelled-border));
                     }
                   }
                 }
@@ -400,7 +389,7 @@ $transition: all 0.3s ease;
 
               .service-name {
                 margin: 0 0 1rem;
-                color: $text-dark;
+                color: var(--text-dark);
                 font-weight: 600;
               }
 
@@ -419,24 +408,24 @@ $transition: all 0.3s ease;
                 }
 
                 .btn-secondary {
-                  background: $white;
-                  border: 1px solid $border-color;
-                  color: $text-muted;
+                  background: var(--white);
+                  border: 1px solid var(--border);
+                  color: var(--text-muted);
 
                   &:hover {
-                    background: #f7fafc;
+                    background: var(--bg-tab-hover);
                   }
                 }
                 a {
                   text-decoration: none;
                 }
                 .btn-primary {
-                  background: #667eea;
-                  color: $white;
+                  background: var(--primary-start);
+                  color: var(--white);
                   border: none;
 
                   &:hover {
-                    background: #5a67d8;
+                    background: var(--primary-hover);
                   }
                 }
               }
@@ -458,22 +447,22 @@ $transition: all 0.3s ease;
 
             .filter-btn {
               padding: 0.5rem 1rem;
-              background: $white;
-              border: 1px solid $border-color;
+              background: var(--white);
+              border: 1px solid var(--border);
               border-radius: 6px;
-              color: $text-muted;
+              color: var(--text-muted);
               font-size: 0.875rem;
               cursor: pointer;
               transition: $transition;
 
               &:hover {
-                background: #f7fafc;
+                background: var(--bg-tab-hover);
               }
 
               &.active {
-                background: #667eea;
-                color: $white;
-                border-color: #667eea;
+                background: var(--primary-start);
+                color: var(--white);
+                border-color: var(--primary-start);
               }
             }
           }
@@ -494,7 +483,7 @@ $transition: all 0.3s ease;
               align-items: flex-start;
               margin-bottom: 1rem;
               padding-bottom: 1rem;
-              border-bottom: 1px solid $border-color;
+              border-bottom: 1px solid var(--border);
 
               .company-info {
                 @include flex-center;
@@ -505,8 +494,8 @@ $transition: all 0.3s ease;
                     width: 40px;
                     height: 40px;
                     @include flex-center;
-                    background: $primary-gradient;
-                    color: $white;
+                    background: var(--primary-gradient);
+                    color: var(--white);
                     border-radius: 8px;
                     font-weight: 600;
                   }
@@ -515,7 +504,7 @@ $transition: all 0.3s ease;
                 .reservation-meta {
                   display: flex;
                   gap: 1rem;
-                  color: $text-muted;
+                  color: var(--text-muted);
                   font-size: 0.875rem;
                 }
               }
@@ -527,35 +516,35 @@ $transition: all 0.3s ease;
                 gap: 0.5rem;
 
                 .status-badge {
-                  @include status-badge(#f7fafc, $text-muted, $border-color);
+                  @include status-badge(var(--status-default-bg), var(--status-default-text), var(--status-default-border));
 
                   &.pending {
-                    @include status-badge(#fef3c7, #d97706, #fbbf24);
+                    @include status-badge(var(--status-pending-bg), var(--status-pending-text), var(--status-pending-border));
                   }
 
                   &.confirmed {
-                    @include status-badge(#dbeafe, #1d4ed8, #93c5fd);
+                    @include status-badge(var(--status-confirmed-bg), var(--status-confirmed-text), var(--status-confirmed-border));
                   }
 
                   &.completed {
-                    @include status-badge(#d1fae5, #065f46, #6ee7b7);
+                    @include status-badge(var(--status-completed-bg), var(--status-completed-text), var(--status-completed-border));
                   }
 
                   &.cancelled {
-                    @include status-badge(#fee2e2, #dc2626, #fca5a5);
+                    @include status-badge(var(--status-cancelled-bg), var(--status-cancelled-text), var(--status-cancelled-border));
                   }
                 }
 
                 .reservation-price {
                   font-weight: 600;
-                  color: $text-dark;
+                  color: var(--text-dark);
                 }
               }
             }
 
             .service-name {
               margin: 0 0 1rem;
-              color: $text-dark;
+              color: var(--text-dark);
               font-weight: 600;
             }
 
@@ -578,7 +567,7 @@ $transition: all 0.3s ease;
                 @include flex-center;
                 gap: 0.5rem;
                 background: #fbbf24;
-                color: $white;
+                color: var(--white);
                 border: none;
 
                 &:hover {
@@ -587,24 +576,24 @@ $transition: all 0.3s ease;
               }
 
               .btn-cancel {
-                background: $white;
-                color: #dc2626;
-                border: 1px solid #fee2e2;
+                background: var(--white);
+                color: var(--cancel-btn);
+                border: 1px solid var(--status-cancelled-bg);
 
                 &:hover {
-                  background: #fee2e2;
+                  background: var(--status-cancelled-bg);
                 }
               }
 
               .btn-view-company {
                 @include flex-center;
-                background: #f7fafc;
-                color: $text-muted;
-                border: 1px solid $border-color;
+                background: var(--bg-tab-hover);
+                color: var(--text-muted);
+                border: 1px solid var(--border);
                 text-decoration: none;
 
                 &:hover {
-                  background: $border-color;
+                  background: var(--border-hover);
                 }
               }
             }
@@ -617,16 +606,16 @@ $transition: all 0.3s ease;
         .section-header {
           .btn-secondary {
             padding: 0.5rem 1rem;
-            background: $white;
-            border: 1px solid $border-color;
+            background: var(--white);
+            border: 1px solid var(--border);
             border-radius: 6px;
-            color: $text-muted;
+            color: var(--text-muted);
             font-size: 0.875rem;
             cursor: pointer;
             transition: $transition;
 
             &:hover {
-              background: #f7fafc;
+              background: var(--bg-tab-hover);
             }
           }
         }
@@ -652,8 +641,8 @@ $transition: all 0.3s ease;
                   width: 50px;
                   height: 50px;
                   @include flex-center;
-                  background: $primary-gradient;
-                  color: $white;
+                  background: var(--primary-gradient);
+                  color: var(--white);
                   border-radius: 8px;
                   font-weight: 600;
                   font-size: 1.25rem;
@@ -665,7 +654,7 @@ $transition: all 0.3s ease;
 
                 h3 {
                   margin: 0 0 0.5rem;
-                  color: $text-dark;
+                  color: var(--text-dark);
                   font-size: 1.125rem;
                   font-weight: 600;
                 }
@@ -677,14 +666,14 @@ $transition: all 0.3s ease;
                   .rating {
                     @include flex-center;
                     gap: 0.25rem;
-                    color: #f59e0b;
+                    color: var(--rating-star);
                     font-weight: 600;
                   }
 
                   .distance {
                     @include flex-center;
                     gap: 0.25rem;
-                    color: $text-muted;
+                    color: var(--text-muted);
                   }
                 }
               }
@@ -700,20 +689,20 @@ $transition: all 0.3s ease;
 
                 .service-tag {
                   padding: 0.25rem 0.75rem;
-                  background: #f7fafc;
-                  border: 1px solid $border-color;
+                  background: var(--bg-tab-hover);
+                  border: 1px solid var(--border);
                   border-radius: 20px;
                   font-size: 0.75rem;
-                  color: $text-muted;
+                  color: var(--text-muted);
                 }
 
                 .more-tag {
                   padding: 0.25rem 0.75rem;
-                  background: #edf2f7;
-                  border: 1px solid $border-color;
+                  background: var(--btn-location-bg);
+                  border: 1px solid var(--border);
                   border-radius: 20px;
                   font-size: 0.75rem;
-                  color: $text-light;
+                  color: var(--text-light);
                 }
               }
             }
@@ -735,22 +724,22 @@ $transition: all 0.3s ease;
               }
 
               .btn-view-company {
-                background: $white;
-                color: $text-muted;
-                border: 1px solid $border-color;
+                background: var(--white);
+                color: var(--text-muted);
+                border: 1px solid var(--border);
 
                 &:hover {
-                  background: #f7fafc;
+                  background: var(--bg-tab-hover);
                 }
               }
 
               .btn-primary {
-                background: #667eea;
-                color: $white;
+                background: var(--primary-start);
+                color: var(--white);
                 border: none;
 
                 &:hover {
-                  background: #5a67d8;
+                  background: var(--primary-hover);
                 }
               }
             }
@@ -771,7 +760,7 @@ $transition: all 0.3s ease;
 
             .history-date {
               font-size: 0.875rem;
-              color: #667eea;
+              color: var(--primary-start);
               font-weight: 600;
               margin-bottom: 0.5rem;
             }
@@ -785,35 +774,35 @@ $transition: all 0.3s ease;
 
                 h4 {
                   margin: 0;
-                  color: $text-dark;
+                  color: var(--text-dark);
                   font-size: 1rem;
                   font-weight: 600;
                 }
 
                 .history-status {
-                  @include status-badge(#f7fafc, $text-muted, $border-color);
+                  @include status-badge(var(--status-default-bg), var(--status-default-text), var(--status-default-border));
 
                   &.pending {
-                    @include status-badge(#fef3c7, #d97706, #fbbf24);
+                    @include status-badge(var(--status-pending-bg), var(--status-pending-text), var(--status-pending-border));
                   }
 
                   &.confirmed {
-                    @include status-badge(#dbeafe, #1d4ed8, #93c5fd);
+                    @include status-badge(var(--status-confirmed-bg), var(--status-confirmed-text), var(--status-confirmed-border));
                   }
 
                   &.completed {
-                    @include status-badge(#d1fae5, #065f46, #6ee7b7);
+                    @include status-badge(var(--status-completed-bg), var(--status-completed-text), var(--status-completed-border));
                   }
 
                   &.cancelled {
-                    @include status-badge(#fee2e2, #dc2626, #fca5a5);
+                    @include status-badge(var(--status-cancelled-bg), var(--status-cancelled-text), var(--status-cancelled-border));
                   }
                 }
               }
 
               .history-service {
                 margin: 0 0 0.75rem;
-                color: $text-light;
+                color: var(--text-light);
                 font-size: 0.9rem;
               }
 
@@ -821,7 +810,7 @@ $transition: all 0.3s ease;
                 display: flex;
                 gap: 1.5rem;
                 font-size: 0.875rem;
-                color: $text-muted;
+                color: var(--text-muted);
               }
             }
           }
@@ -848,22 +837,22 @@ $transition: all 0.3s ease;
 
     .modal-content {
       position: relative;
-      background: $white;
+      background: var(--white);
       border-radius: $radius-lg;
       padding: 1.5rem;
       max-width: 400px;
       width: 90%;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--shadow-modal);
 
       h2 {
         margin: 0 0 0.5rem;
         font-size: 1.25rem;
-        color: $text-dark;
+        color: var(--text-dark);
       }
 
       p {
         margin: 0 0 1.5rem;
-        color: $text-muted;
+        color: var(--text-muted);
       }
 
       .rating-input {
@@ -875,7 +864,7 @@ $transition: all 0.3s ease;
           background: none;
           border: none;
           font-size: 1.5rem;
-          color: #fbbf24;
+          color: var(--rating-star);
           cursor: pointer;
         }
       }
@@ -883,27 +872,29 @@ $transition: all 0.3s ease;
       textarea {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid $border-color;
+        border: 1px solid var(--border);
         border-radius: $radius-sm;
         font-size: 0.875rem;
         resize: vertical;
         margin-bottom: 1rem;
+        background: var(--white);
+        color: var(--text-dark);
 
         &:focus {
           outline: none;
-          border-color: #667eea;
+          border-color: var(--primary-start);
         }
       }
 
       .cancel-details {
         margin: 1rem 0;
         padding: 0.75rem;
-        background: #f7fafc;
+        background: var(--bg-service-detail);
         border-radius: $radius-sm;
 
         p {
           margin: 0.25rem 0;
-          color: $text-light;
+          color: var(--text-light);
         }
       }
 
@@ -924,29 +915,29 @@ $transition: all 0.3s ease;
         }
 
         .btn-secondary {
-          background: $border-color;
-          color: $text-light;
+          background: var(--border);
+          color: var(--text-light);
 
           &:hover {
-            background: $border-hover;
+            background: var(--border-hover);
           }
         }
 
         .btn-primary {
-          background: #667eea;
-          color: $white;
+          background: var(--primary-start);
+          color: var(--white);
 
           &:hover {
-            background: #5a67d8;
+            background: var(--primary-hover);
           }
         }
 
         .btn-danger {
-          background: #f56565;
-          color: $white;
+          background: var(--cancel-btn);
+          color: var(--white);
 
           &:hover {
-            background: #e53e3e;
+            background: var(--cancel-btn-hover);
           }
         }
       }
@@ -961,7 +952,7 @@ $transition: all 0.3s ease;
   }
 }
 
-// Responsive
+// Responsive (unchanged)
 @media (max-width: 768px) {
   .client-dashboard {
     .dashboard-header {
@@ -1003,22 +994,22 @@ $transition: all 0.3s ease;
   }
 }
 
-// Booking Modal Styles
+// Additional components (Booking Modal, etc.)
 .booking-summary {
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid var(--border);
 
   .company-avatar {
     .avatar-placeholder {
       width: 50px;
       height: 50px;
       @include flex-center;
-      background: $primary-gradient;
-      color: $white;
+      background: var(--primary-gradient);
+      color: var(--white);
       border-radius: 8px;
       font-weight: 600;
       font-size: 1.25rem;
@@ -1028,7 +1019,7 @@ $transition: all 0.3s ease;
   .company-info {
     h4 {
       margin: 0 0 0.25rem;
-      color: $text-dark;
+      color: var(--text-dark);
       font-size: 1.125rem;
       font-weight: 600;
     }
@@ -1036,7 +1027,7 @@ $transition: all 0.3s ease;
     .rating {
       @include flex-center;
       gap: 0.25rem;
-      color: #f59e0b;
+      color: var(--rating-star);
       font-weight: 600;
     }
   }
@@ -1048,7 +1039,7 @@ $transition: all 0.3s ease;
   .form-label {
     display: block;
     margin-bottom: 0.5rem;
-    color: $text-dark;
+    color: var(--text-dark);
     font-weight: 500;
   }
 
@@ -1056,32 +1047,34 @@ $transition: all 0.3s ease;
   .form-input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid $border-color;
+    border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 0.875rem;
+    background: var(--white);
+    color: var(--text-dark);
 
     &:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: var(--primary-start);
     }
   }
 }
 
 .service-details {
-  background: #f7fafc;
+  background: var(--bg-service-detail);
   border-radius: 8px;
   padding: 1rem;
   margin: 1.5rem 0;
 
   h5 {
     margin: 0 0 0.5rem;
-    color: $text-dark;
+    color: var(--text-dark);
     font-weight: 600;
   }
 
   p {
     margin: 0 0 1rem;
-    color: $text-muted;
+    color: var(--text-muted);
     font-size: 0.875rem;
   }
 
@@ -1093,7 +1086,7 @@ $transition: all 0.3s ease;
 }
 
 .info-box {
-  background: #e0f2fe;
+  background: var(--bg-info);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
@@ -1102,20 +1095,20 @@ $transition: all 0.3s ease;
   margin: 1.5rem 0;
 
   i {
-    color: #0ea5e9;
+    color: var(--info-text);
     margin-top: 0.25rem;
   }
 
   p {
     margin: 0;
-    color: #0369a1;
+    color: var(--info-text);
     font-size: 0.875rem;
     line-height: 1.4;
   }
 }
 
 .success-message {
-  background: #d1fae5;
+  background: var(--success-bg);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
@@ -1132,13 +1125,13 @@ $transition: all 0.3s ease;
   .message-content {
     strong {
       display: block;
-      color: #065f46;
+      color: var(--success-text);
       margin-bottom: 0.25rem;
     }
 
     p {
       margin: 0;
-      color: #047857;
+      color: var(--success-text);
       font-size: 0.875rem;
     }
   }
