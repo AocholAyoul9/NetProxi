@@ -42,9 +42,10 @@ export class BookingEffects {
         ofType(BookingActions.loadCompanyBookings),
         mergeMap(({ companyId }) =>
           this.api.getCompanyBookings(companyId).pipe(
-            map((bookings) =>
-              BookingActions.loadCompanyBookingsSuccess({ bookings })
-            ),
+            map((bookings) => {
+              console.log('Loaded bookings for companyId:', companyId, 'Bookings:', bookings);
+              return BookingActions.loadCompanyBookingsSuccess({ bookings });
+            }),
             catchError((error) =>
               of(BookingActions.loadCompanyBookingsFailure({ error }))
             )

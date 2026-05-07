@@ -1,5 +1,5 @@
 package com.shawilTech.netproxi.entity;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +10,8 @@ import java.util.UUID;
 @Table(name = "users", indexes = {
                 @Index(name = "idx_user_email", columnList = "email")
 })
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -48,6 +49,7 @@ public class User {
 
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+        @JsonIgnore
         private Set<Role> roles;
 
         @ManyToOne(fetch = FetchType.LAZY)

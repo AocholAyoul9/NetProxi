@@ -2,7 +2,6 @@ package com.shawilTech.netproxi.config;
 
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.*;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,11 +18,4 @@ public class SwaggerConfig {
                 );
     }
 
-    @Bean
-    public GroupedOpenApi publicApi() {
-        return GroupedOpenApi.builder()
-                .group("identity")
-                .pathsToMatch("/api/**")
-                .build();
-    }
 }

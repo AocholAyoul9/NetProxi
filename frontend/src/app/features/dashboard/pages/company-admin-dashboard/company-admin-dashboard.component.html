@@ -33,7 +33,7 @@
       <button
         *ngFor="let tab of tabs"
         [class.active]="activeTab === tab.id"
-        (click)="setActiveTab(tab.id)"
+        (click)="setActiveTab($any(tab.id))"
       >
         <div class="tab-icon"><i [class]="tab.icon"></i></div>
         <span>{{ tab.label }}</span>
