@@ -10,6 +10,8 @@ public class RegisterCompanyRequest {
     private String phone;
     private String companyName;
     private String address;
+    private Double latitude;
+    private Double longitude;
     private String website;
     private String description;
 }

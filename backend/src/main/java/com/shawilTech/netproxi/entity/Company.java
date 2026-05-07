@@ -30,8 +30,11 @@ public class Company {
 
     private Integer maxEmployees;
     private Integer maxActiveBookings;
-
+    
+    @Column(name = "latitude")
     private Double latitude;
+
+    @Column(name = "longitude")
     private Double longitude;
 
     private String logoUrl;

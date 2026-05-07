@@ -34,6 +34,12 @@ public class User {
 
         private String address;
 
+        @Column(nullable = true)
+        private Double latitude;
+
+        @Column(nullable = true)
+        private Double longitude;
+        
         @Builder.Default
         private boolean enabled = true;
 

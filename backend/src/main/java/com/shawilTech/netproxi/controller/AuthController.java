@@ -18,7 +18,6 @@ import com.shawilTech.netproxi.security.JwtTokenProvider;
 import com.shawilTech.netproxi.service.AuthService;
 import com.shawilTech.netproxi.service.RefreshTokenService;
 import org.springframework.security.core.Authentication;
-
 import java.util.Map;
 
 @RestController

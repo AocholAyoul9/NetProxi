@@ -1,6 +1,8 @@
 package com.shawilTech.netproxi.service;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,9 @@ public class AuthService {
         private final CompanyRepository companyRepository;
         private final PasswordEncoder passwordEncoder;
         private final JwtTokenProvider jwtProvider;
+
+        @Autowired
+        private NominatimGeocodingService geocodingService;
 
         /**
          * Authenticate a user with username/email and password.
@@ -73,12 +78,18 @@ public class AuthService {
                 Role clientRole = roleRepository.findByName("ROLE_CLIENT")
                                 .orElseThrow(() -> new RuntimeException("Role ROLE_CLIENT not found"));
 
+                GeocodingResult geo = geocodingService.geocode(request.getAddress());
+                Double lat = geo.success() ? geo.latitude() : null;
+                Double lng = geo.success() ? geo.longitude() : null;
+
                 User user = User.builder()
                                 .username(request.getUsername())
                                 .email(request.getEmail())
                                 .password(passwordEncoder.encode(request.getPassword()))
                                 .phone(request.getPhone())
                                 .address(request.getAddress())
+                                .latitude(lat)
+                                .longitude(lng)
                                 .enabled(true)
                                 .roles(Collections.singleton(clientRole))
                                 .build();
@@ -107,10 +118,21 @@ public class AuthService {
                 Role companyAdminRole = roleRepository.findByName("ROLE_COMPANY")
                                 .orElseThrow(() -> new RuntimeException("Role ROLE_COMPANY not found"));
 
+                // Geocode the company address
+                GeocodingResult geo = geocodingService.geocode(request.getAddress());
+                Double lat = geo.success() ? geo.latitude() : null;
+                Double lng = geo.success() ? geo.longitude() : null;
+
+
+
+                System.out.println("LAT=" + lat + " LNG=" + lng);
+                
                 // Create the tenant company
                 Company company = Company.builder()
                                 .name(request.getCompanyName())
                                 .address(request.getAddress())
+                                .latitude(lat)
+                                .longitude(lng)
                                 .email(request.getEmail())
                                 .password(passwordEncoder.encode(request.getPassword()))
                                 .phone(request.getPhone())
@@ -140,6 +162,7 @@ public class AuthService {
                                 .accessToken(token)
                                 .username(user.getUsername())
                                 .email(user.getEmail())
+                                .phone(user.getPhone())
                                 .role("COMPANY")
                                 .roles(List.of(companyAdminRole.getName()))
                                 .companyId(savedCompany.getId())

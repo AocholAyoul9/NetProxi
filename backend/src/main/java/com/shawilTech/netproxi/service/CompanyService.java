@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,13 +20,11 @@ import java.util.stream.Collectors;
 public class CompanyService {
 
         private final CompanyRepository companyRepository;
-        private final SubscriptionRepository subscriptionRepository;
         private final ServiceRepository serviceRepository;
 
         private final PasswordEncoder passwordEncoder;
         private final JwtTokenProvider jwtProvider;
         private final UserRepository userRepository;
-        private final GeocodingService geocodingService;
 
         /**
          * Find companies near a point (lat, lng) within radius in km
@@ -95,94 +91,9 @@ public class CompanyService {
                 return EARTH_RADIUS_KM * c;
         }
 
-        private CompanyResponseDto mapToDto(Company company) {
-                return CompanyResponseDto.builder()
-                                .id(company.getId())
-                                .name(company.getName())
-                                .address(company.getAddress())
-                                .latitude(company.getLatitude())
-                                .longitude(company.getLongitude())
-                                .active(company.isActive())
-                                .build();
-        }
+  
 
-        /**
-         * Register a new company with FREE plan by default
-         */
-        @Transactional
-        public CompanyResponseDto registerCompany(CompanyRequestDto dto) {
-
-                String token = jwtProvider.generateToken(dto.getName());
-
-                // Geocode address if lat/lng not provided
-                Double lat = dto.getLatitude();
-                Double lng = dto.getLongitude();
-                if ((lat == null || lng == null) && dto.getAddress() != null && !dto.getAddress().isEmpty()) {
-                        try {
-                                GeocodingResponse geo = geocodingService.geocodeAddress(dto.getAddress() + ", France");
-                                if (geo.getLat() != null && geo.getLng() != null) {
-                                        lat = geo.getLat();
-                                        lng = geo.getLng();
-                                        System.out.println("Geocoded address: " + dto.getAddress() + " -> lat=" + lat + ", lng=" + lng);
-                                }
-                        } catch (Exception e) {
-                                System.out.println("Geocoding failed: " + e.getMessage());
-                        }
-                }
-
-                // Build company from DTO
-                Company company = Company.builder()
-                                .name(dto.getName())
-                                .address(dto.getAddress())
-                                .email(dto.getEmail())
-                                .password(passwordEncoder.encode(dto.getPassword()))
-                                .phone(dto.getPhone())
-                                .latitude(lat)
-                                .longitude(lng)
-                                .logoUrl(dto.getLogoUrl())
-                                .website(dto.getWebsite())
-                                .description(dto.getDescription())
-                                .token(token)
-                                .openingHours(dto.getOpeningHours())
-                                .active(true)
-                                .build();
-
-                Company savedCompany = companyRepository.save(company);
-
-                // Create default FREE subscription
-                Subscription freeSubscription = Subscription.builder()
-                                .company(savedCompany)
-                                .plan(SubscriptionPlan.FREE)
-                                .startDate(LocalDateTime.now())
-                                .endDate(LocalDateTime.now().plusMonths(1))
-                                .active(true)
-                                .price(BigDecimal.valueOf(SubscriptionPlan.FREE.getMonthlyPrice()))
-                                .build();
-
-                freeSubscription = subscriptionRepository.save(freeSubscription);
-
-                // Link active subscription to company
-                savedCompany.setActiveSubscription(freeSubscription);
-                companyRepository.save(savedCompany);
-
-                return CompanyResponseDto.builder()
-                                .id(savedCompany.getId())
-                                .name(savedCompany.getName())
-                                .address(savedCompany.getAddress())
-                                .email(savedCompany.getEmail())
-                                .phone(savedCompany.getPhone())
-                                .active(savedCompany.isActive())
-                                .activePlan(freeSubscription.getPlan() != null ? freeSubscription.getPlan().name()
-                                                : null)
-                                .latitude(savedCompany.getLatitude())
-                                .longitude(savedCompany.getLongitude())
-                                .logoUrl(savedCompany.getLogoUrl())
-                                .website(savedCompany.getWebsite())
-                                .description(savedCompany.getDescription())
-                                .pricing(savedCompany.getPricing())
-                                .build();
-        }
-
+    
         /**
          * Login company
          */

@@ -2,6 +2,7 @@ package com.shawilTech.netproxi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -13,15 +14,17 @@ import java.util.List;
 public class WebConfig {
 
     private static final List<String> ALLOWED_ORIGINS = List.of(
-        "http://localhost:4200",
-        "http://localhost",
-        "http://127.0.0.1:4200",
-        "http://127.0.0.1"
-    );
+            "http://localhost:4200",
+            "http://localhost",
+            "http://127.0.0.1:4200",
+            "http://127.0.0.1");
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectTimeout(5000);
+        factory.setReadTimeout(10000); 
+        return new RestTemplate(factory);
     }
 
     /**
