@@ -5,5 +5,5 @@ import  lombok.Builder;
 @Data
 @Builder
 public class UpdateAvailabilityDto {
-    private Boolean isAvailable;
+    private Boolean available;
 }

@@ -42,7 +42,7 @@ assignedEmployeeName?: string;
 export interface CreateBookingRequest {
   clientId: string;     // ID of the client making the booking
   serviceId: string;    // ID of the selected service
-  companyId: string;    // ID of the company providing the service
   startTime: string;    // ISO string of the booking start time
   address: string;      // Address for the booking
+  price?: number;
 }

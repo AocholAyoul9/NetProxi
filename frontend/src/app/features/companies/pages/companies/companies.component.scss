@@ -32,6 +32,25 @@
   min-height: 100vh;
 }
 
+.popup-content {
+  font-family: inherit;
+  min-width: 200px;
+
+  .popup-button {
+    background-color: #0f3b3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #1e5f5e;
+    }
+  }
+}
+
 /* Blue Background for Upper Section */
 .upper-section-wrapper {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

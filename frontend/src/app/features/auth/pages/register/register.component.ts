@@ -15,15 +15,20 @@ import { selectLoading, selectError } from '../../state/auth.selectors';
 })
 export class RegisterPageComponent implements OnInit {
   accountType: 'client' | 'company' = 'client';
+
   formData = {
     username: '',
     email: '',
     password: '',
     phone: '',
     address: '',
+    companyName: '',
   };
+
   loading$!: Observable<boolean>;
   error$!: Observable<string | null>;
+
+  @Output() close = new EventEmitter<void>();
 
   constructor(private store: Store) {}
 
@@ -33,12 +38,15 @@ export class RegisterPageComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { username, email, password, phone, address } = this.formData;
+    const { username, email, password, phone, address, companyName } = this.formData;
     if (!username || !email || !password) return;
-    this.store.dispatch(register({ userData: { username, email, password, phone, address }, userType: this.accountType }));
+    
+    const userData = this.accountType === 'company'
+      ? { username, email, password, phone, address, companyName }
+      : { username, email, password, phone, address };
+    
+    this.store.dispatch(register({ userData, userType: this.accountType }));
   }
-
-   @Output() close = new EventEmitter<void>();
 
   closeModal() {
     this.close.emit();

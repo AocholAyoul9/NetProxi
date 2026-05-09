@@ -1,5 +1,5 @@
 // company-detail.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { Company, getPriceRange,ServiceResponseDto } from '../../models/company.model';
@@ -8,11 +8,13 @@ import { ActivatedRoute } from '@angular/router';
 import * as CompanyActions from '../../state/company.actions';
 import * as CompanySelectors from '../../state/company.selectors';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BookingFlowService } from '../../services/booking-flow.service';
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './company-detail.component.html',
   styleUrls: ['./company-detail.component.scss']
 })
@@ -22,10 +24,32 @@ export class CompanyDetailComponent implements OnInit {
   loading$!: Observable<boolean>;
   error$!: Observable<string | null>;
 
+  // Booking state
+  bookingModalOpen = signal(false);
+  bookingCompany = signal<Company | null>(null);
+  selectedService = signal('');
+  selectedDate = signal('');
+  selectedTime = signal('');
+  bookingSuccess = signal(false);
+  bookingLoading = signal(false);
+  bookingStep = signal(1);
+  
+  bookingForm = {
+    fullName: '',
+    email: '',
+    phone: '',
+    address: '',
+    propertyType: 'apartment',
+    rooms: '2',
+    surface: 0,
+    notes: '',
+  };
+
   constructor(
     private store: Store,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private bookingFlow: BookingFlowService
   ) {}
 
   ngOnInit(): void {
@@ -66,12 +90,106 @@ export class CompanyDetailComponent implements OnInit {
     }
   }
 
- 
-bookCompany(company: Company): void {
-   // this.bookingCompany.set(company);
-    //this.selectedService.set(null);
-    //this.bookingSuccess.set('');
+  bookCompany(company: Company, preselectedServiceId?: string): void {
+    this.bookingCompany.set(company);
+    this.selectedService.set(preselectedServiceId ?? company.services?.[0]?.id ?? '');
+    this.bookingSuccess.set(false);
+    this.bookingStep.set(1);
+    this.selectedDate.set('');
+    this.selectedTime.set('');
+    this.bookingForm = {
+      fullName: '',
+      email: '',
+      phone: '',
+      address: company.address || '',
+      propertyType: 'apartment',
+      rooms: '2',
+      surface: 0,
+      notes: '',
+    };
+    this.bookingModalOpen.set(true);
   }
+
+  closeBookingModal(): void {
+    this.bookingModalOpen.set(false);
+    this.bookingCompany.set(null);
+    this.selectedService.set('');
+    this.selectedDate.set('');
+    this.selectedTime.set('');
+    this.bookingSuccess.set(false);
+  }
+
+  nextBookingStep(): void {
+    if (this.bookingStep() < 3) {
+      this.bookingStep.update(s => s + 1);
+    }
+  }
+
+  prevBookingStep(): void {
+    if (this.bookingStep() > 1) {
+      this.bookingStep.update(s => s - 1);
+    }
+  }
+
+  confirmBooking(): void {
+    const company = this.bookingCompany();
+    const serviceId = this.selectedService();
+    if (!company || !serviceId || !this.selectedDate() || !this.selectedTime()) return;
+
+    this.bookingLoading.set(true);
+
+    const dateTimeStr = `${this.selectedDate()}T${this.selectedTime()}:00`;
+    const bookingRequest = {
+      serviceId,
+      address: this.bookingForm.address,
+      startTime: dateTimeStr,
+      price: 0,
+    };
+
+    this.bookingFlow
+      .createBookingWithClient(company.id, bookingRequest, {
+        fullName: this.bookingForm.fullName,
+        email: this.bookingForm.email,
+        phone: this.bookingForm.phone,
+        address: this.bookingForm.address,
+      })
+      .subscribe({
+        next: () => {
+          this.bookingLoading.set(false);
+          this.bookingSuccess.set(true);
+        },
+        error: (err) => {
+          console.error('Booking error:', err);
+          this.bookingLoading.set(false);
+          alert(err?.message ?? 'Erreur lors de la réservation. Veuillez réessayer.');
+        },
+      });
+  }
+
+  timeSlots = [
+    { label: '08h–10h', value: '08:00' },
+    { label: '10h–12h', value: '10:00' },
+    { label: '12h–14h', value: '12:00' },
+    { label: '14h–16h', value: '14:00' },
+    { label: '16h–18h', value: '16:00' },
+    { label: '18h–20h', value: '18:00' },
+  ];
+
+  getServiceName(serviceId: string): string {
+    const company = this.bookingCompany();
+    if (!company || !company.services) return '';
+    const service = company.services.find(s => s.id === serviceId);
+    return service ? service.name : '';
+  }
+
+  getServices(company: Company): ServiceResponseDto[] {
+    return company.services || [];
+  }
+
+  get todayDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
   // Retry loading company details
   retry(): void {
     const companyId = this.route.snapshot.paramMap.get('id');
@@ -94,13 +212,11 @@ bookCompany(company: Company): void {
 
   // Check if company is currently open (simplified)
   isCompanyOpen(openingHours?: string): boolean {
-    if (!openingHours) return true; // Default to open if no hours specified
+    if (!openingHours) return true;
     
-    // Simple check - you might want to implement more sophisticated logic
     const now = new Date();
     const hour = now.getHours();
     
-    // Assume typical business hours if not specified in detail
     return hour >= 8 && hour < 18;
   }
 

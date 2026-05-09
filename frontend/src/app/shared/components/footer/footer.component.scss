@@ -1,8 +1,8 @@
 .footer {
-  background: #1f2937;
-  color: #f9fafb;
+  background: var(--footer-bg);
+  color: var(--footer-text);
   margin-top: auto;
-  border-top: 1px solid #374151;
+  border-top: 1px solid var(--footer-border);
 
   .container {
     max-width: 1200px;
@@ -15,14 +15,14 @@
 
   .col {
     h4 {
-      color: #ffffff;
+      color: var(--footer-text);
       margin-bottom: 1rem;
       font-size: 1.1rem;
       font-weight: 600;
     }
 
     p {
-      color: #d1d5db;
+      color: var(--footer-muted);
       line-height: 1.6;
       margin-bottom: 1.5rem;
     }
@@ -33,7 +33,7 @@
 .logo-section {
   h4 {
     font-size: 1.5rem;
-    color: #2563eb;
+    color: var(--brand);
     margin-bottom: 1rem;
   }
 }
@@ -45,18 +45,18 @@
   .social-link {
     width: 40px;
     height: 40px;
-    background: #374151;
+    background: var(--footer-social-bg);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #d1d5db;
+    color: var(--footer-muted);
     text-decoration: none;
     transition: all 0.3s ease;
 
     &:hover {
-      background: #2563eb;
-      color: #ffffff;
+      background: var(--brand);
+      color: var(--footer-text);
       transform: translateY(-2px);
     }
   }
@@ -74,13 +74,13 @@ ul {
 }
 
 .footer-link {
-  color: #d1d5db;
+  color: var(--footer-muted);
   text-decoration: none;
   transition: color 0.2s ease;
   font-size: 0.9rem;
 
   &:hover {
-    color: #2563eb;
+    color: var(--brand);
   }
 }
 
@@ -91,11 +91,11 @@ ul {
     align-items: center;
     gap: 0.75rem;
     margin-bottom: 0.75rem;
-    color: #d1d5db;
+    color: var(--footer-muted);
     font-size: 0.9rem;
 
     i {
-      color: #2563eb;
+      color: var(--brand);
       width: 16px;
     }
   }
@@ -107,25 +107,25 @@ ul {
   gap: 1rem;
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid #374151;
+  border-top: 1px solid var(--footer-border);
 
   .legal-link {
-    color: #9ca3af;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 0.8rem;
     transition: color 0.2s;
 
     &:hover {
-      color: #2563eb;
+      color: var(--brand);
     }
   }
 }
 
 /* Section basse */
 .bottom {
-  background: #111827;
+  background: var(--footer-bottom-bg);
   padding: 1.5rem 2rem;
-  border-top: 1px solid #374151;
+  border-top: 1px solid var(--footer-border);
 
   .bottom-content {
     max-width: 1200px;
@@ -138,7 +138,7 @@ ul {
   }
 
   .copyright {
-    color: #9ca3af;
+    color: var(--text-muted);
     font-size: 0.9rem;
   }
 }
@@ -147,7 +147,7 @@ ul {
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: #9ca3af;
+  color: var(--text-muted);
   font-size: 0.9rem;
 
   .payment-icons {
@@ -156,11 +156,11 @@ ul {
 
     i {
       font-size: 1.5rem;
-      color: #d1d5db;
+      color: var(--footer-muted);
       transition: color 0.2s;
 
       &:hover {
-        color: #2563eb;
+        color: var(--brand);
       }
     }
   }

@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
 import { authFeature } from './auth.reducer';
 
-// Auto-generated selectors from createFeature
+// Auto-generated feature selectors
 export const {
   selectAuthState,
   selectUser,
@@ -12,42 +12,34 @@ export const {
   selectUserType,
 } = authFeature;
 
+// ---------------------------
+// Unified selectors
+// ---------------------------
+
+// Is the user authenticated
 export const selectIsAuthenticated = createSelector(
   selectAccessToken,
   (accessToken) => !!accessToken
 );
 
-export const selectUserRoles = createSelector(selectUserType, (userType) =>
-  userType ? [userType] : []
-);
+// Current logged-in user (any type)
+export const selectCurrentUser = selectUser;
 
-// ---------------------------------------------------------------------------
-// Backward-compatible selectors used by existing components
-// ---------------------------------------------------------------------------
+// Current user type ('client' | 'company' | 'employee' | null)
+export const selectCurrentUserType = selectUserType;
 
-export const selectIsCompanyLoggedIn = createSelector(
-  selectAuthState,
-  (state) => state.userType === 'company' && !!state.accessToken
-);
+// Current access token
+export const selectAuthToken = selectAccessToken;
 
-export const selectIsClientLoggedIn = createSelector(
-  selectAuthState,
-  (state) => state.userType === 'client' && !!state.accessToken
-);
+// Current refresh token
+export const selectAuthRefreshToken = selectRefreshToken;
 
-export const selectCurrentCompany = createSelector(selectAuthState, (state) =>
-  state.userType === 'company' ? state.user : null
-);
-
-export const selectClient = createSelector(selectAuthState, (state) =>
-  state.userType === 'client' ? state.user : null
-);
-
-export const selectAuthToken = createSelector(
-  selectAccessToken,
-  (accessToken) => accessToken
-);
-
+// Loading and error state
 export const selectAuthLoading = selectLoading;
-
 export const selectAuthError = selectError;
+
+// User roles array (for RBAC)
+export const selectUserRoles = createSelector(
+  selectUserType,
+  (userType) => (userType ? [userType] : [])
+);

@@ -10,9 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,11 +20,11 @@ import java.util.stream.Collectors;
 public class CompanyService {
 
         private final CompanyRepository companyRepository;
-        private final SubscriptionRepository subscriptionRepository;
         private final ServiceRepository serviceRepository;
 
         private final PasswordEncoder passwordEncoder;
         private final JwtTokenProvider jwtProvider;
+        private final UserRepository userRepository;
 
         /**
          * Find companies near a point (lat, lng) within radius in km
@@ -92,78 +91,9 @@ public class CompanyService {
                 return EARTH_RADIUS_KM * c;
         }
 
-        private CompanyResponseDto mapToDto(Company company) {
-                return CompanyResponseDto.builder()
-                                .id(company.getId())
-                                .name(company.getName())
-                                .address(company.getAddress())
-                                .latitude(company.getLatitude())
-                                .longitude(company.getLongitude())
-                                .active(company.isActive())
-                                .build();
-        }
+  
 
-        /**
-         * Register a new company with FREE plan by default
-         */
-        @Transactional
-        public CompanyResponseDto registerCompany(CompanyRequestDto dto) {
-
-                String token = jwtProvider.generateToken(dto.getName());
-
-                // Build company from DTO
-                Company company = Company.builder()
-                                .name(dto.getName())
-                                .address(dto.getAddress())
-                                .email(dto.getEmail())
-                                .password(passwordEncoder.encode(dto.getPassword()))
-                                .phone(dto.getPhone())
-                                .latitude(dto.getLatitude())
-                                .longitude(dto.getLongitude())
-                                .logoUrl(dto.getLogoUrl())
-                                .website(dto.getWebsite())
-                                .description(dto.getDescription())
-                                .token(token)
-                                .openingHours(dto.getOpeningHours())
-                                .active(true)
-                                .build();
-
-                Company savedCompany = companyRepository.save(company);
-
-                // Create default FREE subscription
-                Subscription freeSubscription = Subscription.builder()
-                                .company(savedCompany)
-                                .plan(SubscriptionPlan.FREE)
-                                .startDate(LocalDateTime.now())
-                                .endDate(LocalDateTime.now().plusMonths(1))
-                                .active(true)
-                                .price(BigDecimal.valueOf(SubscriptionPlan.FREE.getMonthlyPrice()))
-                                .build();
-
-                freeSubscription = subscriptionRepository.save(freeSubscription);
-
-                // Link active subscription to company
-                savedCompany.setActiveSubscription(freeSubscription);
-                companyRepository.save(savedCompany);
-
-                return CompanyResponseDto.builder()
-                                .id(savedCompany.getId())
-                                .name(savedCompany.getName())
-                                .address(savedCompany.getAddress())
-                                .email(savedCompany.getEmail())
-                                .phone(savedCompany.getPhone())
-                                .active(savedCompany.isActive())
-                                .activePlan(freeSubscription.getPlan() != null ? freeSubscription.getPlan().name()
-                                                : null)
-                                .latitude(savedCompany.getLatitude())
-                                .longitude(savedCompany.getLongitude())
-                                .logoUrl(savedCompany.getLogoUrl())
-                                .website(savedCompany.getWebsite())
-                                .description(savedCompany.getDescription())
-                                .pricing(savedCompany.getPricing())
-                                .build();
-        }
-
+    
         /**
          * Login company
          */
@@ -294,20 +224,34 @@ public class CompanyService {
         /**
          * create new cleaning service for a company
          */
-
         @Transactional
         public ServiceResponseDto createService(ServiceRequestDto dto) {
-                // Validate company exists
-                Company company = companyRepository.findById(dto.getCompanyId())
-                                .orElseThrow(() -> new RuntimeException("Company not found"));
 
-                // Check if service with same name already exists for this company
-                if (serviceRepository.existsByNameAndCompanyId(dto.getName(), dto.getCompanyId())) {
+                //  Get logged-in user
+                String username = SecurityContextHolder
+                                .getContext()
+                                .getAuthentication()
+                                .getName();
+
+                User user = userRepository.findByUsername(username)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                // Get company from user
+                Company company = user.getCompany();
+
+                if (company == null) {
+                        throw new RuntimeException("User is not associated with any company");
+                }
+
+        
+
+                //  Check duplicate service
+                if (serviceRepository.existsByNameAndCompanyId(dto.getName(), company.getId())) {
                         throw new RuntimeException("Service with this name already exists for this company");
                 }
 
-                // Check subscription plan limitations
-                checkServiceCreationLimits(company);
+                // Check subscription
+                //checkServiceCreationLimits(company);
 
                 // Create service
                 ServiceEntity service = ServiceEntity.builder()
@@ -315,7 +259,7 @@ public class CompanyService {
                                 .description(dto.getDescription())
                                 .basePrice(dto.getBasePrice())
                                 .durationInMinutes(dto.getDurationInMinutes())
-                                .company(company)
+                                .company(company) 
                                 .active(true)
                                 .build();
 

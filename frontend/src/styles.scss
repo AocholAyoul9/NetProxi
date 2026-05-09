@@ -1,6 +1,406 @@
-/* You can add global styles to this file, and also import other style files */
+/* ─── Load SCSS Map Utilities ───────────────────────── */
+@use "sass:map";
 
-@use 'styles/themes';
+/* ─── Design Tokens (already defined) ───────────────── */
+$tokens-light: (
+  color-bg: #ffffff,
+  color-surface: #f9fafb,
+  color-text: #111827,
+  color-text-muted: #6b7280,
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+  color-primary: #1976d2,
+  color-primary-hover: #1565c0,
+  color-primary-light: #e3f2fd,
+
+  color-danger: #ef4444,
+  color-danger-bg: #fee2e2,
+  color-header-bg: #ffffff,
+  color-header-border: #e5e7eb,
+  
+  color-brand: #2563eb,
+  color-brand-dark: #1d4ed8,
+  color-brand-light: #eff6ff,
+  color-accent: #10b981,
+  color-stat-bg: #0f172a,
+  color-stat-label: #94a3b8,
+  shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06),
+  shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1),
+
+
+  shadow-lg: 0 20px 40px rgba(0,0,0,.14),
+  color-stat-value: #ffffff,
+  color-testimonial-text: #334155,
+
+
+   // Dashboard specific (from your light mode)
+  color-primary-start: #667eea,
+  color-primary-end: #764ba2,
+  color-white: #ffffff,
+  color-text-dark: #2d3748,
+  color-text-light: #4a5568,
+  color-border: #e2e8f0,
+  color-border-hover: #cbd5e0,
+  color-background-page: #f8f9fa,
+  color-background-tab-hover: #f7fafc,
+  color-background-service-detail: #f7fafc,
+  color-background-info: #e0f2fe,
+  color-success-bg: #d1fae5,
+  color-success-text: #065f46,
+  color-info-text: #0369a1,
+  color-cancel-btn: #f56565,
+  color-cancel-btn-hover: #e53e3e,
+  color-search-icon: #667eea,
+  color-btn-location-bg: #edf2f7,
+  color-btn-location-hover: #cbd5e0,
+  color-placeholder: #b0bec5,
+
+  // Shadows (needed for mixins)
+  shadow-light: 0 2px 6px rgba(0,0,0,0.1),
+  shadow-medium: 0 4px 12px rgba(0,0,0,0.1),
+  shadow-modal: 0 10px 40px rgba(0,0,0,0.2),
+
+  // Status badge colors (light mode)
+  status-pending-bg: #fef3c7,
+  status-pending-text: #d97706,
+  status-pending-border: #fbbf24,
+  status-confirmed-bg: #dbeafe,
+  status-confirmed-text: #1d4ed8,
+  status-confirmed-border: #93c5fd,
+  status-in-progress-bg: #e0e7ff,
+  status-in-progress-text: #4f46e5,
+  status-in-progress-border: #a5b4fc,
+  status-completed-bg: #d1fae5,
+  status-completed-text: #065f46,
+  status-completed-border: #6ee7b7,
+  status-cancelled-bg: #fee2e2,
+  status-cancelled-text: #dc2626,
+  status-cancelled-border: #fca5a5,
+  status-default-bg: #f7fafc,
+  status-default-text: #718096,
+  status-default-border: #e2e8f0,
+
+
+  color-accent-red: #ef4444,
+  shadow-brand: 0 8px 20px rgba(37,99,235,.30),
+  color-skeleton-bg: #e2e8f0,
+  color-avatar-gradient-start: #eff6ff,
+  color-avatar-gradient-end: #dbeafe,
+  color-avatar-initials: #2563eb,
+  color-empty-icon: #cbd5e0,
+  color-rating-star: #f59e0b,
+  color-hover-border: #c7d7f5,
+  color-active-card-bg: #f0f7ff,
+  color-hovered-card-bg: #fafbff,
+  color-map-bg: #e8edf2,
+
+  // Footer tokens (light mode keeps the existing darker footer style)
+  color-footer-bg: #1f2937,
+  color-footer-bottom-bg: #111827,
+  color-footer-border: #374151,
+  color-footer-text: #f9fafb,
+  color-footer-muted: #d1d5db,
+  color-footer-social-bg: #374151,
+
+);
+
+$tokens-dark: (
+  // Softer, friendlier dark palette (less pure black, more depth)
+  color-bg: #0b1220,
+  color-surface: #111a2b,
+  color-text: #e6edf7,
+  color-text-muted: #a6b3c8,
+  color-border: #22304a,
+
+  // Slightly warmer blue that stays readable on dark surfaces
+  color-primary: #7aa2ff,
+  color-primary-hover: #5b86ff,
+  color-primary-light: #1a2b52,
+
+  color-danger: #ff7b7b,
+  color-danger-bg: #3a1620,
+  color-header-bg: #0f172a,
+  color-header-border: #22304a,
+  color-brand: #7aa2ff,
+  color-brand-dark: #5b86ff,
+  color-brand-light: #1a2b52,
+  color-accent: #34d399,
+  color-stat-bg: #09101d,
+  color-stat-label: #a6b3c8,
+  
+  shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3),
+  shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4),
+
+  shadow-lg: 0 20px 40px rgba(0,0,0,.4),
+  color-stat-value: #ffffff,
+  color-testimonial-text: #e2e8f0,
+
+
+  // Dark mode dashboard counterparts
+  color-primary-start: #7aa2ff,
+  color-primary-end: #b28bff,
+  color-white: #111a2b, // used as "card" background in dashboards
+  color-text-dark: #e6edf7,
+  color-text-light: #c9d5ea,
+  color-border-hover: #314566,
+  color-background-page: #0b1220,
+  color-background-tab-hover: #16213a,
+  color-background-service-detail: #121c33,
+  color-background-info: #0b2a4a,
+  color-success-bg: #063b2d,
+  color-success-text: #7ce6b6,
+  color-info-text: #8bd6ff,
+  color-cancel-btn: #ff6b6b,
+  color-cancel-btn-hover: #ff4d4d,
+  color-search-icon: #7aa2ff,
+  color-btn-location-bg: #16213a,
+  color-btn-location-hover: #203055,
+  color-placeholder: #7f8fb0,
+
+  // Dark shadows (darker, more depth)
+  shadow-light: 0 2px 6px rgba(0,0,0,0.4),
+  shadow-medium: 0 4px 12px rgba(0,0,0,0.5),
+  shadow-modal: 0 10px 40px rgba(0,0,0,0.6),
+
+  // Status badge colors (dark mode)
+  status-pending-bg: #2a1b08,
+  status-pending-text: #ffd38a,
+  status-pending-border: #7a4a14,
+  status-confirmed-bg: #0f2346,
+  status-confirmed-text: #a9c6ff,
+  status-confirmed-border: #2f65d9,
+  status-in-progress-bg: #1b1a4e,
+  status-in-progress-text: #cfc8ff,
+  status-in-progress-border: #6b5bff,
+  status-completed-bg: #063b2d,
+  status-completed-text: #7ce6b6,
+  status-completed-border: #1fb981,
+  status-cancelled-bg: #2a0b12,
+  status-cancelled-text: #ffb3b3,
+  status-cancelled-border: #ff6b6b,
+  status-default-bg: #16213a,
+  status-default-text: #a6b3c8,
+  status-default-border: #22304a,
+
+
+  color-accent-red: #ff7b7b,
+  shadow-brand: 0 8px 20px rgba(122,162,255,.30),
+  color-skeleton-bg: #1a2640,
+  color-avatar-gradient-start: #1e3a5f,
+  color-avatar-gradient-end: #1e293b,
+  color-avatar-initials: #7aa2ff,
+  color-empty-icon: #475569,
+  color-rating-star: #fbbf24,
+  color-hover-border: #4f46e5,
+  color-active-card-bg: #1e293b,
+  color-hovered-card-bg: #1e293b,
+  color-map-bg: #0b1220,
+
+  // Footer tokens (so footer matches theme)
+  color-footer-bg: #0b1220,
+  color-footer-bottom-bg: #060b16,
+  color-footer-border: #1a2640,
+  color-footer-text: #e6edf7,
+  color-footer-muted: #a6b3c8,
+  color-footer-social-bg: #16213a,
+);
+
+/* ─── Theme Mixin ─────────────────────────── */
+@mixin theme($tokens) {
+  
+  --bg: #{map.get($tokens, color-bg)};
+  --surface: #{map.get($tokens, color-surface)};
+  --text: #{map.get($tokens, color-text)};
+  --text-muted: #{map.get($tokens, color-text-muted)};
+  --border: #{map.get($tokens, color-border)};
+
+  --primary: #{map.get($tokens, color-primary)};
+  --primary-hover: #{map.get($tokens, color-primary-hover)};
+  --primary-light: #{map.get($tokens, color-primary-light)};
+
+  --danger: #{map.get($tokens, color-danger)};
+  --danger-bg: #{map.get($tokens, color-danger-bg)};
+
+  --header-border: var(--border);
+  --header-scrolled-bg: #{map.get($tokens, color-bg)};
+ --header-bg: #{map.get($tokens, color-header-bg)};
+
+  --brand: #{map.get($tokens, color-brand)};
+  --brand-dark: #{map.get($tokens, color-brand-dark)};
+  --brand-light: #{map.get($tokens, color-brand-light)};
+  --accent: #{map.get($tokens, color-accent)};
+  --stat-bg: #{map.get($tokens, color-stat-bg)};
+  --stat-label: #{map.get($tokens, color-stat-label)};
+  --testimonial-text: #{map.get($tokens, color-testimonial-text)};
+  --shadow-sm: #{map.get($tokens, shadow-sm)};
+  --shadow-md: #{map.get($tokens, shadow-md)};
+
+    --shadow-lg: #{map.get($tokens, shadow-lg)};
+  --stat-value: #{map.get($tokens, color-stat-value)};
+  --testimonial-text: #{map.get($tokens, color-testimonial-text)};
+
+
+
+   // Dashboard specific (new)
+  --primary-start: #{map.get($tokens, color-primary-start)};
+  --primary-end: #{map.get($tokens, color-primary-end)};
+  --primary-gradient: linear-gradient(135deg, var(--primary-start), var(--primary-end));
+  --white: #{map.get($tokens, color-white)};
+  --text-dark: #{map.get($tokens, color-text-dark)};
+  --text-light: #{map.get($tokens, color-text-light)};
+  --border-hover: #{map.get($tokens, color-border-hover)};
+  --bg-page: #{map.get($tokens, color-background-page)};
+  --bg-tab-hover: #{map.get($tokens, color-background-tab-hover)};
+  --bg-service-detail: #{map.get($tokens, color-background-service-detail)};
+  --bg-info: #{map.get($tokens, color-background-info)};
+  --success-bg: #{map.get($tokens, color-success-bg)};
+  --success-text: #{map.get($tokens, color-success-text)};
+  --info-text: #{map.get($tokens, color-info-text)};
+  --rating-star: #{map.get($tokens, color-rating-star)};
+  --cancel-btn: #{map.get($tokens, color-cancel-btn)};
+  --cancel-btn-hover: #{map.get($tokens, color-cancel-btn-hover)};
+  --search-icon: #{map.get($tokens, color-search-icon)};
+  --btn-location-bg: #{map.get($tokens, color-btn-location-bg)};
+  --btn-location-hover: #{map.get($tokens, color-btn-location-hover)};
+  --placeholder: #{map.get($tokens, color-placeholder)};
+
+  // Shadows
+  --shadow-light: #{map.get($tokens, shadow-light)};
+  --shadow-medium: #{map.get($tokens, shadow-medium)};
+  --shadow-modal: #{map.get($tokens, shadow-modal)};
+
+  // Status badges
+  --status-pending-bg: #{map.get($tokens, status-pending-bg)};
+  --status-pending-text: #{map.get($tokens, status-pending-text)};
+  --status-pending-border: #{map.get($tokens, status-pending-border)};
+  --status-confirmed-bg: #{map.get($tokens, status-confirmed-bg)};
+  --status-confirmed-text: #{map.get($tokens, status-confirmed-text)};
+  --status-confirmed-border: #{map.get($tokens, status-confirmed-border)};
+  --status-in-progress-bg: #{map.get($tokens, status-in-progress-bg)};
+  --status-in-progress-text: #{map.get($tokens, status-in-progress-text)};
+  --status-in-progress-border: #{map.get($tokens, status-in-progress-border)};
+  --status-completed-bg: #{map.get($tokens, status-completed-bg)};
+  --status-completed-text: #{map.get($tokens, status-completed-text)};
+  --status-completed-border: #{map.get($tokens, status-completed-border)};
+  --status-cancelled-bg: #{map.get($tokens, status-cancelled-bg)};
+  --status-cancelled-text: #{map.get($tokens, status-cancelled-text)};
+  --status-cancelled-border: #{map.get($tokens, status-cancelled-border)};
+  --status-default-bg: #{map.get($tokens, status-default-bg)};
+  --status-default-text: #{map.get($tokens, status-default-text)};
+  --status-default-border: #{map.get($tokens, status-default-border)};
+
+  --accent-red: #{map.get($tokens, color-accent-red)};
+  --shadow-brand: #{map.get($tokens, shadow-brand)};
+  --skeleton-bg: #{map.get($tokens, color-skeleton-bg)};
+  --avatar-gradient-start: #{map.get($tokens, color-avatar-gradient-start)};
+  --avatar-gradient-end: #{map.get($tokens, color-avatar-gradient-end)};
+  --avatar-initials: #{map.get($tokens, color-avatar-initials)};
+  --empty-icon: #{map.get($tokens, color-empty-icon)};
+  --rating-star: #{map.get($tokens, color-rating-star)};
+  --hover-border: #{map.get($tokens, color-hover-border)};
+  --active-card-bg: #{map.get($tokens, color-active-card-bg)};
+  --hovered-card-bg: #{map.get($tokens, color-hovered-card-bg)};
+  --map-bg: #{map.get($tokens, color-map-bg)};
+
+  // Footer
+  --footer-bg: #{map.get($tokens, color-footer-bg)};
+  --footer-bottom-bg: #{map.get($tokens, color-footer-bottom-bg)};
+  --footer-border: #{map.get($tokens, color-footer-border)};
+  --footer-text: #{map.get($tokens, color-footer-text)};
+  --footer-muted: #{map.get($tokens, color-footer-muted)};
+  --footer-social-bg: #{map.get($tokens, color-footer-social-bg)};
+
+}
+
+/* ─── Apply Themes ───────────────────────── */
+body {
+  @include theme($tokens-light);
+  background: var(--bg);
+  color: var(--text);
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+body.dark-theme {
+  @include theme($tokens-dark);
+}
+
+/* ─── Snackbars (Material) ───────────────────────────── */
+.np-snack-success {
+  --mdc-snackbar-container-color: #065f46;
+  --mdc-snackbar-supporting-text-color: #ecfdf5;
+  --mat-snack-bar-button-color: #ecfdf5;
+}
+
+.np-snack-error {
+  --mdc-snackbar-container-color: #7f1d1d;
+  --mdc-snackbar-supporting-text-color: #fef2f2;
+  --mat-snack-bar-button-color: #fef2f2;
+}
+
+.np-snack-info {
+  --mdc-snackbar-container-color: #0f172a;
+  --mdc-snackbar-supporting-text-color: #e6edf7;
+  --mat-snack-bar-button-color: #e6edf7;
+}
+
+/* ─── Global Page Styles ───────────────────────── */
+.page-container {
+  padding: 2rem;
+  font-family: "Inter", sans-serif;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ─── Upper Section ───────────────────────── */
+.upper-section-wrapper {
+  background: var(--primary);
+  border-radius: 0 0 1.5rem 1.5rem;
+  padding: 2rem 2rem 3rem;
+  margin: -2rem -2rem 2rem;
+}
+
+/* ─── Search Input ───────────────────────── */
+.search-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+
+  &:focus {
+    border-color: var(--primary);
+    background: var(--bg);
+    outline: none;
+  }
+}
+
+/* ─── Buttons ───────────────────────── */
+.btn-primary {
+  background: var(--primary);
+  color: var(--bg);
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: var(--bg);
+
+  &:hover {
+    background: var(--danger-bg);
+  }
+}
+
+/* ─── Cards ───────────────────────── */
+.company-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: var(--text);
+}

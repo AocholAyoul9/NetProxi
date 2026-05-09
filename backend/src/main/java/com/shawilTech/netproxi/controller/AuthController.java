@@ -17,7 +17,7 @@ import com.shawilTech.netproxi.repository.UserRepository;
 import com.shawilTech.netproxi.security.JwtTokenProvider;
 import com.shawilTech.netproxi.service.AuthService;
 import com.shawilTech.netproxi.service.RefreshTokenService;
-
+import org.springframework.security.core.Authentication;
 import java.util.Map;
 
 @RestController
@@ -38,6 +38,10 @@ public class AuthController {
     @Operation(summary = "Login with username/email and password")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+
+        System.out.println("EMAIL: " + request.getEmail());
+        System.out.println("PASSWORD: " + request.getPassword());
+        System.out.println("USERTYPE: " + request.getUserType());
         AuthResponse authResponse = authService.login(request);
 
         // Create a persistent refresh token
@@ -141,5 +145,17 @@ public class AuthController {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Map<String, String>> superAdminDashboard() {
         return ResponseEntity.ok(Map.of("message", "Welcome, Super Admin!"));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return ResponseEntity.ok(Map.of(
+                "username", user.getUsername(),
+                "email", user.getEmail(),
+                "roles", user.getRoles(),
+                "companyId", user.getCompany() != null ? user.getCompany().getId() : null));
     }
 }

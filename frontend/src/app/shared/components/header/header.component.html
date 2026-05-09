@@ -1,7 +1,6 @@
 <header class="header">
   <div class="container">
-
-    <!-- Logo (always visible) -->
+    <!-- Logo -->
     <div class="logo">
       <a routerLink="/" class="logo-link">
         <span class="logo-icon"></span>
@@ -9,53 +8,73 @@
       </a>
     </div>
 
-    <!-- ================= COMPANY HEADER ================= -->
-    <ng-container *ngIf="isCompanyLoggedIn$ | async">
+    <!-- ================= AUTHENTICATED USERS ================= -->
+    <ng-container *ngIf="isAuthenticated$ | async; else publicHeader">
+      <nav class="nav" [class.active]="menuOpen()">
+        <div class="user-info" *ngIf="currentUser$ | async as user">
+          <!-- Dynamic User Info -->
+          <ng-container [ngSwitch]="currentUserType$ | async">
+            <span *ngSwitchCase="'company'" class="company-name">
+              <i class="fas fa-building"></i>
+              {{ user.name }}
+            </span>
+            <span *ngSwitchCase="'client'" class="client-name">
+              <i class="fas fa-user"></i>
+              {{ user.firstName }} {{ user.lastName }}
+            </span>
+            <span *ngSwitchCase="'employee'" class="employee-name">
+              <i class="fas fa-user-tie"></i>
+              {{ user.name }}
+            </span>
+          </ng-container>
 
-      <nav class="nav company-nav">
-        <div class="company-info" *ngIf="company$ | async as company">
-          <span class="company-name">
-            {{ company.name }}
-          </span>
-
-          <button class="btn-logout" (click)="logoutCompany()">
-            <i class="fas fa-sign-out-alt"></i>
-            Déconnexion
-          </button>
-        </div>
-      </nav>
-
-    </ng-container>
-
-    <!-- ================= CLIENT HEADER ================= -->
-    <ng-container *ngIf="!(isCompanyLoggedIn$ | async) && (isClientLoggedIn$ | async)">
-
-      <nav class="nav client-nav">
-        <div class="client-info" *ngIf="client$ | async as client">
-          <span class="client-name">
-            <i class="fas fa-user"></i>
-            {{ client.firstName }} {{ client.lastName }}
-          </span>
-
-          <a routerLink="/client/dashboard" class="btn-dashboard">
+          <!-- Boutons -->
+          <a
+            *ngIf="(currentUserType$ | async) === 'client'"
+            routerLink="/client/dashboard"
+            class="btn-dashboard"
+          >
             Mon espace
           </a>
 
-          <button class="btn-logout" (click)="logoutClient()">
+          <a
+            *ngIf="(currentUserType$ | async) === 'company'"
+            routerLink="/company-admin"
+            class="btn-dashboard"
+          >
+            Espace entreprise
+          </a>
+
+          <a
+            *ngIf="(currentUserType$ | async) === 'employee'"
+            routerLink="/employee-dashboard"
+            class="btn-dashboard"
+          >
+            Mon espace
+          </a>
+
+          <button class="btn-logout" (click)="logout()">
             <i class="fas fa-sign-out-alt"></i>
             Déconnexion
           </button>
         </div>
       </nav>
-
     </ng-container>
 
-    <!-- ================= PUBLIC HEADER ================= -->
-    <ng-container *ngIf="!(isCompanyLoggedIn$ | async) && !(isClientLoggedIn$ | async)">
-
+    <!-- ================= PUBLIC USERS ================= -->
+    <ng-template #publicHeader>
       <nav class="nav" [class.active]="menuOpen()">
         <a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a>
-        <a routerLink="/companies" routerLinkActive="active" class="nav-link">Entreprises</a>
+        <a routerLink="/nearby" routerLinkActive="active" class="nav-link"
+          >Entreprises proches</a
+        >
+        <a routerLink="/pro" routerLinkActive="active" class="nav-link">
+          Espace Pro
+        </a>
+        <div class="mobile-actions">
+          <button class="btn-login" (click)="openLogin()">Connexion</button>
+          <button class="btn-signup" (click)="openSignup()">Inscription</button>
+        </div>
       </nav>
 
       <div class="actions">
@@ -68,19 +87,12 @@
           Inscription
         </button>
       </div>
+    </ng-template>
 
-    </ng-container>
-
-   
     <!-- Modals -->
-    <app-login-page
-      *ngIf="showLogin"
-      (close)="closeLogin()">
-    </app-login-page>
+    <app-login-page *ngIf="showLogin" (close)="closeLogin()"> </app-login-page>
 
-    <app-register-page
-      *ngIf="showSignup"
-      (close)="closeSignup()">
+    <app-register-page *ngIf="showSignup" (close)="closeSignup()">
     </app-register-page>
 
     <!-- Theme Toggle -->
@@ -88,28 +100,24 @@
       <select
         [value]="currentTheme"
         (change)="setTheme($any($event.target).value)"
-        aria-label="Select theme">
+        aria-label="Select theme"
+      >
         <option value="system">System</option>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
       </select>
     </div>
 
-    <!-- Hamburger (only for public users) -->
+    <!-- Hamburger menu -->
     <button
-      *ngIf="!(isCompanyLoggedIn$ | async)"
       class="menu-toggle"
       (click)="toggleMenu()"
       aria-label="Toggle menu"
-      [class.active]="menuOpen()">
-      <span></span>
-      <span></span>
-      <span></span>
+      [class.active]="menuOpen()"
+    >
+      <span class="menu-line"> </span>
+      <span class="menu-line"> </span>
+      <span class="menu-line"> </span>
     </button>
-
   </div>
 </header>
-
-
-
-

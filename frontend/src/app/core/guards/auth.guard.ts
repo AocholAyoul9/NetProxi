@@ -45,9 +45,12 @@ export class AuthGuard implements CanActivate {
 
   private getUserRoles(): string[] {
     try {
-      const user = localStorage.getItem('user') || localStorage.getItem('company') || localStorage.getItem('client');
-      if (!user) return [];
-      const parsed = JSON.parse(user);
+      const raw = localStorage.getItem('user')
+        || localStorage.getItem('company')
+        || localStorage.getItem('client')
+        || localStorage.getItem('employee');
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
       return parsed?.roles ?? [];
     } catch {
       return [];

@@ -52,9 +52,9 @@ export class CompaniesApiService {
 
   // ------------ Company Services --------------
 
-  getCompanyService(companyId: string): Observable<ServiceModel[]> {
+  getCompanyService(): Observable<ServiceModel[]> {
     return this.http.get<ServiceModel[]>(
-      `${this.baseUrl}/services/company/${companyId}`
+      `${this.baseUrl}/services/company/me`
     );
   }
 
@@ -164,5 +164,15 @@ export class CompaniesApiService {
 
   getCompanySubscription(companyId: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/subscribes/${companyId}`);
+  }
+
+  // ------------ Client Auth --------------
+  
+  registerClient(data: { name: string; email: string; password: string; phone: string; address: string }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/clients/register`, data);
+  }
+
+  loginClient(email: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/clients/login`, { email, password });
   }
 }

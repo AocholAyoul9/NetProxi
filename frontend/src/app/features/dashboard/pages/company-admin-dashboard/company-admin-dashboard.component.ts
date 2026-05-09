@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { Observable, map, take, filter, tap } from 'rxjs';
 
 import { Company } from '../../../companies/models/company.model';
 import {
   ServiceModel,
   ServiceModel as ServiceResponseDto,
-  ServiceUpdateModel,
 } from '../../../../shared/models/service.model';
 import {
   Employee,
@@ -18,16 +18,12 @@ import {
 
 import * as CompanySelectors from '../../../companies/state/company.selectors';
 import * as CompanyActions from '../../../companies/state/company.actions';
-import { FormsModule } from '@angular/forms';
+import * as BookingActions from '../../../booking/state/booking.actions';
+import * as AuthSelectors from '../../../auth/state/auth.selectors';
+import * as BookingSelectors from '../../../booking/state/booking.selectors';
 import { Booking } from '../../../booking/models/booking.model';
 
 type TabType = 'overview' | 'services' | 'bookings' | 'employees';
-
-interface DashboardTab {
-  id: TabType;
-  label: string;
-  icon: string;
-}
 
 @Component({
   selector: 'app-company-admin-dashboard',
@@ -36,47 +32,44 @@ interface DashboardTab {
   templateUrl: './company-admin-dashboard.component.html',
   styleUrls: ['./company-admin-dashboard.component.scss'],
 })
-export class CompanyAdminDashboardComponent {
-  // Selectors
+export class CompanyAdminDashboardComponent implements OnInit {
+  // ================= STORE =================
   company$: Observable<Company | null>;
   services$: Observable<ServiceResponseDto[]>;
   bookings$: Observable<Booking[]>;
   employees$: Observable<Employee[]>;
   loading$: Observable<boolean>;
 
-  activeTab: TabType = 'overview';
-  companyId: string = '';
+  recentBookings$: Observable<Booking[]>;
 
-  // Tab configuration
-  tabs: DashboardTab[] = [
+  // ================= STATE =================
+  activeTab: TabType = 'overview';
+  companyId = '';
+
+  tabs = [
     { id: 'overview', label: "Vue d'ensemble", icon: 'fas fa-chart-pie' },
     { id: 'services', label: 'Services', icon: 'fas fa-concierge-bell' },
     { id: 'bookings', label: 'Réservations', icon: 'fas fa-calendar-check' },
     { id: 'employees', label: 'Employés', icon: 'fas fa-users' },
   ];
 
-  // Recent bookings for overview tab
-  recentBookings$: Observable<Booking[]>;
-
-  // Service modals
+  // ================= MODALS =================
   newService: ServiceModel = {
     id: '',
     name: '',
     description: '',
     basePrice: 0,
     durationInMinutes: 0,
-    companyId: '',
   };
 
   editingService: ServiceModel | null = null;
   isServiceModalOpen = false;
   isEditServiceModalOpen = false;
 
-  // Employee modals
   newEmployee: EmployeeCreateModel = {
     name: '',
     email: '',
-    password:'',
+    password: '',
     phone: '',
     address: '',
     companyId: '',
@@ -87,7 +80,6 @@ export class CompanyAdminDashboardComponent {
   isEmployeeModalOpen = false;
   isEditEmployeeModalOpen = false;
 
-  // Available roles for employees
   employeeRoles = [
     { value: 'cleaner', label: 'Agent de Nettoyage' },
     { value: 'supervisor', label: 'Superviseur' },
@@ -95,50 +87,85 @@ export class CompanyAdminDashboardComponent {
     { value: 'admin', label: 'Administrateur' },
   ];
 
+  // ================= INIT =================
+  ngOnInit(): void {
+    this.initCompany();
+    this.initBookings();
+  }
+
   constructor(private store: Store) {
-    // Select data from store
+    // store bindings
     this.company$ = this.store.select(CompanySelectors.selectCurrentCompany);
     this.services$ = this.store.select(CompanySelectors.selectCompanyServices);
-    this.bookings$ = this.store.select(CompanySelectors.selectCompanyBookings);
-    this.employees$ = this.store.select(
-      CompanySelectors.selectCompanyEmployees
-    );
+    this.bookings$ = this.store.select(BookingSelectors.selectBookings);
+    this.employees$ = this.store.select(CompanySelectors.selectCompanyEmployees);
     this.loading$ = this.store.select(CompanySelectors.selectCompanyLoading);
 
-    // Get company ID
-    this.company$.subscribe((company) => {
-      if (company) {
-        this.companyId = company.id;
-      }
-    });
-
-    // Setup recent bookings (first 5)
     this.recentBookings$ = this.bookings$.pipe(
-      map((bookings) => bookings?.slice(0, 5) || [])
+      map(b => (b ?? []).slice(0, 5))
     );
   }
 
-  // Change UI tab
+  // ================= SAFE INIT =================
+  private initCompany(): void {
+    this.company$
+      .pipe(
+        take(1),
+        tap(company => {
+          if (company) {
+            this.companyId = company.id;
+          }
+        })
+      )
+      .subscribe();
+
+    if (!this.companyId) {
+      this.store
+        .select(AuthSelectors.selectCurrentUser)
+        .pipe(
+          take(1),
+          filter(user => !!user),
+          tap(user => {
+            this.companyId = user!.id;
+
+            this.store.dispatch(
+              CompanyActions.loadCompany({ companyId: this.companyId })
+            );
+          })
+        )
+        .subscribe();
+    }
+  }
+
+  private initBookings(): void {
+    this.store
+      .select(AuthSelectors.selectCurrentUser)
+      .pipe(
+        take(1),
+        filter(user => !!user),
+        tap(user => {
+          this.store.dispatch(
+            BookingActions.loadCompanyBookings({ companyId: user!.id })
+          );
+        })
+      )
+      .subscribe();
+  }
+
+  // ================= UI =================
   setActiveTab(tab: TabType): void {
     this.activeTab = tab;
   }
 
-  // Compute revenue
   getTotalRevenue(bookings: Booking[] | null): number {
-    if (!bookings) return 0;
-    return bookings.reduce((total, booking) => total + (booking.price || 0), 0);
+    return (bookings ?? []).reduce(
+      (total, b) => total + (b.price ?? 0),
+      0
+    );
   }
 
-  // Service Creation Methods
+  // ================= SERVICES =================
   openServiceModal(): void {
-    this.newService = {
-      id: '',
-      name: '',
-      description: '',
-      basePrice: 0,
-      durationInMinutes: 0,
-      companyId: this.companyId,
-    };
     this.isServiceModalOpen = true;
   }
 
@@ -153,7 +180,6 @@ export class CompanyAdminDashboardComponent {
     this.closeServiceModal();
   }
 
-  // Service Update Methods
   openEditServiceModal(service: ServiceModel): void {
     this.editingService = { ...service };
     this.isEditServiceModalOpen = true;
@@ -165,40 +191,27 @@ export class CompanyAdminDashboardComponent {
   }
 
   updateService(): void {
-    if (this.editingService && this.editingService.id) {
-      const updateData: ServiceUpdateModel = {
-        id: this.editingService.id,
-        name: this.editingService.name,
-        description: this.editingService.description,
-        basePrice: this.editingService.basePrice,
-        durationInMinutes: this.editingService.durationInMinutes,
-        companyId: this.companyId
-      };
+    if (!this.editingService?.id) return;
 
-      // Dispatch action to update service
-      this.store.dispatch(CompanyActions.updateCompanyService({ 
-        serviceId: this.editingService.id, 
-        service: updateData 
-      }));
+    this.store.dispatch(
+      CompanyActions.updateCompanyService({
+        serviceId: this.editingService.id,
+        service: this.editingService,
+      })
+    );
+
     this.closeEditServiceModal();
-  }}
-
-  // Service Deletion Method
-  deleteService(serviceId: string): void {
-    this.store.dispatch(CompanyActions.deleteCompanyService({ serviceId }));
   }
 
-  // Employee Creation Methods
+  deleteService(serviceId: string): void {
+    this.store.dispatch(
+      CompanyActions.deleteCompanyService({ serviceId })
+    );
+  }
+
+  // ================= EMPLOYEES =================
   openEmployeeModal(): void {
-    this.newEmployee = {
-      name: '',
-      email: '',
-      password:'',
-      phone: '',
-      address: '',
-      companyId: this.companyId,
-      role: 'cleaner',
-    };
+    this.newEmployee.companyId = this.companyId;
     this.isEmployeeModalOpen = true;
   }
 
@@ -207,23 +220,18 @@ export class CompanyAdminDashboardComponent {
   }
 
   createEmployee(): void {
-    if (
-      this.newEmployee.name &&
-      this.newEmployee.email &&
-      this.newEmployee.phone
-    ) {
-      // Dispatch action to create employee
-      this.store.dispatch(
-        CompanyActions.addCompanyEmployee({
-          companyId: this.companyId,
-          employeeData: this.newEmployee,
-        })
-      );
-      this.closeEmployeeModal();
-    }
+    if (!this.companyId) return;
+
+    this.store.dispatch(
+      CompanyActions.addCompanyEmployee({
+        companyId: this.companyId,
+        employeeData: this.newEmployee,
+      })
+    );
+
+    this.closeEmployeeModal();
   }
 
-  // Employee Update Methods
   openEditEmployeeModal(employee: Employee): void {
     this.editingEmployee = { ...employee };
     this.isEditEmployeeModalOpen = true;
@@ -235,56 +243,47 @@ export class CompanyAdminDashboardComponent {
   }
 
   updateEmployee(): void {
-    if (this.editingEmployee && this.editingEmployee.id) {
-      const updateData: EmployeeUpdateModel = {
-        id: this.editingEmployee.id,
-        name: this.editingEmployee.name,
-        email: this.editingEmployee.email,
-        phone: this.editingEmployee.phone,
-        address: this.editingEmployee.address,
-        role: this.editingEmployee.role,
-      };
+    if (!this.editingEmployee?.id) return;
 
-      // Dispatch action to update employee
-      this.store.dispatch(
-        CompanyActions.updateCompanyEmployee({
-          companyId: this.companyId,
-          employeeId: this.editingEmployee.id,
-          employeeData: updateData,
-        })
-      );
-      this.closeEditEmployeeModal();
-    }
+    this.store.dispatch(
+      CompanyActions.updateCompanyEmployee({
+        companyId: this.companyId,
+        employeeId: this.editingEmployee.id,
+        employeeData: this.editingEmployee,
+      })
+    );
+
+    this.closeEditEmployeeModal();
   }
 
-  // Employee Deletion Method
   deleteEmployee(employeeId: string): void {
-      this.store.dispatch(
-        CompanyActions.deleteCompanyEmployee({
-          companyId: this.companyId,
-          employeeId,
-        })
-      );
+    this.store.dispatch(
+      CompanyActions.deleteCompanyEmployee({
+        companyId: this.companyId,
+        employeeId,
+      })
+    );
   }
 
-  // Get role label for display
   getRoleLabel(role: string | undefined): string {
-    const roleObj = this.employeeRoles.find((r) => r.value === role);
-    return roleObj ? roleObj.label : 'Agent de Nettoyage';
+    return (
+      this.employeeRoles.find(r => r.value === role)?.label ||
+      'Agent de Nettoyage'
+    );
   }
 
-  // Booking methods
-assignEmployeeToBooking(bookingId: string, employeeId: string) {
-  if (!employeeId) return;
-  this.store.dispatch(
-    CompanyActions.assignEmployeeToBooking({
-      companyId: this.companyId,
-      bookingId,
-      employeeId,
-    })
-  );
-}
+  // ================= BOOKINGS =================
+  assignEmployeeToBooking(bookingId: string, employeeId: string): void {
+    if (!employeeId) return;
 
+    this.store.dispatch(
+      CompanyActions.assignEmployeeToBooking({
+        companyId: this.companyId,
+        bookingId,
+        employeeId,
+      })
+    );
+  }
 
   updateBookingStatus(bookingId: string, status: string): void {
     console.log('Updating booking status:', { bookingId, status });

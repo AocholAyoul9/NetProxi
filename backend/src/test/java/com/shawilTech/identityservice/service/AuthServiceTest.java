@@ -37,21 +37,24 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
+    // ========================= LOGIN TESTS =========================
+
     @Test
     void login_withValidCredentials_returnsAuthResponse() {
         Role role = Role.builder().name("ROLE_CLIENT").build();
         User user = User.builder()
                 .username("testuser")
+                .email("testuser@example.com")
                 .password("encodedPassword")
                 .roles(Collections.singleton(role))
                 .build();
 
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("password", "encodedPassword")).thenReturn(true);
         when(jwtProvider.generateToken("testuser")).thenReturn("jwt-token");
 
         LoginRequest request = new LoginRequest();
-        request.setUsername("testuser");
+        request.setEmail("testuser@example.com");
         request.setPassword("password");
 
         AuthResponse response = authService.login(request);
@@ -64,14 +67,15 @@ class AuthServiceTest {
     }
 
     @Test
-    void login_withUnknownUsername_throwsException() {
-        when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+    void login_withUnknownEmail_throwsException() {
+        when(userRepository.findByEmail("unknown@example.com")).thenReturn(Optional.empty());
 
         LoginRequest request = new LoginRequest();
-        request.setUsername("unknown");
+        request.setEmail("unknown@example.com");
         request.setPassword("password");
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> authService.login(request));
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> authService.login(request));
         assertEquals("Invalid username or password", ex.getMessage());
     }
 
@@ -79,19 +83,23 @@ class AuthServiceTest {
     void login_withWrongPassword_throwsException() {
         User user = User.builder()
                 .username("testuser")
+                .email("testuser@example.com")
                 .password("encodedPassword")
                 .build();
 
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrongpassword", "encodedPassword")).thenReturn(false);
 
         LoginRequest request = new LoginRequest();
-        request.setUsername("testuser");
+        request.setEmail("testuser@example.com");
         request.setPassword("wrongpassword");
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> authService.login(request));
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> authService.login(request));
         assertEquals("Invalid username or password", ex.getMessage());
     }
+
+    // ========================= REGISTER CLIENT =========================
 
     @Test
     void registerClient_withValidRequest_returnsAuthResponse() {
@@ -126,6 +134,8 @@ class AuthServiceTest {
 
         assertThrows(RuntimeException.class, () -> authService.registerClient(request));
     }
+
+    // ========================= REGISTER COMPANY =========================
 
     @Test
     void registerCompany_withValidRequest_returnsAuthResponse() {

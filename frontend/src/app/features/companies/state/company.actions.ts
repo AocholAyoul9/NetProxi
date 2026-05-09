@@ -94,13 +94,13 @@ export const loadCompanyBookingsFailure = createAction(
 //getCompanyServices
 export const loadCompanyServices = createAction(
   '[Company] Load Company Services',
-  props<{ companyId: string }>()
 );
 
 export const loadCompanyServicesSuccess = createAction(
   '[Company] Load Company Services Success',
   props<{ services: any[] }>()
-);
+)
+
 
 export const loadCompanyServicesFailure = createAction(
   '[Company] Load Company Services Failure',
