@@ -1,25 +1,33 @@
 #!/bin/sh
 set -e
 
-# Parse DATABASE_URL if set (Render provides: postgres://user:password@host:port/database)
-if [ -n "$DATABASE_URL" ]; then
-  echo "DATABASE_URL is set, parsing..."
+echo "Environment check:"
+echo "PORT: ${PORT:-not set}"
+echo "DATABASE_URL: ${DATABASE_URL:-not set}"
+echo "PGHOST: ${PGHOST:-not set}"
+
+# Try PG variables first (Render PostgreSQL service provides these)
+if [ -n "$PGHOST" ] && [ -n "$PGDATABASE" ]; then
+  echo "Using PG* environment variables"
+  JDBC_URL="jdbc:postgresql://${PGHOST}:${PGPORT:-5432}/${PGDATABASE}"
+  export SPRING_DATASOURCE_URL="$JDBC_URL"
+  export SPRING_DATASOURCE_USERNAME="${PGUSER}"
+  export SPRING_DATASOURCE_PASSWORD="${PGPASSWORD}"
+  echo "JDBC URL: $JDBC_URL"
+elif [ -n "$DATABASE_URL" ]; then
+  echo "Using DATABASE_URL"
   
-  # Extract components
-  DB_USER=$(echo "$DATABASE_URL" | sed -E 's/postgres:\/\/([^:]+):.*/\1/')
-  DB_PASSWORD=$(echo "$DATABASE_URL" | sed -E 's/postgres:\/\/[^:]+:([^@]+)@.*/\1/')
-  DB_HOST=$(echo "$DATABASE_URL" | sed -E 's/postgres:\/\/[^@]+@([^:]+):.*/\1/')
-  DB_PORT=$(echo "$DATABASE_URL" | sed -E 's/postgres:\/\/[^@]+@[^:]+:([0-9]+)\/.*/\1/')
-  DB_NAME=$(echo "$DATABASE_URL" | sed -E 's/postgres:\/\/[^@]+@[^/]+\/([^?]*).*/\1/')
+  # Handle both postgres:// and postgresql:// schemes
+  if echo "$DATABASE_URL" | grep -q '^postgres://'; then
+    CLEAN_URL=$(echo "$DATABASE_URL" | sed 's|^postgres://|jdbc:postgresql://|')
+  elif echo "$DATABASE_URL" | grep -q '^postgresql://'; then
+    CLEAN_URL=$(echo "$DATABASE_URL" | sed 's|^postgresql://|jdbc:postgresql://|')
+  else
+    CLEAN_URL="$DATABASE_URL"
+  fi
   
-  echo "Host: $DB_HOST, Port: $DB_PORT, DB: $DB_NAME, User: $DB_USER"
-  
-  # Export JDBC URL and credentials for Spring Boot
-  export SPRING_DATASOURCE_URL="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}"
-  export SPRING_DATASOURCE_USERNAME="$DB_USER"
-  export SPRING_DATASOURCE_PASSWORD="$DB_PASSWORD"
-else
-  echo "DATABASE_URL not set, using application.properties defaults"
+  export SPRING_DATASOURCE_URL="$CLEAN_URL"
+  echo "JDBC URL: $CLEAN_URL"
 fi
 
 # Run the app
