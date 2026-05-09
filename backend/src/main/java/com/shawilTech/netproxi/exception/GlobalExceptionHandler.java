@@ -14,31 +14,37 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<Map<String, Object>> handleApiException(ApiException ex) {
+        return buildErrorResponse(ex.getStatus(), ex.getMessage(), ex.getCode());
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), "runtime_error");
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex) {
-        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid credentials", "invalid_credentials");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
-        return buildErrorResponse(HttpStatus.FORBIDDEN, "Access denied: insufficient permissions");
+        return buildErrorResponse(HttpStatus.FORBIDDEN, "Access denied: insufficient permissions", "access_denied");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", "internal_error");
     }
 
-    private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String message) {
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String message, String code) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now().toString());
         body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
+        body.put("code", code);
         body.put("message", message);
         return new ResponseEntity<>(body, status);
     }

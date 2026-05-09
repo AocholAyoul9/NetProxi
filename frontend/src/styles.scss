@@ -325,6 +325,25 @@ body.dark-theme {
   @include theme($tokens-dark);
 }
 
+/* ─── Snackbars (Material) ───────────────────────────── */
+.np-snack-success {
+  --mdc-snackbar-container-color: #065f46;
+  --mdc-snackbar-supporting-text-color: #ecfdf5;
+  --mat-snack-bar-button-color: #ecfdf5;
+}
+
+.np-snack-error {
+  --mdc-snackbar-container-color: #7f1d1d;
+  --mdc-snackbar-supporting-text-color: #fef2f2;
+  --mat-snack-bar-button-color: #fef2f2;
+}
+
+.np-snack-info {
+  --mdc-snackbar-container-color: #0f172a;
+  --mdc-snackbar-supporting-text-color: #e6edf7;
+  --mat-snack-bar-button-color: #e6edf7;
+}
+
 /* ─── Global Page Styles ───────────────────────── */
 .page-container {
   padding: 2rem;
