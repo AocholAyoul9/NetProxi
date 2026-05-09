@@ -19,6 +19,7 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 
 import { Company } from '../../models/company.model';
 import { CompaniesApiService } from '../../services/companies.api';
+import { BookingFlowService } from '../../services/booking-flow.service';
 
 interface CompanyWithCoords extends Company {
   lat?: number;
@@ -39,6 +40,7 @@ export class NearbyCompaniesComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
   private api = inject(CompaniesApiService);
+  private bookingFlow = inject(BookingFlowService);
   private destroy$ = new Subject<void>();
 
   // ── State ──────────────────────────────────────────────────
@@ -640,70 +642,28 @@ export class NearbyCompaniesComponent
 
     const dateTimeStr = `${this.selectedDate()}T${this.selectedTime()}:00`;
     const bookingRequest = {
-      clientId: localStorage.getItem('clientId') ?? '',
       serviceId,
       address: this.bookingForm.address,
       startTime: dateTimeStr,
       price: 0,
     };
 
-    const doBook = (clientId: string) => {
-      this.api
-        .CreateBooking(company.id, { ...bookingRequest, clientId })
-        .subscribe({
-          next: () => {
-            this.bookingLoading.set(false);
-            this.bookingSuccess.set(true);
-          },
-          error: (err) => {
-            console.error(err);
-            this.bookingLoading.set(false);
-            alert('Erreur lors de la réservation. Veuillez réessayer.');
-          },
-        });
-    };
-
-    const existingId = localStorage.getItem('clientId');
-    if (existingId) {
-      doBook(existingId);
-      return;
-    }
-
-    this.api
-      .registerClient({
-        name: this.bookingForm.fullName,
+    this.bookingFlow
+      .createBookingWithClient(company.id, bookingRequest, {
+        fullName: this.bookingForm.fullName,
         email: this.bookingForm.email,
-        password: 'TempPass123!',
         phone: this.bookingForm.phone,
         address: this.bookingForm.address,
       })
       .subscribe({
-        next: (res) => {
-          if (res.id) {
-            localStorage.setItem('clientId', res.id);
-            doBook(res.id);
-          } else {
-            this.bookingLoading.set(false);
-          }
+        next: () => {
+          this.bookingLoading.set(false);
+          this.bookingSuccess.set(true);
         },
-        error: () => {
-          // Try login fallback
-          this.api
-            .loginClient(this.bookingForm.email, 'TempPass123!')
-            .subscribe({
-              next: (res) => {
-                if (res.id) {
-                  localStorage.setItem('clientId', res.id);
-                  doBook(res.id);
-                } else {
-                  this.bookingLoading.set(false);
-                }
-              },
-              error: () => {
-                this.bookingLoading.set(false);
-                alert("Erreur d'authentification. Veuillez réessayer.");
-              },
-            });
+        error: (err) => {
+          console.error(err);
+          this.bookingLoading.set(false);
+          alert(err?.message ?? 'Erreur lors de la réservation. Veuillez réessayer.');
         },
       });
   }

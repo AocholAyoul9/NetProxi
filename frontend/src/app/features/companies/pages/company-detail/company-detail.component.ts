@@ -9,7 +9,7 @@ import * as CompanyActions from '../../state/company.actions';
 import * as CompanySelectors from '../../state/company.selectors';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CompaniesApiService } from '../../services/companies.api';
+import { BookingFlowService } from '../../services/booking-flow.service';
 
 @Component({
   selector: 'app-company-detail',
@@ -49,7 +49,7 @@ export class CompanyDetailComponent implements OnInit {
     private store: Store,
     private route: ActivatedRoute,
     private router: Router,
-    private api: CompaniesApiService
+    private bookingFlow: BookingFlowService
   ) {}
 
   ngOnInit(): void {
@@ -90,11 +90,13 @@ export class CompanyDetailComponent implements OnInit {
     }
   }
 
-  bookCompany(company: Company): void {
+  bookCompany(company: Company, preselectedServiceId?: string): void {
     this.bookingCompany.set(company);
-    this.selectedService.set(company.services?.[0]?.id || '');
+    this.selectedService.set(preselectedServiceId ?? company.services?.[0]?.id ?? '');
     this.bookingSuccess.set(false);
     this.bookingStep.set(1);
+    this.selectedDate.set('');
+    this.selectedTime.set('');
     this.bookingForm = {
       fullName: '',
       email: '',
@@ -135,23 +137,23 @@ export class CompanyDetailComponent implements OnInit {
     if (!company || !serviceId || !this.selectedDate() || !this.selectedTime()) return;
 
     this.bookingLoading.set(true);
-    
-    let clientId: string | null = localStorage.getItem('clientId');
-    
-    const createBooking = (cid: string) => {
-      const dateStr = this.selectedDate();
-      const timeStr = this.selectedTime();
-      const dateTimeStr = `${dateStr}T${timeStr}:00`;
-      
-      const bookingRequest = {
-        clientId: cid,
-        serviceId: serviceId,
+
+    const dateTimeStr = `${this.selectedDate()}T${this.selectedTime()}:00`;
+    const bookingRequest = {
+      serviceId,
+      address: this.bookingForm.address,
+      startTime: dateTimeStr,
+      price: 0,
+    };
+
+    this.bookingFlow
+      .createBookingWithClient(company.id, bookingRequest, {
+        fullName: this.bookingForm.fullName,
+        email: this.bookingForm.email,
+        phone: this.bookingForm.phone,
         address: this.bookingForm.address,
-        startTime: dateTimeStr,
-        price: 0,
-      };
-      
-      this.api.CreateBooking(company.id, bookingRequest).subscribe({
+      })
+      .subscribe({
         next: () => {
           this.bookingLoading.set(false);
           this.bookingSuccess.set(true);
@@ -159,37 +161,19 @@ export class CompanyDetailComponent implements OnInit {
         error: (err) => {
           console.error('Booking error:', err);
           this.bookingLoading.set(false);
-          alert('Erreur lors de la réservation');
-        }
-      });
-    };
-    
-    if (clientId) {
-      createBooking(clientId);
-    } else {
-      const clientData = {
-        name: this.bookingForm.fullName,
-        email: this.bookingForm.email,
-        password: 'TempPass123!',
-        phone: this.bookingForm.phone,
-        address: this.bookingForm.address,
-      };
-      
-      this.api.registerClient(clientData).subscribe({
-        next: (response) => {
-          const newClientId = response.id;
-          if (newClientId) {
-            localStorage.setItem('clientId', newClientId);
-            createBooking(newClientId);
-          }
+          alert(err?.message ?? 'Erreur lors de la réservation. Veuillez réessayer.');
         },
-        error: () => {
-          this.bookingLoading.set(false);
-          alert('Erreur lors de l\'inscription');
-        }
       });
-    }
   }
+
+  timeSlots = [
+    { label: '08h–10h', value: '08:00' },
+    { label: '10h–12h', value: '10:00' },
+    { label: '12h–14h', value: '12:00' },
+    { label: '14h–16h', value: '14:00' },
+    { label: '16h–18h', value: '16:00' },
+    { label: '18h–20h', value: '18:00' },
+  ];
 
   getServiceName(serviceId: string): string {
     const company = this.bookingCompany();

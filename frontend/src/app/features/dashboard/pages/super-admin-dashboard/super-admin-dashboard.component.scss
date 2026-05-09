@@ -15,10 +15,10 @@ $transition: all 0.3s ease;
 
 // Mixins
 @mixin card-base {
-  background: $white;
+  background: var(--white);
   border-radius: $border-radius;
   box-shadow: $shadow-md;
-  border: 1px solid rgba($white, 0.2);
+  border: 1px solid var(--border);
 }
 
 @mixin gradient-text {
@@ -39,6 +39,8 @@ $transition: all 0.3s ease;
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-page);
+  color: var(--text);
 }
 
 // Header
@@ -136,7 +138,7 @@ $transition: all 0.3s ease;
   
   p {
     margin: 0;
-    color: $text-muted;
+    color: var(--text-muted);
     font-size: 1rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -151,7 +153,7 @@ $transition: all 0.3s ease;
   
   h2 {
     margin: 0 0 2rem 0;
-    color: $text-dark;
+    color: var(--text-dark);
     font-size: 1.75rem;
     font-weight: 700;
     display: flex;
@@ -170,7 +172,7 @@ $transition: all 0.3s ease;
 
 // Table Styles
 .companies-table {
-  background: #f8fafc;
+  background: var(--surface);
   border-radius: $border-radius;
   overflow: hidden;
   box-shadow: $shadow-sm;
@@ -194,8 +196,8 @@ $transition: all 0.3s ease;
   }
   
   .table-row {
-    background: $white;
-    border-bottom: 1px solid #f1f5f9;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
     transition: $transition;
     
     &:last-child {
@@ -203,7 +205,7 @@ $transition: all 0.3s ease;
     }
     
     &:hover {
-      background: #f8fafc;
+      background: var(--bg-tab-hover);
       transform: translateX(4px);
     }
   }
@@ -242,7 +244,7 @@ $transition: all 0.3s ease;
   
   .company-info {
     strong {
-      color: $text-dark;
+      color: var(--text-dark);
       font-weight: 600;
       font-size: 1rem;
       margin-bottom: 0.25rem;
@@ -250,7 +252,7 @@ $transition: all 0.3s ease;
     }
     
     span {
-      color: $text-muted;
+      color: var(--text-muted);
       font-size: 0.875rem;
     }
   }
@@ -374,9 +376,9 @@ $transition: all 0.3s ease;
 }
 
 .service-count, .employee-count {
-  color: $text-dark;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
+  color: var(--text-dark);
+  background: var(--surface);
+  border: 1px solid var(--border);
 }
 
 // Responsive

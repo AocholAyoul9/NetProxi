@@ -10,10 +10,10 @@ $border-color: #e5e7eb;
 
 // Mixins
 @mixin card-base {
-  background: white;
+  background: var(--white);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid $border-color;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border);
   transition: all 0.3s ease;
 }
 
@@ -26,7 +26,7 @@ $border-color: #e5e7eb;
 // Main Styles
 .employee-dashboard {
   min-height: 100vh;
-  background: $light-color;
+  background: var(--bg-page);
 
   .dashboard-header {
     background: linear-gradient(135deg, $primary-color 0%, #1d4ed8 100%);
@@ -144,10 +144,10 @@ $border-color: #e5e7eb;
       display: flex;
       gap: 0.5rem;
       margin-bottom: 1.5rem;
-      background: white;
+      background: var(--white);
       border-radius: 10px;
       padding: 0.5rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-light);
 
       .tab-button {
         flex: 1;
@@ -164,7 +164,7 @@ $border-color: #e5e7eb;
         transition: all 0.3s;
 
         &:hover {
-          background: #f9fafb;
+          background: var(--bg-tab-hover);
         }
 
         &.active {
@@ -215,20 +215,20 @@ $border-color: #e5e7eb;
         align-items: center;
         margin-bottom: 1.5rem;
         padding: 1rem;
-        background: white;
+        background: var(--white);
         border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow-light);
 
         h2 {
           margin: 0;
           @include flex-center;
           gap: 0.75rem;
-          color: $dark-color;
+          color: var(--text-dark);
           font-size: 1.25rem;
         }
 
         .current-date, .date-range {
-          color: #6b7280;
+          color: var(--text-muted);
           font-size: 0.9rem;
           font-weight: 500;
         }
@@ -237,9 +237,9 @@ $border-color: #e5e7eb;
       .empty-state {
         text-align: center;
         padding: 3rem 2rem;
-        background: white;
+        background: var(--white);
         border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow-light);
 
         .empty-icon {
           font-size: 3rem;
@@ -248,7 +248,7 @@ $border-color: #e5e7eb;
         }
 
         p {
-          color: #6b7280;
+          color: var(--text-muted);
           font-size: 1.125rem;
           margin-bottom: 0.5rem;
         }
