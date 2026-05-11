@@ -1,7 +1,7 @@
 INSERT INTO roles (id, name)
 VALUES
 (gen_random_uuid(), 'ROLE_SUPER_ADMIN'),
-(gen_random_uuid(), 'ROLE_COMPANY_ADMIN'),
+(gen_random_uuid(), 'ROLE_COMPANY'),
 (gen_random_uuid(), 'ROLE_EMPLOYEE'),
 (gen_random_uuid(), 'ROLE_CLIENT');
 -- Create users for companies (email verified, enabled, with role)
