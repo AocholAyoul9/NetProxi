@@ -6,7 +6,8 @@ import { map, catchError } from 'rxjs/operators';
 @Injectable({ providedIn: 'root' })
 export class GeocodingService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/api';
+ // private baseUrl = 'http://localhost:8080/api';
+  private baseUrl = 'https://netproxi.onrender.com/api';
 
   geocodeAddress(address: string): Observable<{ lat: number; lng: number } | null> {
     return this.http.post<{ lat: number; lng: number; displayName?: string }>(
