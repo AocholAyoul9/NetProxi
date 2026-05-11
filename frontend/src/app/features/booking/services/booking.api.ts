@@ -5,7 +5,8 @@ import { Booking, CreateBookingRequest } from '../models/booking.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingApiService {
-  private baseUrl = 'http://localhost:8080/api';
+ //private baseUrl = 'http://localhost:8080/api';
+  private baseUrl = 'https://netproxi.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 
