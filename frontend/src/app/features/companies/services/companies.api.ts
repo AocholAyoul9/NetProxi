@@ -10,7 +10,8 @@ import { NearbyCompany } from '../../client/models/client.model';
   providedIn: 'root',
 })
 export class CompaniesApiService {
-  private baseUrl = 'http://localhost:8080/api';
+  //private baseUrl = 'http://localhost:8080/api';
+   private baseUrl = 'https://netproxi.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 
