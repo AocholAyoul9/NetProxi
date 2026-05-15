@@ -10,7 +10,6 @@ import {
   OnDestroy,
   AfterViewInit,
 } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
